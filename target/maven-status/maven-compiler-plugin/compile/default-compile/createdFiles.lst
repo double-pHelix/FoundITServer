@@ -1,0 +1,13 @@
+au\edu\unsw\soacourse\job\model\Review.class
+au\edu\unsw\soacourse\job\dao\JobsDAO.class
+au\edu\unsw\soacourse\job\model\JobApplication.class
+au\edu\unsw\soacourse\job\HelloWorld.class
+au\edu\unsw\soacourse\job\model\HiringTeam.class
+au\edu\unsw\soacourse\job\FoundITResource.class
+au\edu\unsw\soacourse\job\JsonBean.class
+au\edu\unsw\soacourse\job\model\TeamMemberProfile.class
+au\edu\unsw\soacourse\job\model\CompanyProfile.class
+au\edu\unsw\soacourse\job\model\UserProfiles.class
+au\edu\unsw\soacourse\job\model\UserProfile.class
+au\edu\unsw\soacourse\job\model\JobPosting.class
+au\edu\unsw\soacourse\job\model\JobApplicationAssignment.class
