@@ -13,6 +13,10 @@ public class UserProfiles {
 	@XmlElement(name = "UserProfile")
 	List<UserProfile> userProfiles = new ArrayList<UserProfile>();
 
+	public UserProfiles() {
+		
+	}
+	
 	public UserProfiles(List<UserProfile> userProfiles) {
 		super();
 		this.userProfiles = userProfiles;

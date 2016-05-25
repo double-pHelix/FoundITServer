@@ -12,7 +12,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JobPostings {
 	@XmlElement(name = "jobPosting")
 	List<JobPosting> jobPostings = new ArrayList<JobPosting>();
-
+	
+	public JobPostings(){
+		
+	}
+	
 	public JobPostings(List<JobPosting> jobPostings) {
 		super();
 		this.jobPostings = jobPostings;

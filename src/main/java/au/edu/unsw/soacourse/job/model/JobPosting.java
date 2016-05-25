@@ -18,9 +18,23 @@ public class JobPosting {
 		super();
 	}
 	
+	public JobPosting(String id) {
+		super();
+		this.id = id;
+		this.description = "PLEASE ENTER";
+		this.companyProfileId = "PLEASE ENTER";
+		this.positionType = "PLEASE ENTER";
+		this.desiredSkills = "PLEASE ENTER";
+		this.salaryLevel = "PLEASE ENTER";
+		this.location = "PLEASE ENTER";
+		this.status = "PLEASE ENTER";
+		this.archived = "PLEASE ENTER";
+	}
+	
+	
 	public JobPosting(String id, String description, String companyProfileId,
 			String positionType, String desiredSkills, String salaryLevel,
-			String location, String status, String archived) {
+			String location) {
 		super();
 		this.id = id;
 		this.description = description;
@@ -29,8 +43,8 @@ public class JobPosting {
 		this.desiredSkills = desiredSkills;
 		this.salaryLevel = salaryLevel;
 		this.location = location;
-		this.status = status;
-		this.archived = archived;
+		this.status = "default";
+		this.archived = "N";
 	}
 	
 	public String getId() {

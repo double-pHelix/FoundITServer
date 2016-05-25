@@ -12,18 +12,32 @@ public class JobApplication {
     private String resume; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
     private String status; // (shortlisted/not-shortlisted or rejected/accepted)
     private String archived; //Y or N
-	
+    
+    public JobApplication() {
+
+	}
+    
+    public JobApplication(String id) {
+		super();
+		this.id = id;
+		this.jobApplicationId = "PLEASE ENTER";
+		this.userProfileId = "PLEASE ENTER";
+		this.coverLetter = "PLEASE ENTER";
+		this.resume = "PLEASE ENTER";
+		this.status = "DEFAULT";
+		this.archived = "N";
+	}
+    
     public JobApplication(String id, String jobApplicationId,
-			String userProfileId, String coverLetter, String resume,
-			String status, String archived) {
+			String userProfileId, String coverLetter, String resume) {
 		super();
 		this.id = id;
 		this.jobApplicationId = jobApplicationId;
 		this.userProfileId = userProfileId;
 		this.coverLetter = coverLetter;
 		this.resume = resume;
-		this.status = status;
-		this.archived = archived;
+		this.status = "DEFAULT";
+		this.archived = "N";
 	}
 
 	public String getId() {

@@ -15,6 +15,16 @@ public class UserProfile {
 		super();
 	}
 
+    public UserProfile(String id) {
+		super();
+		this.id = id;
+		this.name = "PLEASE ENTER";
+		this.currentPosition = "PLEASE ENTER";
+		this.education = "PLEASE ENTER";
+		this.pastExperience = "PLEASE ENTER";
+		this.professionalSkills = "PLEASE ENTER";
+	}
+    
 	public UserProfile(String id, String name, String currentPosition,
 			String education, String pastExperience, String professionalSkills) {
 		super();
