@@ -8,6 +8,7 @@ import java.util.Map;
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
 import au.edu.unsw.soacourse.job.model.HiringTeam;
 import au.edu.unsw.soacourse.job.model.JobApplication;
+import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
 import au.edu.unsw.soacourse.job.model.Review;
@@ -62,8 +63,65 @@ public enum JobsDAO {
         contentStore.put("2", b);
         */
     	
-    	//add test cases files
+    	//add test cases files (to avoid having to create manually)
+    	addTestCasesJobPostings();
+    	addTestCasesUserProfiles();
+    	addTestCasesJobApplications();
     	
+    }
+    
+    private void addTestCasesJobPostings(){
+    	String id = "1"; 
+    	String description = "description"; 
+    	String companyProfileId = "companyProfileId"; 
+		String positionType = "positionType"; 
+    	String desiredSkills = "desiredSkills"; 
+    	String salaryLevel= "salaryLevel"; 
+		String location= "location"; 
+    	
+    	JobPosting post1 = new JobPosting(id, description, companyProfileId,
+    			positionType, desiredSkills, salaryLevel,
+    			location);
+    	
+    	JobPosting post2 = new JobPosting("2");
+    	JobPosting post3 = new JobPosting("3");
+    	JobPosting post4 = new JobPosting("4");
+    	
+
+    	contentStorePostings.put(id, post1);
+    	contentStorePostings.put("2", post2);
+    	contentStorePostings.put("3", post3);
+    	contentStorePostings.put("4", post4);
+    }
+    
+    private void addTestCasesUserProfiles(){
+    	
+    	
+    }
+    
+    private void addTestCasesJobApplications(){
+    	String id = "1"; 
+        String jobApplicationId= "1"; 
+        String userProfileId= "1"; 
+        String coverLetter= "Hey"; 
+        String resume= "resume.pdf"; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
+
+        JobApplication app1 = new JobApplication(id, jobApplicationId, userProfileId, coverLetter, resume);
+        JobApplication app2 = new JobApplication("2");
+        JobApplication app3 = new JobApplication("3");
+        JobApplication app4 = new JobApplication("4");
+        JobApplication app5 = new JobApplication("5");
+
+        //test for manager grab
+        app2.setJobApplicationId("1");
+        app3.setJobApplicationId("1");
+        app4.setJobApplicationId("1");
+        contentStoreApplications.put(id, app1);
+        contentStoreApplications.put("2", app2);
+        contentStoreApplications.put("3", app3);
+        contentStoreApplications.put("4", app4);
+        contentStoreApplications.put("5", app5);
+        
     	
     }
     
@@ -167,48 +225,155 @@ public enum JobsDAO {
     public TeamMemberProfile deleteTeamMemberProfile(String id){
     	return contentStoreTeamProfiles.remove(id);
     }
+     
+ 
+    ///ID STUFF
+    
+    public String getNextUserProfileId(){
+    	int nextId = contentStoreUserProfiles.size() + 1;
+    	while(contentStoreUserProfiles.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextCompanyProfileId(){
+    	int nextId = contentStoreUserProfiles.size() + 1;
+    	while(contentStoreUserProfiles.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextHiringTeamId(){
+    	int nextId = contentStoreHiringTeam.size() + 1;
+    	while(contentStoreHiringTeam.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextJobApplicationId(){
+    	int nextId = contentStoreApplications.size() + 1;
+    	while(contentStoreApplications.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextJobPostingId(){
+    	int nextId = contentStorePostings.size() + 1;
+    	while(contentStorePostings.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextReviewId(){
+    	int nextId = contentStoreReviews.size() + 1;
+    	while(contentStoreReviews.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    
+    public String getNextTeamMemberProfileId(){
+    	int nextId = contentStoreTeamProfiles.size() + 1;
+    	while(contentStoreTeamProfiles.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
     
     //QUERY JOB POSTINGS
-//    private String description;
-//    private String companyProfileId;
+//  private String description;
+//  private String companyProfileId;
 //	  private String positionType;
 //	  private String desiredSkills;
-//    private String salaryLevel;
-//    private String location;
+//  private String salaryLevel;
+//  private String location;
 //	  private String status; //(created, open, in-review, processed, sent invitations)
 //	  private String archived;
 	
 
-    public JobPostings searchJobPostingDescription(String query){
-    	//
-    	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
+  public JobPostings searchJobPostingDescription(String query){
+  	//		
+	//match as a substring
+	query = ".*" + query + ".*";
+	
+  	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
+
+  	for(JobPosting posting : contentStorePostings.values()){
+  		if(posting.getDescription().matches(query)){
+  			jobPostingsList.add(posting);
+  		}
+  	}
+  	JobPostings newJobPostings = new JobPostings(jobPostingsList);
+  	
+  	return newJobPostings;
+  }
   
-    	for(JobPosting posting : contentStorePostings.values()){
-    		if(posting.getDescription().matches(query)){
-    			jobPostingsList.add(posting);
-    		}
-    	}
-    	JobPostings newJobPostings = new JobPostings(jobPostingsList);
-    	
-    	return newJobPostings;
-    }
-    
-    
+  public JobPostings getAllJobPostings(){
+	  	//
+	  	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
+
+	  	for(JobPosting posting : contentStorePostings.values()){
+	  		
+  			jobPostingsList.add(posting);
+	  		
+	  	}
+	  	JobPostings newJobPostings = new JobPostings(jobPostingsList);
+	  	
+	  	return newJobPostings;
+  }
+  public JobApplications searchJobApplicationsPostId(String query){
+	  	//		
+		//match as a substring
+		//query = ".*" + query + ".*";
+		
+	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
+
+	  	for(JobApplication app : contentStoreApplications.values()){
+	  		if(app.getJobApplicationId().matches(query)){
+	  			JobApplicationsList.add(app);
+	  		}
+	  	}
+	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
+	  	
+	  	return newJobApplications;
+  }
+  
+  
+  public JobApplications getAllJobApplications(){
+	  	//
+	  	List<JobApplication> jobApplicationList = new ArrayList<JobApplication>();
+
+	  	for(JobApplication application : contentStoreApplications.values()){
+	  		
+	  		jobApplicationList.add(application);
+	  		
+	  	}
+	  	JobApplications newJobApplications = new JobApplications(jobApplicationList);
+	  	
+	  	return newJobApplications;
+}
+	  
+  
+  
 /*	
-    public JobPosting searchJobPostingPositionType(String query){
-    	return contentStorePostings.remove(id);
-    }
-    public JobPosting searchJobPostingDesiredSkills(String query){
-    	return contentStorePostings.remove(id);
-    }
-    public JobPosting searchJobPostingSalaryLevel(String query){
-    	return contentStorePostings.remove(id);
-    }
-    public JobPosting searchJobPostingLocation(String query){
-    	return contentStorePostings.remove(id);
-    }
+  public JobPosting searchJobPostingPositionType(String query){
+  	return contentStorePostings.remove(id);
+  }
+  public JobPosting searchJobPostingDesiredSkills(String query){
+  	return contentStorePostings.remove(id);
+  }
+  public JobPosting searchJobPostingSalaryLevel(String query){
+  	return contentStorePostings.remove(id);
+  }
+  public JobPosting searchJobPostingLocation(String query){
+  	return contentStorePostings.remove(id);
+  }
 */
-    
     
     
 }	

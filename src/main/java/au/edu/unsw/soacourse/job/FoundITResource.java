@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +14,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -23,6 +25,9 @@ import javax.ws.rs.core.UriInfo;
 import au.edu.unsw.soacourse.job.dao.JobsDAO;
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
 import au.edu.unsw.soacourse.job.model.JobApplication;
+import au.edu.unsw.soacourse.job.model.JobApplications;
+import au.edu.unsw.soacourse.job.model.JobPosting;
+import au.edu.unsw.soacourse.job.model.JobPostings;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
 //We can change this path
@@ -35,7 +40,7 @@ public class FoundITResource {
 	@Context
 	Request request;
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//User Profile (Candidate/Employer?/Hiring Team Member)
 //	POST:
 //	Create new user
@@ -51,7 +56,7 @@ public class FoundITResource {
 			@FormParam("pastExperience") String pastExperience,
 			@FormParam("professionalSkills") String professionalSkills
 	) throws IOException {
-		String id = "1";
+		String id = JobsDAO.instance.getNextUserProfileId();
 
 		//create new profile
 		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills);
@@ -137,7 +142,7 @@ public class FoundITResource {
 	}
 	
 	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Company Profile
 //	POST:
 //	Create new company
@@ -154,7 +159,7 @@ public class FoundITResource {
 			@FormParam("industryType") String industryType,
 			@FormParam("address") String address
 	) throws IOException {
-		String id = "hi";
+		String id = JobsDAO.instance.getNextCompanyProfileId();
 
 		//create new profile
 		CompanyProfile newProfile = new CompanyProfile(id, name, description, website, industryType, address);
@@ -236,22 +241,92 @@ public class FoundITResource {
 		return res;
 	}
 	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Job Posting (for Employer)
 //	POST:
 //	Create Job Posting
 //	Create a new (Job Posting) with a new id set with given values
 //	Return new id URI to Company
-	
+	@POST
+	@Path("/jobposting")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newJobPosting(
+			@FormParam("description") String description,
+			@FormParam("companyProfileId") String companyProfileId,
+			@FormParam("positionType") String positionType,
+			@FormParam("desiredSkills") String desiredSkills,
+			@FormParam("salaryLevel") String salaryLevel,
+			@FormParam("location") String location
+	) throws IOException {
+		String id = JobsDAO.instance.getNextJobPostingId();
+		
+		//create new profile
+		JobPosting newJobPosting= new JobPosting(id, description, companyProfileId,
+				positionType, desiredSkills, salaryLevel,
+				location);
+				
+		//store profile
+		JobsDAO.instance.storeJobPosting(newJobPosting);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 //	GET:
 //	Get Job Posting
 //	Look up (Company Profile) with given “id”
 //	If id does not exist return error
 //	Return XML of Job Posting
+	@GET
+	@Path("/jobposting/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobPosting getJobPosting(@PathParam("id") String id) {
+		
+		JobPosting p = JobsDAO.instance.getJobPosting(id);
+		
+		if(p==null)
+			throw new RuntimeException("GET: Job Posting with:" + id +  " not found");
+		
+		return p;
+		
+	}
 //	Get a Collection i.e Job Search/id={“Job Application id”} or skills/etc..=”REGEX MATCH”
 //	Go through each Job Posting and check if they match the query (just start with id for now)... and are NOT archived
 //	Return an XML of those job postings (full)
+	@GET
+	@Path("/jobposting/search")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobPostings getSearchJobPostings(@DefaultValue(".*") @QueryParam("query") String query) {
+
+		//search description
+		System.out.println("Search query:" + query);
+		JobPostings allJobPosts = JobsDAO.instance.searchJobPostingDescription(query);
+		
+		if(allJobPosts==null)
+			throw new RuntimeException("GET: No Job Postings not found for query:" + query);
+		
+		return allJobPosts;
+		
+	}
 	
+//	Get All
+	@GET
+	@Path("/jobposting/all")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobPostings getAllJobPostings() {
+		
+		JobPostings allJobPosts = JobsDAO.instance.getAllJobPostings();
+		
+		if(allJobPosts==null)
+			throw new RuntimeException("GET: No Job Postings not found");
+		
+		return allJobPosts;
+		
+	}
 //	PUT:
 //	Update Job Posting Public Details (if no applications applied for it)
 //	Update Job Posting status (open/in-review/closed)
@@ -259,32 +334,138 @@ public class FoundITResource {
 //	We delete the old Job Posting with id
 //	Replace with the given Job Posting
 //	Return GET URI and id of the resource… to signal success.
-
+	@PUT
+	@Path("/jobposting")
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response putJobPosting(JobPosting p) {
+		Response res = null;
+		String msg = "success";
+		
+		//store profile
+		JobsDAO.instance.storeJobPosting(p);
+		//Probably should modify test to be in xml format or something :/
+		res = Response.ok(msg).build();
+		//res.
+		return res;
+		//TODO: Fix here so that it returns the updated job
+	}
+	
 //	DELETE:
 //	Archive job posting (mark as archived, not physically delete)
 //	Look up job posting with id
 //	Set flag to be archived
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@DELETE
+	@Path("/jobposting/{id}")
+	public Response deleteJobPosting(@PathParam("id") String id) {
+		
+		JobPosting delProfile = JobsDAO.instance.deleteJobPosting(id);
+		//modify.s
+		
+		Response res = null;
+		int errorCode = 220;
+		
+		if(delProfile == null) {
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "DELETE: Posting with " + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(errorCode);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			String msg = "Deleted Posting:" + id;
+			res = Response.ok(msg).build();
+		}
+		return res;
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	//Job Application (for Candidate)
 //	POST:
 //	Create Job Application (Apply to a Job Posting)
 //	Create a new job application with new id and given details
 //	Returns: new Job Application ID (and it’s get URI)
-	
+	@POST
+	@Path("/jobapplication")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newJobApplication(
+			@FormParam("description") String jobApplicationId,
+			@FormParam("companyProfileId") String userProfileId,
+			@FormParam("positionType") String coverLetter,
+			@FormParam("desiredSkills") String resume
+	) throws IOException {
+		String id = JobsDAO.instance.getNextJobApplicationId();
+			
+		//create new application
+		JobApplication newJobApp= new JobApplication(id, jobApplicationId,
+				userProfileId, coverLetter, resume);
+				
+		//store application
+		JobsDAO.instance.storeJobApplication(newJobApp);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 //	GET:
 //	Get Single Application including its Status (shortlisted/not-shortlisted or rejected/accepted)
 //	Go through all applications and look i
 //	Return XML of Job Application
+	@GET
+	@Path("/jobapplication/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobApplication getJobApplication(@PathParam("id") String id) {
+		
+		JobApplication a = JobsDAO.instance.getJobApplication(id);
+		
+		if(a==null)
+			throw new RuntimeException("GET: Job Application with:" + id +  " not found");
+		
+		return a;
+		
+	}
 //	Get Job Posting’s Applications (for Manager)
 //	Go through all applications that have job_application id matching the given job posting->id
 //	Return XML of Job Applications
+	@GET
+	@Path("/jobapplication/search")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobApplications getSearchJobApplications(@DefaultValue(".*") @QueryParam("jobpostid") String query) {
+
+		//search description
+		System.out.println("Search Job Application Id:" + query);
+		JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsPostId(query);
+		
+		if(allJobApplications==null)
+			throw new RuntimeException("GET: No Job Applications with Job Application Id:" + query);
+		
+		return allJobApplications;
+		
+	}
+	
 //	Get Job Applications assigned for review
 //	Search (Job Application Assignments), if reviewer-id matches either of assigned reviewer ids, return job application-ids
 //	Return list of job-application ids and URIs
-//	Get All Job Postings
-//	Return (Job Postings) (all Job Postings inside)
+	//TODO::
+	
+	
+//	Get All Job Applications
+//	Return (Job Applications) (all Job Applications inside)
 //	Return XML of all Job Applications
+	@GET
+	@Path("/jobapplication/all")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobApplications getAllJobApplications() {
+		
+		JobApplications allJobApps = JobsDAO.instance.getAllJobApplications();
+		
+		if(allJobApps==null)
+			throw new RuntimeException("GET: No Job Applications found");
+		
+		return allJobApps;
+	}
 	
 //	PUT:
 //	Update Job Application (if job posting is still open)
@@ -296,13 +477,49 @@ public class FoundITResource {
 //	Search and delete old job Application
 //	Replace (create) with one provided
 //	Returns Success
+	@PUT
+	@Path("/jobapplication")
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response putJobApplication(JobApplication p) {
+		Response res = null;
+		String msg = "success";
+		
+		//store profile
+		JobsDAO.instance.storeJobApplication(p);
+		//Probably should modify test to be in xml format or something :/
+		res = Response.ok(msg).build();
+		//res.
+		return res;
+		//TODO: Fix here so that it returns the updated job
+	}
 	
 //	DELETE:
 //	Withdraw Application (Archive application, if completed workflow)
-//
 //	Returns Success
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	@DELETE
+	@Path("/jobapplication/{id}")
+	public Response deleteJobApplication(@PathParam("id") String id) {
+		
+		JobApplication delApp = JobsDAO.instance.deleteJobApplication(id);
+		//modify.s
+		
+		Response res = null;
+		int errorCode = 220;
+		
+		if(delApp == null) {
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "DELETE: Application with " + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(errorCode);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			String msg = "Deleted Application:" + id;
+			res = Response.ok(msg).build();
+		}
+		return res;
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	//Hiring Team Member
 //	Hiring Team for Company
 //	POST:
@@ -325,7 +542,7 @@ public class FoundITResource {
 //	Remove the hiring team from a company
 	
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	//Review Assignment
 //	POST:
 //	Assign two company team members to an application
@@ -340,7 +557,7 @@ public class FoundITResource {
 //	Removal: Not supported.  
 	
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Reviews: By Hiring Team Member
 //	POST:
 //	Create Review for a job application
