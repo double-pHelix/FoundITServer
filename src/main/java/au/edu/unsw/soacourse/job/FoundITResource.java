@@ -57,13 +57,14 @@ public class FoundITResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newUserProfile(
 			@FormParam("name") String name,
-			@FormParam("currentPosition") String currentPosition,
+			@FormParam("currentposition") String currentPosition,
 			@FormParam("education") String education,
-			@FormParam("pastExperience") String pastExperience,
-			@FormParam("professionalSkills") String professionalSkills
+			@FormParam("pastexperience") String pastExperience,
+			@FormParam("professionalskills") String professionalSkills
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
+		System.out.println("!!");
 		//create new profile
 		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills);
 				

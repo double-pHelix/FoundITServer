@@ -6,15 +6,27 @@ import java.util.List;
 import java.util.Map;
 
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
+import au.edu.unsw.soacourse.job.model.CompanyProfiles;
 import au.edu.unsw.soacourse.job.model.HiringTeam;
 import au.edu.unsw.soacourse.job.model.HiringTeamStore;
+import au.edu.unsw.soacourse.job.model.HiringTeams;
 import au.edu.unsw.soacourse.job.model.JobApplication;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
 import au.edu.unsw.soacourse.job.model.Review;
+import au.edu.unsw.soacourse.job.model.Reviews;
 import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
+import au.edu.unsw.soacourse.job.model.TeamMemberProfiles;
 import au.edu.unsw.soacourse.job.model.UserProfile;
+import au.edu.unsw.soacourse.job.model.UserProfiles;
+
+import java.io.File;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 //This is suppose to be the DAO layer so we should probably change this
 //This class should interact with our data storage
@@ -41,6 +53,15 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 public enum JobsDAO {
 	instance;
 
+	//metadata
+	private final String COMPANY_PROFILE_FILEDIR = System.getProperty("user.dir") + "/compprofilestore.xml";
+	private final String USER_PROFILE_FILEDIR =System.getProperty("user.dir") +  "/test/userprofilestore.xml";
+	private final String HIRING_TEAM_FILEDIR = System.getProperty("user.dir") + "/hiringteamstore.xml";
+	private final String JOB_APPLICATION_FILEDIR = System.getProperty("user.dir") + "/jobappsstore.xml";
+	private final String JOB_POSTING_FILEDIR = System.getProperty("user.dir") + "/jobpostingstore.xml";
+	private final String REVIEW_FILEDIR =System.getProperty("user.dir") +  "/reviewsstore.xml";
+	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "teammemberprofilestore/.xml";
+	
 	//these are in place of XML storage for now! 
 	//we need to store persistently
 	//referred to by their ids
@@ -54,7 +75,7 @@ public enum JobsDAO {
 
     
     private JobsDAO() {
-
+  
     	/*
     	JobApplication b = new JobApplication("1", "RESTful Web Services");
         b.setDetail("http://oreilly.com/catalog/9780596529260");
@@ -179,31 +200,188 @@ public enum JobsDAO {
     //store userProfiles etc..
     
     public void storeUserProfile(UserProfile newUserProfile){
+    	loadUserProfilesFromFile();
+      	
     	contentStoreUserProfiles.put(newUserProfile.getId(), newUserProfile);
+    	System.out.println(":" + newUserProfile.getPastExperience());
+    	//create storage class
+      	List<UserProfile> userProfiles = new ArrayList<UserProfile>(contentStoreUserProfiles.values());
+    	UserProfiles storeThis = new UserProfiles(userProfiles);
+    	
+    	try {
+    		File file = new File(USER_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+
     }
     
     public void storeCompanyProfile(CompanyProfile newCompanyProfile){
+    	loadCompanyProfilesFromFile();
+
     	contentStoreCompProfiles.put(newCompanyProfile.getId(), newCompanyProfile);
+    	
+    	//create storage class
+      	List<CompanyProfile> compProfiles = new ArrayList<CompanyProfile>(contentStoreCompProfiles.values());
+      	CompanyProfiles storeThis = new CompanyProfiles(compProfiles);
+    	
+    	try {
+    		File file = new File(COMPANY_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
     }
     
     public void storeHiringTeam(HiringTeamStore newHiringTeam){
+    	loadHiringTeamsFromFile();
+
     	contentStoreHiringTeam.put(newHiringTeam.getId(), newHiringTeam);
+    	
+     	//create storage class
+      	List<HiringTeamStore> hiringTeams = new ArrayList<HiringTeamStore>(contentStoreHiringTeam.values());
+      	HiringTeams storeThis = new HiringTeams(hiringTeams);
+    	
+    	try {
+    		File file = new File(HIRING_TEAM_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+    	
     }
     
     public void storeJobApplication(JobApplication newJobApplication ){
+    	loadJobApplicationsFromFile();
+    	
     	contentStoreApplications.put(newJobApplication.getId(), newJobApplication);
+    	
+    	//create storage class
+      	List<JobApplication> jobApps = new ArrayList<JobApplication>(contentStoreApplications.values());
+      	JobApplications storeThis = new JobApplications(jobApps);
+    	
+    	try {
+    		File file = new File(JOB_APPLICATION_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+    	
     }
     
     public void storeJobPosting(JobPosting newJobPosting){
+    	loadJobPostingsFromFile();
+
     	contentStorePostings.put(newJobPosting.getId(), newJobPosting);
+    	
+    	//create storage class
+      	List<JobPosting> jobPosts = new ArrayList<JobPosting>(contentStorePostings.values());
+      	JobPostings storeThis = new JobPostings(jobPosts);
+    	
+    	try {
+    		File file = new File(JOB_POSTING_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
     }
     
     public void storeReview(Review newReview ){
+    	loadReviewsFromFile();
+    	
     	contentStoreReviews.put(newReview.getId(), newReview);
+    	
+    	//create storage class
+      	List<Review> reviews = new ArrayList<Review>(contentStoreReviews.values());
+      	Reviews storeThis = new Reviews(reviews);
+    	
+    	try {
+    		File file = new File(REVIEW_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
     }
     
     public void storeTeamMemberProfile(TeamMemberProfile newTeamMemberProfile){
+    	loadTeamMemberProfilesFromFile();
+    	
     	contentStoreTeamProfiles.put(newTeamMemberProfile.getId(), newTeamMemberProfile);
+    	
+    	//create storage class
+      	List<TeamMemberProfile> profiles = new ArrayList<TeamMemberProfile>(contentStoreTeamProfiles.values());
+      	TeamMemberProfiles storeThis = new TeamMemberProfiles(profiles);
+    	
+    	try {
+    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
     }
     
     
@@ -215,32 +393,39 @@ public enum JobsDAO {
     }
 */
     //GET
-    
     public UserProfile getUserProfile(String id){
+    	//if we've reset load from file
+		loadUserProfilesFromFile();
     	return contentStoreUserProfiles.get(id);
     }
     
     public CompanyProfile getCompanyProfile(String id){
+    	loadCompanyProfilesFromFile();
     	return contentStoreCompProfiles.get(id);
     }
     
     public HiringTeamStore getHiringTeam(String id){
+    	loadHiringTeamsFromFile();
     	return contentStoreHiringTeam.get(id);
     }
     
     public JobApplication getJobApplication(String id){
+    	loadJobApplicationsFromFile();
     	return contentStoreApplications.get(id);
     }
     
     public JobPosting getJobPosting(String id){
+    	loadJobPostingsFromFile();
     	return contentStorePostings.get(id);
     }
     
     public Review getReview(String id){
+    	loadReviewsFromFile();
     	return contentStoreReviews.get(id);
     }
     
     public TeamMemberProfile getTeamMemberProfile(String id){
+    	loadTeamMemberProfilesFromFile();
     	return contentStoreTeamProfiles.get(id);
     }
     
@@ -278,6 +463,7 @@ public enum JobsDAO {
     ///ID STUFF
     
     public String getNextUserProfileId(){
+    	loadUserProfilesFromFile();
     	int nextId = contentStoreUserProfiles.size() + 1;
     	while(contentStoreUserProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -286,6 +472,7 @@ public enum JobsDAO {
     }
     
     public String getNextCompanyProfileId(){
+    	loadCompanyProfilesFromFile();
     	int nextId = contentStoreUserProfiles.size() + 1;
     	while(contentStoreUserProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -294,6 +481,7 @@ public enum JobsDAO {
     }
     
     public String getNextHiringTeamId(){
+    	loadHiringTeamsFromFile();
     	int nextId = contentStoreHiringTeam.size() + 1;
     	while(contentStoreHiringTeam.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -302,6 +490,7 @@ public enum JobsDAO {
     }
     
     public String getNextJobApplicationId(){
+    	loadJobApplicationsFromFile();
     	int nextId = contentStoreApplications.size() + 1;
     	while(contentStoreApplications.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -310,6 +499,7 @@ public enum JobsDAO {
     }
     
     public String getNextJobPostingId(){
+    	loadJobPostingsFromFile();
     	int nextId = contentStorePostings.size() + 1;
     	while(contentStorePostings.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -318,6 +508,7 @@ public enum JobsDAO {
     }
     
     public String getNextReviewId(){
+    	loadReviewsFromFile();
     	int nextId = contentStoreReviews.size() + 1;
     	while(contentStoreReviews.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -326,6 +517,7 @@ public enum JobsDAO {
     }
     
     public String getNextTeamMemberProfileId(){
+    	loadTeamMemberProfilesFromFile();
     	int nextId = contentStoreTeamProfiles.size() + 1;
     	while(contentStoreTeamProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
@@ -461,6 +653,159 @@ public enum JobsDAO {
   	return contentStorePostings.remove(id);
   }
 */
-    
+//loads from file if we've reset from last time
+	void loadUserProfilesFromFile(){
+	  	if(contentStoreUserProfiles.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(USER_PROFILE_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		UserProfiles profiles = (UserProfiles) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(UserProfile profile : profiles.getUserProfiles()){
+	    			contentStoreUserProfiles.put(profile.getId(), profile);
+	          	}
+	    		
+	    		System.out.println(profiles);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadCompanyProfilesFromFile(){
+	  	if(contentStoreCompProfiles.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(COMPANY_PROFILE_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		CompanyProfiles profiles = (CompanyProfiles) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(CompanyProfile profile : profiles.getCompanyProfiles()){
+	    			contentStoreCompProfiles.put(profile.getId(), profile);
+	          	}
+	    		
+	    		System.out.println(profiles);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadHiringTeamsFromFile(){
+	  	if(contentStoreHiringTeam.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(HIRING_TEAM_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		HiringTeams teams = (HiringTeams) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(HiringTeamStore team : teams.getHiringTeams()){
+	    			contentStoreHiringTeam.put(team.getId(), team);
+	          	}
+	    		
+	    		System.out.println(teams);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadJobApplicationsFromFile(){
+	  	if(contentStoreApplications.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(JOB_APPLICATION_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		JobApplications apps = (JobApplications) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(JobApplication app : apps.getJobApplications()){
+	    			contentStoreApplications.put(app.getId(), app);
+	          	}
+	    		
+	    		System.out.println(apps);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadJobPostingsFromFile(){
+	  	if(contentStorePostings.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(JOB_POSTING_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		JobPostings posts = (JobPostings) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(JobPosting post : posts.getJobPostings()){
+	    			contentStorePostings.put(post.getId(), post);
+	          	}
+	    		
+	    		System.out.println(posts);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadReviewsFromFile(){
+	  	if(contentStoreReviews.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(REVIEW_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		Reviews reviews = (Reviews) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(Review review : reviews.getReviews()){
+	    			contentStoreReviews.put(review.getId(), review);
+	          	}
+	    		
+	    		System.out.println(reviews);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadTeamMemberProfilesFromFile(){
+	  	if(contentStoreTeamProfiles.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		TeamMemberProfiles profiles = (TeamMemberProfiles) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(TeamMemberProfile profile : profiles.getTeamMemberProfiles()){
+	    			contentStoreTeamProfiles.put(profile.getId(), profile);
+	          	}
+	    		
+	    		System.out.println(profiles);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
     
 }	
