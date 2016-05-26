@@ -646,14 +646,16 @@ public class FoundITResource {
 	@GET
 	@Path("/hiringteam/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public HiringTeam getHiringTeam(@PathParam("id") String id) {
+	public HiringTeamStore getHiringTeam(@PathParam("id") String id) {
 		//get Hiring Team Store
 		HiringTeamStore reqHiringTeam = JobsDAO.instance.getHiringTeam(id);
 		
 		if(reqHiringTeam == null)
 			throw new RuntimeException("GET: Hiring Team Store with:" + id +  " not found");
 		
+		return reqHiringTeam;
 		
+		/*
 		String companyProfileId = reqHiringTeam.getCompanyProfileId();
 		String member1id = reqHiringTeam.getMember1id();
 		String member2id = reqHiringTeam.getMember2id();
@@ -679,6 +681,7 @@ public class FoundITResource {
 		HiringTeam newHiringTeam = new HiringTeam(id, companyProfileId, teamMembers);
 		
 		return newHiringTeam;
+		*/
 	}
 //	PUT:
 //	Unsupported
