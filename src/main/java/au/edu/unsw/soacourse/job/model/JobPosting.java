@@ -5,10 +5,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class JobPosting {
 	private String id;
-    private String description;
+	private String title;
+
+	private String description;
     private String companyProfileId;
 	private String positionType;
-	private String desiredSkills;
+	private String skills;
     private String salaryLevel;
     private String location;
 	private String status; //(created, open, in-review, processed, sent invitations)
@@ -21,37 +23,46 @@ public class JobPosting {
 	public JobPosting(String id) {
 		super();
 		this.id = id;
+		this.title = "PLEASE ENTER";
 		this.description = "PLEASE ENTER";
 		this.companyProfileId = "PLEASE ENTER";
 		this.positionType = "PLEASE ENTER";
-		this.desiredSkills = "PLEASE ENTER";
+		this.skills = "PLEASE ENTER";
 		this.salaryLevel = "PLEASE ENTER";
 		this.location = "PLEASE ENTER";
-		this.status = "PLEASE ENTER";
-		this.archived = "PLEASE ENTER";
+		this.status = "default";
+		this.archived = "N";
 	}
 	
-	
-	public JobPosting(String id, String description, String companyProfileId,
-			String positionType, String desiredSkills, String salaryLevel,
-			String location) {
+
+	public JobPosting(String id, String title, String description,
+			String companyProfileId, String positionType, String desiredSkills,
+			String salaryLevel, String location) {
 		super();
 		this.id = id;
+		this.title = title;
 		this.description = description;
 		this.companyProfileId = companyProfileId;
 		this.positionType = positionType;
-		this.desiredSkills = desiredSkills;
+		this.skills = desiredSkills;
 		this.salaryLevel = salaryLevel;
 		this.location = location;
 		this.status = "default";
 		this.archived = "N";
 	}
-	
+
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+    public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	public String getDescription() {
 		return description;
@@ -71,12 +82,13 @@ public class JobPosting {
 	public void setPositionType(String positionType) {
 		this.positionType = positionType;
 	}
-	public String getDesiredSkills() {
-		return desiredSkills;
+	public String getSkills() {
+		return skills;
 	}
-	public void setDesiredSkills(String desiredSkills) {
-		this.desiredSkills = desiredSkills;
+	public void setSkills(String skills) {
+		this.skills = skills;
 	}
+
 	public String getSalaryLevel() {
 		return salaryLevel;
 	}

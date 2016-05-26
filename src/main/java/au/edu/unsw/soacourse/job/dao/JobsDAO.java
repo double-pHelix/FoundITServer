@@ -7,6 +7,7 @@ import java.util.Map;
 
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
 import au.edu.unsw.soacourse.job.model.HiringTeam;
+import au.edu.unsw.soacourse.job.model.HiringTeamStore;
 import au.edu.unsw.soacourse.job.model.JobApplication;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
@@ -45,7 +46,7 @@ public enum JobsDAO {
 	//referred to by their ids
     private Map<String, CompanyProfile> contentStoreCompProfiles = new HashMap<String, CompanyProfile>();
     private Map<String, UserProfile> contentStoreUserProfiles = new HashMap<String, UserProfile>();
-    private Map<String, HiringTeam> contentStoreHiringTeam = new HashMap<String, HiringTeam>();
+    private Map<String, HiringTeamStore> contentStoreHiringTeam = new HashMap<String, HiringTeamStore>();
     private Map<String, JobApplication> contentStoreApplications = new HashMap<String, JobApplication>();
     private Map<String, JobPosting> contentStorePostings = new HashMap<String, JobPosting>();
     private Map<String, Review> contentStoreReviews = new HashMap<String, Review>();
@@ -67,11 +68,13 @@ public enum JobsDAO {
     	addTestCasesJobPostings();
     	addTestCasesUserProfiles();
     	addTestCasesJobApplications();
+    	addTestCasesHiringTeamMembersAndTeam();
     	
     }
     
     private void addTestCasesJobPostings(){
     	String id = "1"; 
+    	String title = "title"; 
     	String description = "description"; 
     	String companyProfileId = "companyProfileId"; 
 		String positionType = "positionType"; 
@@ -79,7 +82,7 @@ public enum JobsDAO {
     	String salaryLevel= "salaryLevel"; 
 		String location= "location"; 
     	
-    	JobPosting post1 = new JobPosting(id, description, companyProfileId,
+    	JobPosting post1 = new JobPosting(id, title, description, companyProfileId,
     			positionType, desiredSkills, salaryLevel,
     			location);
     	
@@ -124,6 +127,51 @@ public enum JobsDAO {
         
     	
     }
+    private void  addTestCasesHiringTeamMembersAndTeam(){
+    	String id = "1";
+        String companyProfileId = "1";
+        
+        CompanyProfile newCompProf = new CompanyProfile(companyProfileId, "", "", "", "", "" );
+        storeCompanyProfile(newCompProf);
+        
+        String id2 ="1";
+        String username2 = "";
+        String password2 = "";
+    	String professionalSkills2 = "";
+    	String id3="2";
+        String username3 = "";
+        String password3 = "";
+    	String professionalSkills3 = "";
+    	String id4="3";
+        String username4 = "";
+        String password4 = "";
+    	String professionalSkills4 = "";
+    	String id5="4";
+        String username5 = "";
+        String password5 = "";
+    	String professionalSkills5 = "";
+    	String id6="5";
+        String username6 = "";
+        String password6 = "";
+    	String professionalSkills6 = "";
+        
+    	TeamMemberProfile memProf1 = new TeamMemberProfile(id2, username2, password2, professionalSkills2);
+    	TeamMemberProfile memProf2 = new TeamMemberProfile(id3, username3, password3, professionalSkills3);
+    	TeamMemberProfile memProf3 = new TeamMemberProfile(id4, username4, password4, professionalSkills4);
+    	TeamMemberProfile memProf4 = new TeamMemberProfile(id5, username5, password5, professionalSkills5);
+    	TeamMemberProfile memProf5 = new TeamMemberProfile(id6, username6, password6, professionalSkills6);
+    	
+    	storeTeamMemberProfile(memProf1);
+    	storeTeamMemberProfile(memProf2);
+    	storeTeamMemberProfile(memProf3);
+    	storeTeamMemberProfile(memProf4);
+    	storeTeamMemberProfile(memProf5);
+		
+		//create new profile to transfer
+		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, id2, id3, id4, id5, id6);
+				
+    	storeHiringTeam(newHiringTeam);
+    }
     
     //CREATE/UPDATE
     
@@ -138,7 +186,7 @@ public enum JobsDAO {
     	contentStoreCompProfiles.put(newCompanyProfile.getId(), newCompanyProfile);
     }
     
-    public void storeHiringTeam(HiringTeam newHiringTeam){
+    public void storeHiringTeam(HiringTeamStore newHiringTeam){
     	contentStoreHiringTeam.put(newHiringTeam.getId(), newHiringTeam);
     }
     
@@ -176,7 +224,7 @@ public enum JobsDAO {
     	return contentStoreCompProfiles.get(id);
     }
     
-    public HiringTeam getHiringTeam(String id){
+    public HiringTeamStore getHiringTeam(String id){
     	return contentStoreHiringTeam.get(id);
     }
     
@@ -206,7 +254,7 @@ public enum JobsDAO {
     	return contentStoreCompProfiles.remove(id);
     }
     
-    public HiringTeam deleteHiringTeam(String id){
+    public HiringTeamStore deleteHiringTeam(String id){
     	return contentStoreHiringTeam.remove(id);
     }
     
@@ -295,19 +343,58 @@ public enum JobsDAO {
 //	  private String status; //(created, open, in-review, processed, sent invitations)
 //	  private String archived;
 	
+    public JobPostings searchJobPostingKeyword(String keyword){
+      	//		
+    	//match as a substring
+    	//note (?i: PATTERN ) makes match case insensitive
+    	  
+    	  
+    	keyword = "(?i:.*" + keyword + ".*)";
+    	
+      	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
-  public JobPostings searchJobPostingDescription(String query){
+      	for(JobPosting posting : contentStorePostings.values()){
+      		if(posting.getTitle().matches(keyword) || posting.getSkills().matches(keyword) || posting.getStatus().matches(keyword) || posting.getDescription().matches(keyword)){
+      			jobPostingsList.add(posting);
+      		}
+      	}
+      	JobPostings newJobPostings = new JobPostings(jobPostingsList);
+      	
+      	return newJobPostings;
+      }
+    
+  public JobPostings searchJobPostingAttribute(String query, String attrbute){
   	//		
 	//match as a substring
-	query = ".*" + query + ".*";
+	//note (?i: PATTERN ) makes match case insensitive
+	  
+	  
+	query = "(?i:.*" + query + ".*)";
 	
   	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
   	for(JobPosting posting : contentStorePostings.values()){
-  		if(posting.getDescription().matches(query)){
-  			jobPostingsList.add(posting);
-  		}
+  		
+  		if(attrbute == "title"){
+  			if(posting.getTitle().matches(query)){
+  	  			jobPostingsList.add(posting);
+  	  		}
+  		} else if(attrbute == "skills"){
+  			if(posting.getSkills().matches(query)){
+  	  			jobPostingsList.add(posting);
+  	  		}
+  		} else if(attrbute == "status"){
+  			if(posting.getStatus().matches(query)){
+  	  			jobPostingsList.add(posting);
+  	  		}
+  		} else if(attrbute == "description"){
+  			if(posting.getDescription().matches(query)){
+  	  			jobPostingsList.add(posting);
+  	  		}
+  		} 
+  		
   	}
+  	
   	JobPostings newJobPostings = new JobPostings(jobPostingsList);
   	
   	return newJobPostings;

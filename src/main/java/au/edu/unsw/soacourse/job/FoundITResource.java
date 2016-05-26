@@ -24,11 +24,16 @@ import javax.ws.rs.core.UriInfo;
 
 import au.edu.unsw.soacourse.job.dao.JobsDAO;
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
+import au.edu.unsw.soacourse.job.model.HiringTeam;
+import au.edu.unsw.soacourse.job.model.HiringTeamStore;
 import au.edu.unsw.soacourse.job.model.JobApplication;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
+import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
+
+//TODO:: Modify output to include a GET url like in the lecture slides
 
 //We can change this path
 @Path("/foundIT")
@@ -42,6 +47,7 @@ public class FoundITResource {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//User Profile (Candidate/Employer?/Hiring Team Member)
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
 //	Create new user
 //	Create a new (User Profile) with a new id set with given values
@@ -144,6 +150,7 @@ public class FoundITResource {
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Company Profile
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
 //	Create new company
 //	Create a new (Company Profile) with a new id set with given values
@@ -243,6 +250,7 @@ public class FoundITResource {
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Job Posting (for Employer)
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
 //	Create Job Posting
 //	Create a new (Job Posting) with a new id set with given values
@@ -251,6 +259,7 @@ public class FoundITResource {
 	@Path("/jobposting")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newJobPosting(
+			@FormParam("title") String title,
 			@FormParam("description") String description,
 			@FormParam("companyProfileId") String companyProfileId,
 			@FormParam("positionType") String positionType,
@@ -261,7 +270,7 @@ public class FoundITResource {
 		String id = JobsDAO.instance.getNextJobPostingId();
 		
 		//create new profile
-		JobPosting newJobPosting= new JobPosting(id, description, companyProfileId,
+		JobPosting newJobPosting= new JobPosting(id, title, description, companyProfileId,
 				positionType, desiredSkills, salaryLevel,
 				location);
 				
@@ -300,11 +309,67 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobPostings getSearchJobPostings(@DefaultValue(".*") @QueryParam("query") String query) {
+	public JobPostings getSearchJobPostings(@QueryParam("keyword") String keyword, //title
+			@QueryParam("title") String title,
+			@QueryParam("skills") String skills,
+			@QueryParam("status") String status,
+			@QueryParam("description") String description
+														) {
+
+		//search description
+		System.out.println("Search query:" + description);
+		JobPostings allJobPosts;
+		if(keyword != null){
+			allJobPosts = JobsDAO.instance.searchJobPostingKeyword(keyword);
+		} else { //the rest
+			if(title != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(title, "title");
+			} else if(skills != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
+			} else if(status!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
+			} else if(description!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
+			} else {
+				allJobPosts = null;
+			}
+			
+		}
+		
+		if(allJobPosts==null){
+			if(title != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(title, "title");
+				throw new RuntimeException("GET: No Job Postings not found for title:" + title);
+			} else if(skills != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
+				throw new RuntimeException("GET: No Job Postings not found for skills:" + skills);
+			} else if(status!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
+				throw new RuntimeException("GET: No Job Postings not found for status:" + status);
+			} else if(description!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
+				throw new RuntimeException("GET: No Job Postings not found for description:" + description);
+			} else {
+				allJobPosts = null;
+				throw new RuntimeException("GET: No Query Provided");
+			}
+		}
+		return allJobPosts;
+		
+	}
+	/* ADVANCED SEARCH??
+	@GET
+	@Path("/jobposting/search/advanced")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobPostings getSearchJobPostingsAdvanced(@DefaultValue("^$") @QueryParam("keyword") String keyword, //title
+			@DefaultValue("^$") @QueryParam("skills") String skills,
+			@DefaultValue("^$") @QueryParam("status") String status,
+			@DefaultValue("^$") @QueryParam("query") String query
+														) {
 
 		//search description
 		System.out.println("Search query:" + query);
-		JobPostings allJobPosts = JobsDAO.instance.searchJobPostingDescription(query);
+		JobPostings allJobPosts = JobsDAO.instance.searchJobPostingDescription(keyword, skills, status, query);
 		
 		if(allJobPosts==null)
 			throw new RuntimeException("GET: No Job Postings not found for query:" + query);
@@ -312,7 +377,7 @@ public class FoundITResource {
 		return allJobPosts;
 		
 	}
-	
+	*/
 //	Get All
 	@GET
 	@Path("/jobposting/all")
@@ -379,6 +444,7 @@ public class FoundITResource {
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	//Job Application (for Candidate)
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
 //	Create Job Application (Apply to a Job Posting)
 //	Create a new job application with new id and given details
@@ -387,10 +453,10 @@ public class FoundITResource {
 	@Path("/jobapplication")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newJobApplication(
-			@FormParam("description") String jobApplicationId,
-			@FormParam("companyProfileId") String userProfileId,
-			@FormParam("positionType") String coverLetter,
-			@FormParam("desiredSkills") String resume
+			@FormParam("jobapplicationid") String jobApplicationId,
+			@FormParam("userprofileid") String userProfileId,
+			@FormParam("coverletter") String coverLetter,
+			@FormParam("resume") String resume
 	) throws IOException {
 		String id = JobsDAO.instance.getNextJobApplicationId();
 			
@@ -520,45 +586,251 @@ public class FoundITResource {
 		return res;
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	//Hiring Team Member
+//	//Hiring Team 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	Hiring Team for Company
 //	POST:
 //	Create Team for a company:
-//	Member 1, username, pw
-//	Member 2, username, pw
-//	Member 3, username, pw
-//	Member 4, username, pw
-//	Member 5, username, pw
-//	Returns a list of team members usernames
-	
+//	Member 1 id, 
+//	Member 2 id,
+//	Member 3 id, 
+//	Member 4 id, 
+//	Member 5 id,
+//	Returns aid list of team members usernames
+	@POST
+	@Path("/hiringteam")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newHiringTeam(
+			@FormParam("companyprofileid") String companyProfileId,
+			@FormParam("member1id") String member1id,
+			@FormParam("member2id") String member2id,
+			@FormParam("member3id") String member3id,
+			@FormParam("member4id") String member4id,
+			@FormParam("member5id") String member5id
+	) throws IOException {
+		String id = JobsDAO.instance.getNextTeamMemberProfileId();
+		
+		//get users
+		TeamMemberProfile teamMember1 = JobsDAO.instance.getTeamMemberProfile(member1id);
+		TeamMemberProfile teamMember2 = JobsDAO.instance.getTeamMemberProfile(member2id);
+		TeamMemberProfile teamMember3 = JobsDAO.instance.getTeamMemberProfile(member3id);
+		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(member4id);
+		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(member5id);
+		
+		//check members all exist
+		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
+			//return error that user's do not exist
+			throw new RuntimeException("GET: One of the given users ids not found");
+		}
+		//TODO: check company exists
+		
+		
+		
+		//create new profile
+		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
+				
+		//store profile
+		JobsDAO.instance.storeHiringTeam(newHiringTeam);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 //	GET:
 //	Get Hiring Team Members List of a company
 //	List in XML
-	
+	@GET
+	@Path("/hiringteam/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public HiringTeam getHiringTeam(@PathParam("id") String id) {
+		//get Hiring Team Store
+		HiringTeamStore reqHiringTeam = JobsDAO.instance.getHiringTeam(id);
+		
+		if(reqHiringTeam == null)
+			throw new RuntimeException("GET: Hiring Team Store with:" + id +  " not found");
+		
+		
+		String companyProfileId = reqHiringTeam.getCompanyProfileId();
+		String member1id = reqHiringTeam.getMember1id();
+		String member2id = reqHiringTeam.getMember2id();
+		String member3id = reqHiringTeam.getMember3id();
+		String member4id = reqHiringTeam.getMember4id();
+		String member5id = reqHiringTeam.getMember5id();
+		
+		//get users
+		TeamMemberProfile teamMember1 = JobsDAO.instance.getTeamMemberProfile(member1id);
+		TeamMemberProfile teamMember2 = JobsDAO.instance.getTeamMemberProfile(member2id);
+		TeamMemberProfile teamMember3 = JobsDAO.instance.getTeamMemberProfile(member3id);
+		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(member4id);
+		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(member5id);
+		
+		List<TeamMemberProfile> teamMembers = new ArrayList<TeamMemberProfile>();
+		teamMembers.add(teamMember1);
+		teamMembers.add(teamMember2);
+		teamMembers.add(teamMember3);
+		teamMembers.add(teamMember4);
+		teamMembers.add(teamMember5);
+		
+		//create new profile to transfer
+		HiringTeam newHiringTeam = new HiringTeam(id, companyProfileId, teamMembers);
+		
+		return newHiringTeam;
+	}
 //	PUT:
-//	Update Hiring Team members and assignments for a company
+//	Unsupported
+	
+	@PUT
+	@Path("/teammemberprofile")
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response putHiringTeam(HiringTeamStore t) {
+		Response res = null;
+		
+		//store profile
+		JobsDAO.instance.storeHiringTeam(t);
+		
+		String msg = "success";		
+		//Probably should modify test to be in xml format or something :/
+		res = Response.ok(msg).build();
+		//res.
+		return res;
+		//TODO: Fix here so that it returns the updated job
+	}
 	
 //	DELETE:
 //	Remove the hiring team from a company
-	
+	@DELETE
+	@Path("/hiringteam/{id}")
+	public Response deleteHiringTeam(@PathParam("id") String id) {
+		
+		HiringTeamStore delProfile = JobsDAO.instance.deleteHiringTeam(id);
+		//modify.s
+		
+		Response res = null;
+		int errorCode = 220;
+		
+		if(delProfile == null) {
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "DELETE: Team with " + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(errorCode);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			String msg = "Deleted Team Profile:" + id;
+			res = Response.ok(msg).build();
+		}
+		return res;
+	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	//Review Assignment
+//	//Hiring Team Member
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
-//	Assign two company team members to an application
-	
+//	Create a new team member
+	@POST
+	@Path("/teammemberprofile")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newTeamMemberProfile(
+			@FormParam("username") String username,
+			@FormParam("password") String password,
+			@FormParam("professionalskills") String professionalSkills
+	) throws IOException {
+		String id = JobsDAO.instance.getNextTeamMemberProfileId();
+				
+		//create new profile
+		TeamMemberProfile newTeamMemberProfile = new TeamMemberProfile(id, username, password, professionalSkills);
+				
+		//store profile
+		JobsDAO.instance.storeTeamMemberProfile(newTeamMemberProfile);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 //	GET
 //	Get Job Application’s Assigned members
-	
+	@GET
+	@Path("/teammemberprofile/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public TeamMemberProfile getTeamMemberProfile(@PathParam("id") String id) {
+		
+		TeamMemberProfile u = JobsDAO.instance.getTeamMemberProfile(id);
+		if(u==null)
+			throw new RuntimeException("GET: Team Member Profile with:" + id +  " not found");
+		
+		return u;
+		
+	}
 //	PUT
-//	Update: Not supported
-
+//	(same as userprofile)
+	@PUT
+	@Path("/teammemberprofile")
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response putTeamMemberProfile(TeamMemberProfile p) {
+		Response res = null;
+		String msg = "success";
+		
+		//store profile
+		JobsDAO.instance.storeTeamMemberProfile(p);
+		//Probably should modify test to be in xml format or something :/
+		res = Response.ok(msg).build();
+		//res.
+		return res;
+		//TODO: Fix here so that it returns the updated job
+	}
 //	DELETE:
 //	Removal: Not supported.  
+	@DELETE
+	@Path("/teammemberprofile/{id}")
+	public Response deleteTeamMemberProfile(@PathParam("id") String id) {
+		
+		TeamMemberProfile delProfile = JobsDAO.instance.deleteTeamMemberProfile(id);
+		//modify.s
+		
+		Response res = null;
+		int errorCode = 220;
+		
+		if(delProfile == null) {
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "DELETE: Team Member Profile with " + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(errorCode);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			String msg = "Deleted Team Member Profile:" + id;
+			res = Response.ok(msg).build();
+		}
+		return res;
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////Review Assignment
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//POST:
+	//Assign two company team members to an application
+	
+	//GET
+	//Get Job Application’s Assigned members
+	
+	//PUT
+	//Update: Not supported
+	
+	//DELETE:
+	//Removal: Not supported.  
+
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Reviews: By Hiring Team Member
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	POST:
 //	Create Review for a job application
 //	Return URI for review (GET address)
@@ -696,7 +968,6 @@ public class FoundITResource {
 		res = Response.ok(test).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 	//Calling Delete on the URL
