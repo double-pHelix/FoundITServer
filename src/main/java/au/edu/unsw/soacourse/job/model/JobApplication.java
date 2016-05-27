@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class JobApplication {
 	private String id;
-    private String jobApplicationId;
+    private String jobPostId;
     private String userProfileId;
     private String coverLetter;
     private String resume; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
@@ -21,7 +21,7 @@ public class JobApplication {
     public JobApplication(String id) {
 		super();
 		this.id = id;
-		this.jobApplicationId = "PLEASE ENTER";
+		this.jobPostId = "PLEASE ENTER";
 		this.userProfileId = "PLEASE ENTER";
 		this.coverLetter = "PLEASE ENTER";
 		this.resume = "PLEASE ENTER";
@@ -34,7 +34,7 @@ public class JobApplication {
 			String userProfileId, String coverLetter, String resume) {
 		super();
 		this.id = id;
-		this.jobApplicationId = jobApplicationId;
+		this.jobPostId = jobApplicationId;
 		this.userProfileId = userProfileId;
 		this.coverLetter = coverLetter;
 		this.resume = resume;
@@ -52,12 +52,12 @@ public class JobApplication {
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
 
-	public String getJobApplicationId() {
-		return jobApplicationId;
+	public String getJobPostId() {
+		return jobPostId;
 	}
 
-	public void setJobApplicationId(String jobApplicationId) {
-		this.jobApplicationId = jobApplicationId;
+	public void setJobPostId(String jobpostId) {
+		this.jobPostId = jobpostId;
 	}
 
 	public String getUserProfileId() {

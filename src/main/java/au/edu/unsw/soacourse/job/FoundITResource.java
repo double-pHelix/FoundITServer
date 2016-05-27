@@ -35,8 +35,9 @@ import au.edu.unsw.soacourse.job.model.Review;
 import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
-//TODO:: Modify output to include a GET url like in the lecture slides
+//TODONE:: Modify output to include a GET url like in the lecture slides DONE!
 //TODO:: Provide @OPTION method for classes
+//TODO:: Delete only archives
 
 //We can change this path
 @Path("/foundIT")
@@ -198,7 +199,7 @@ public class FoundITResource {
 		CompanyProfile c = JobsDAO.instance.getCompanyProfile(id);
 		
 		if(c==null)
-			throw new RuntimeException("GET: Book with:" + id +  " not found");
+			throw new RuntimeException("GET: Profile with:" + id +  " not found");
 		
 		return c;
 		
@@ -321,7 +322,6 @@ public class FoundITResource {
 														) {
 
 		//search description
-		System.out.println("Search query:" + description);
 		JobPostings allJobPosts;
 		if(keyword != null){
 			allJobPosts = JobsDAO.instance.searchJobPostingKeyword(keyword);
@@ -391,7 +391,7 @@ public class FoundITResource {
 		JobPostings allJobPosts = JobsDAO.instance.getAllJobPostings();
 		
 		if(allJobPosts==null)
-			throw new RuntimeException("GET: No Job Postings not found");
+			throw new RuntimeException("GET: No Job Postings found");
 		
 		return allJobPosts;
 		
@@ -457,15 +457,28 @@ public class FoundITResource {
 	@Path("/jobapplication")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newJobApplication(
-			@FormParam("jobapplicationid") String jobApplicationId,
+			@FormParam("jobpostid") String jobpostId,
 			@FormParam("userprofileid") String userProfileId,
 			@FormParam("coverletter") String coverLetter,
 			@FormParam("resume") String resume
 	) throws IOException {
 		String id = JobsDAO.instance.getNextJobApplicationId();
-			
+		
+		//check job application exists
+		//check user profile exists
+		JobPosting existingPost = JobsDAO.instance.getJobPosting(jobpostId);
+		UserProfile existingUser = JobsDAO.instance.getUserProfile(userProfileId);
+	
+		if(existingPost == null && existingUser == null){
+			throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId);
+		} else if(existingPost == null){
+			throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId);
+		} else if(existingUser == null){
+			throw new RuntimeException("POST: No User found with id:" + userProfileId);
+		}
+		
 		//create new application
-		JobApplication newJobApp= new JobApplication(id, jobApplicationId,
+		JobApplication newJobApp= new JobApplication(id, jobpostId,
 				userProfileId, coverLetter, resume);
 				
 		//store application
@@ -554,6 +567,20 @@ public class FoundITResource {
 		Response res = null;
 		String msg = "success";
 		
+		//check job application exists
+		//check user profile exists
+		JobPosting existingPost = JobsDAO.instance.getJobPosting(p.getJobPostId());
+		UserProfile existingUser = JobsDAO.instance.getUserProfile(p.getUserProfileId());
+	
+		if(existingPost == null && existingUser == null){
+			throw new RuntimeException("POST: No Job Postings found with id:" + p.getJobPostId() + " and no User found with id:" + p.getUserProfileId());
+		} else if(existingPost == null){
+			throw new RuntimeException("POST: No Job Postings found with id:" + p.getJobPostId());
+		} else if(existingUser == null){
+			throw new RuntimeException("POST: No User found with id:" + p.getUserProfileId());
+		}
+		
+
 		//store profile
 		JobsDAO.instance.storeJobApplication(p);
 		//Probably should modify test to be in xml format or something :/
@@ -614,20 +641,42 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextTeamMemberProfileId();
 		
+		//check company exists
+		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(companyProfileId);
 		//get users
 		TeamMemberProfile teamMember1 = JobsDAO.instance.getTeamMemberProfile(member1id);
 		TeamMemberProfile teamMember2 = JobsDAO.instance.getTeamMemberProfile(member2id);
 		TeamMemberProfile teamMember3 = JobsDAO.instance.getTeamMemberProfile(member3id);
 		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(member4id);
 		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(member5id);
-		
-		//check members all exist
-		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
+
+		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null || existCompany == null){
 			//return error that user's do not exist
-			throw new RuntimeException("GET: One of the given users ids not found");
+			String errormsg = new String();
+			if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
+				errormsg += "POST: The following members do not exist: {";
+				if(teamMember1 == null){
+					errormsg +="teamMember1=" + member1id + ",";
+				} 
+				if(teamMember2 == null){
+					errormsg +="teamMember1=" + member2id + ",";
+				} 
+				if(teamMember3 == null){
+					errormsg +="teamMember3=" + member3id+ ",";
+				} 
+				if(teamMember4 == null){
+					errormsg +="teamMember4=" + member4id + ",";
+				} 
+				if(teamMember5 == null){
+					errormsg +="teamMember5=" + member5id;
+				}
+				errormsg+= "}";
+			}
+			if(existCompany == null){
+				errormsg = "POST: Company with id:" + companyProfileId + " does not exist";
+			}
+			throw new RuntimeException(errormsg);
 		}
-		//TODO: check company exists
-		
 		
 		
 		//create new profile
@@ -691,10 +740,48 @@ public class FoundITResource {
 //	Unsupported
 	
 	@PUT
-	@Path("/teammemberprofile")
+	@Path("/hiringteam")
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putHiringTeam(HiringTeamStore t) {
 		Response res = null;
+		
+		//check company exists
+		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(t.getCompanyProfileId());
+		//get users
+		TeamMemberProfile teamMember1 = JobsDAO.instance.getTeamMemberProfile(t.getMember1id());
+		TeamMemberProfile teamMember2 = JobsDAO.instance.getTeamMemberProfile(t.getMember2id());
+		TeamMemberProfile teamMember3 = JobsDAO.instance.getTeamMemberProfile(t.getMember3id());
+		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(t.getMember4id());
+		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(t.getMember5id());
+
+		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null || existCompany == null){
+			//return error that user's do not exist
+			String errormsg = new String();
+			if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
+				errormsg += "POST: The following members do not exist: {";
+				if(teamMember1 == null){
+					errormsg +="teamMember1=" + t.getMember1id() + ",";
+				} 
+				if(teamMember2 == null){
+					errormsg +="teamMember1=" + t.getMember2id() + ",";
+				} 
+				if(teamMember3 == null){
+					errormsg +="teamMember3=" + t.getMember3id()+ ",";
+				} 
+				if(teamMember4 == null){
+					errormsg +="teamMember4=" + t.getMember4id() + ",";
+				} 
+				if(teamMember5 == null){
+					errormsg +="teamMember5=" + t.getMember5id();
+				}
+				errormsg+= "}";
+			}
+			if(existCompany == null){
+				errormsg = "POST: Company with id:" + t.getCompanyProfileId() + " does not exist";
+			}
+			throw new RuntimeException(errormsg);
+		}
+		
 		
 		//store profile
 		JobsDAO.instance.storeHiringTeam(t);
@@ -833,9 +920,33 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getJobApplicationAssignmentId();
 		
-		//TODO: check application exists
+		//TODONE: check application exists
+		JobApplication existingApp =  JobsDAO.instance.getJobApplication(jobApplicationId);
+		//TODONE: check reviewers exist
+		TeamMemberProfile existRev1 = JobsDAO.instance.getTeamMemberProfile(reviewer1);
+		TeamMemberProfile existRev2 = JobsDAO.instance.getTeamMemberProfile(reviewer2);
 		
-		//TODO: check reviewers exist
+		if(existingApp == null || existRev1 == null || existRev2 == null){
+			String errormsg = "POST:";
+			
+			if(existingApp == null){
+				errormsg+= "Job Application with id:" + jobApplicationId + " doesn't exist.";
+			} 
+
+			if (existRev1 == null || existRev2 == null){
+				errormsg+= "Reviews with id:";
+				if(existRev1 == null){
+					errormsg+= reviewer1 + ",";
+				}
+				if (existRev2 == null){
+					errormsg+= reviewer2;
+				}
+				errormsg+= " doesn't exist.";
+			}
+
+			throw new RuntimeException(errormsg);
+			
+		}
 		
 		//create new ass
 		JobApplicationAssignment newJobApplicationAssignment = new JobApplicationAssignment(id, jobApplicationId, reviewer1, reviewer2);
@@ -890,10 +1001,26 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextReviewId();	
 		
-		//TODO: check member exists
+		//TODONE: check member exists
+		JobApplication existingApp =  JobsDAO.instance.getJobApplication(jobApplicationId);
+		//TODONE: check application exist
+		TeamMemberProfile existRev = JobsDAO.instance.getTeamMemberProfile(teamMemberProfileId);
 		
-		//TODO: check application exist
+		if(existingApp == null || existRev == null){
+			String errormsg = "POST:";
+			
+			if(existingApp == null){
+				errormsg+= "Job Application with id:" + jobApplicationId + " doesn't exist.";
+			} 
 
+			if (existRev == null){
+				errormsg+= "Review with id:" + teamMemberProfileId + " doesn't exist.";
+			}
+
+			throw new RuntimeException(errormsg);
+			
+		}
+		
 		//create new ass
 		Review newReview = new Review(id, teamMemberProfileId, jobApplicationId, comments, decision);
 				
