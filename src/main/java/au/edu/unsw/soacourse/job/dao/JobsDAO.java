@@ -57,13 +57,13 @@ public enum JobsDAO {
 
 	//metadata
 	private final String COMPANY_PROFILE_FILEDIR = System.getProperty("user.dir") + "/compprofilestore.xml";
-	private final String USER_PROFILE_FILEDIR =System.getProperty("user.dir") +  "/test/userprofilestore.xml";
+	private final String USER_PROFILE_FILEDIR =System.getProperty("user.dir") +  "/userprofilestore.xml";
 	private final String HIRING_TEAM_FILEDIR = System.getProperty("user.dir") + "/hiringteamstore.xml";
 	private final String JOB_APPLICATION_FILEDIR = System.getProperty("user.dir") + "/jobappsstore.xml";
 	private final String JOB_POSTING_FILEDIR = System.getProperty("user.dir") + "/jobpostingstore.xml";
 	private final String REVIEW_FILEDIR =System.getProperty("user.dir") +  "/reviewsstore.xml";
-	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "teammemberprofilestore/.xml";
-	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = System.getProperty("user.dir") + "jobappassignstore/.xml";
+	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "/teammemberprofilestore/.xml";
+	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = System.getProperty("user.dir") + "/jobappassignstore/.xml";
 	
 	
 	//these are in place of XML storage for now! 
@@ -78,19 +78,13 @@ public enum JobsDAO {
     private Map<String, TeamMemberProfile> contentStoreTeamProfiles = new HashMap<String, TeamMemberProfile>();
     private Map<String, JobApplicationAssignment> contentStoreJobApplicationAssignment= new HashMap<String, JobApplicationAssignment>();
 
-    //job app status
-    private final String STATUS_SUBMITTED = "submitted";
-    private final String STATUS_IN_REVIEW = "in-review";
-    private final String STATUS_SHORTLISTED = "shortlisted";
-    private final String STATUS_NOT_SHORTLISTED = "not-shortlisted";
-    private final String STATUS_ACCEPTED = "accepted-invitation";
-    private final String STATUS_REJECTED = "rejected-invitation";
+ 
     //job post status
-    private final String STATUS_OPEN = "open";
-    private final String STATUS_CLOSED = "closed";
+    public static final String STATUS_OPEN = "open";
+    public static final String STATUS_CLOSED = "closed";
     //archived status
-    private final String ARCHIVED_TRUE = "T";
-    private final String ARCHIVED_FALSE = "F";
+    public static final String ARCHIVED_TRUE = "T";
+    public static final String ARCHIVED_FALSE = "F";
     
     
     private JobsDAO() {
