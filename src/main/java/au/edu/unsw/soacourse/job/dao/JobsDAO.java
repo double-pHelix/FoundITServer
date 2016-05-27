@@ -639,7 +639,13 @@ public enum JobsDAO {
       			jobPostingsList.add(posting);
       		}
       	}
+      	
       	JobPostings newJobPostings = new JobPostings(jobPostingsList);
+      	
+      	if(jobPostingsList.size() == 0){
+      		newJobPostings = null;
+      	} 
+      	
       	
       	return newJobPostings;
       }
@@ -649,7 +655,7 @@ public enum JobsDAO {
 	//match as a substring
 	//note (?i: PATTERN ) makes match case insensitive
 
-	  loadJobPostingsFromFile();
+	loadJobPostingsFromFile();
 	  
 	query = "(?i:.*" + query + ".*)";
 	
@@ -926,9 +932,8 @@ public enum JobsDAO {
 	
 	//checks if the two given reviewer ids are from the specified company
 	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
-		System.out.println("company" + companyId);
-		
 		loadHiringTeamsFromFile();
+		
 		for(HiringTeamStore team : contentStoreHiringTeam.values()){
 			//for
 			if(team.getCompanyProfileId().matches(companyId)){
@@ -947,6 +952,7 @@ public enum JobsDAO {
 	}
 	
 	public boolean existsInHiringTeam(TeamMemberProfile member){
+		loadHiringTeamsFromFile();
 		
 		String memberId = member.getId();
 		for(HiringTeamStore team : contentStoreHiringTeam.values()){
@@ -955,6 +961,23 @@ public enum JobsDAO {
 			//check the team
 			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
 					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
+	}
+	
+	public boolean assignmentAlreadyExists(JobApplication app){
+		loadJobApplicationAssignmentsFromFile();
+		
+		String appId = app.getId();
+		for(JobApplicationAssignment assign : contentStoreJobApplicationAssignment.values()){
+			//for
+			//check the team
+			if(assign.getJobApplicationId().matches(appId)){
 				return true;	
 			}
 			

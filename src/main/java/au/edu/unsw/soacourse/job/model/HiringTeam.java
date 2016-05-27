@@ -42,6 +42,7 @@ public class HiringTeam {
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 	public String getCompanyProfile() {
+		this.companyProfile = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.companyProfileId;
 		return companyProfile;
 	}
 

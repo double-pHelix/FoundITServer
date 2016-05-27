@@ -46,12 +46,12 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 	//If PUT status isn't valid reject 
 
 //TODO: remove invalid postings once companyis removed? etc..
-//TODO: prevent team member belonging to two hiring teams?
+//TODONE: prevent team member belonging to two hiring teams?
 	//if aleady in a team, return error
-
-
+//TODONE: only one assignment per application
+//TODO: Requried Fields??
 //We can change this path
-@Path("/foundIT")
+@Path("/")
 public class FoundITResource {
 	// Allows to insert contextual objects into the class, 
 	// e.g. ServletContext, Request, Response, UriInfo
@@ -103,14 +103,26 @@ public class FoundITResource {
 	@GET
 	@Path("/userprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public UserProfile getUserProfile(@PathParam("id") String id) {
-		
+	public Response getUserProfile(@PathParam("id") String id) {
+		Response res = null;
 		UserProfile u = JobsDAO.instance.getUserProfile(id);
-		if(u==null)
-			throw new RuntimeException("GET: Book with:" + id +  " not found");
 		
-		return u;
+		if(u == null){
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "DELETE: Job with " + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+			
+			//throw new RuntimeException("GET: Book with:" + id +  " not found");
+
+		} else {
+			res = Response.ok(u).build();
+		}
 		
+		
+		return res;
 	}
 	
 //	PUT:
@@ -178,7 +190,7 @@ public class FoundITResource {
 			@FormParam("name") String name,
 			@FormParam("description") String description,
 			@FormParam("website") String website,
-			@FormParam("industryType") String industryType,
+			@FormParam("industrytype") String industryType,
 			@FormParam("address") String address
 	) throws IOException {
 		String id = JobsDAO.instance.getNextCompanyProfileId();
@@ -203,14 +215,26 @@ public class FoundITResource {
 	@GET
 	@Path("/companyprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public CompanyProfile getCompanyProfile(@PathParam("id") String id) {
-		
+	public Response getCompanyProfile(@PathParam("id") String id) {
+		Response res = null;
 		CompanyProfile c = JobsDAO.instance.getCompanyProfile(id);
 		
-		if(c==null)
-			throw new RuntimeException("GET: Profile with:" + id +  " not found");
+		//if(c==null)
+		//	throw new RuntimeException("GET: Profile with:" + id +  " not found");
+		if(c == null){
+			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
+			String msg = "GET: Profile with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+			
+			//throw new RuntimeException("GET: Book with:" + id +  " not found");
+		} else {
+			res = Response.ok(c).build();
+		}
 		
-		return c;
+		return res;
 		
 	}
 	
@@ -305,14 +329,24 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobPosting getJobPosting(@PathParam("id") String id) {
-		
+	public Response getJobPosting(@PathParam("id") String id) {
+				
 		JobPosting p = JobsDAO.instance.getJobPosting(id);
+		Response res = null;
+
+		if(p == null){
+			String msg = "GET: Job Posting with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+			
+		} else {
+			res = Response.ok(p).build();
+		}
 		
-		if(p==null)
-			throw new RuntimeException("GET: Job Posting with:" + id +  " not found");
 		
-		return p;
+		return res;
 		
 	}
 //	Get a Collection i.e Job Search/id={“Job Application id”} or skills/etc..=”REGEX MATCH”
@@ -321,12 +355,13 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobPostings getSearchJobPostings(@QueryParam("keyword") String keyword, //title
+	public Response getSearchJobPostings(@QueryParam("keyword") String keyword, //title
 			@QueryParam("title") String title,
 			@QueryParam("skills") String skills,
 			@QueryParam("status") String status,
 			@QueryParam("description") String description
 														) {
+		Response res = null;
 
 		//search description
 		JobPostings allJobPosts;
@@ -347,25 +382,34 @@ public class FoundITResource {
 			
 		}
 		
+		//if there was an error
 		if(allJobPosts==null){
-			if(title != null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(title, "title");
-				throw new RuntimeException("GET: No Job Postings not found for title:" + title);
+			String msg = new String();
+
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+			if(keyword != null){
+				msg = "GET: No Job Postings not found for keyword:" + keyword;
+			} else if(title != null){
+				msg = "GET: No Job Postings not found for title:" + title;
 			} else if(skills != null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
-				throw new RuntimeException("GET: No Job Postings not found for skills:" + skills);
+				msg = "GET: No Job Postings not found for skills:" + skills;
 			} else if(status!= null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
-				throw new RuntimeException("GET: No Job Postings not found for status:" + status);
+				msg = "GET: No Job Postings not found for status:" + status;
 			} else if(description!= null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
-				throw new RuntimeException("GET: No Job Postings not found for description:" + description);
+				msg = "GET: No Job Postings not found for description:" + description;
 			} else {
-				allJobPosts = null;
-				throw new RuntimeException("GET: No Query Provided");
+				msg = "GET: No Query Provided";
 			}
+			
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+			
+		} else {
+			res = Response.ok(allJobPosts).build();
 		}
-		return allJobPosts;
+		
+		return res;
 		
 	}
 	/* ADVANCED SEARCH??
@@ -393,14 +437,21 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/all")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobPostings getAllJobPostings() {
+	public Response getAllJobPostings() {
+		Response res = null;
 		
 		JobPostings allJobPosts = JobsDAO.instance.getAllJobPostings();
 		
-		if(allJobPosts==null)
-			throw new RuntimeException("GET: No Job Postings found");
+		if(allJobPosts==null){
+			String msg = "GET: No Job Postings found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(allJobPosts).build();
+		}
 		
-		return allJobPosts;
+		return res;
 		
 	}
 //	PUT:
@@ -504,14 +555,21 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobApplication getJobApplication(@PathParam("id") String id) {
+	public Response getJobApplication(@PathParam("id") String id) {
+		Response res = null;
 		
 		JobApplication a = JobsDAO.instance.getJobApplication(id);
+
+		if(a==null){
+			String msg = "GET: Job Application with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(a).build();
+		}
 		
-		if(a==null)
-			throw new RuntimeException("GET: Job Application with:" + id +  " not found");
-		
-		return a;
+		return res;
 		
 	}
 //	Get Job Posting’s Applications (for Manager)
@@ -520,16 +578,23 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobApplications getSearchJobApplications(@DefaultValue(".*") @QueryParam("jobpostid") String query) {
-
+	public Response getSearchJobApplications(@DefaultValue(".*") @QueryParam("jobpostid") String query) {
+		Response res = null;
+		
 		//search description
-		System.out.println("Search Job Application Id:" + query);
+		//System.out.println("Search Job Application Id:" + query);
 		JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsPostId(query);
 		
-		if(allJobApplications==null)
-			throw new RuntimeException("GET: No Job Applications with Job Application Id:" + query);
+		if(allJobApplications==null){
+			String msg = "GET: No Job Applications with Job Application Id:" + query;
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(allJobApplications).build();
+		}
 		
-		return allJobApplications;
+		return res;
 		
 	}
 	
@@ -544,14 +609,21 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/all")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobApplications getAllJobApplications() {
+	public Response getAllJobApplications() {
+		Response res = null;
 		
 		JobApplications allJobApps = JobsDAO.instance.getAllJobApplications();
+				
+		if(allJobApps==null){
+			String msg = "GET: No Job Applications found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(allJobApps).build();
+		}
 		
-		if(allJobApps==null)
-			throw new RuntimeException("GET: No Job Applications found");
-		
-		return allJobApps;
+		return res;
 	}
 	
 //	PUT:
@@ -712,14 +784,22 @@ public class FoundITResource {
 	@GET
 	@Path("/hiringteam/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public HiringTeamStore getHiringTeam(@PathParam("id") String id) {
+	public Response getHiringTeam(@PathParam("id") String id) {
+		Response res = null;
+		
 		//get Hiring Team Store
 		HiringTeamStore reqHiringTeam = JobsDAO.instance.getHiringTeam(id);
 		
-		if(reqHiringTeam == null)
-			throw new RuntimeException("GET: Hiring Team Store with:" + id +  " not found");
+		if(reqHiringTeam==null){
+			String msg = "GET: Hiring Team Store with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(reqHiringTeam).build();
+		}
 		
-		return reqHiringTeam;
+		return res;
 		
 		/*
 		String companyProfileId = reqHiringTeam.getCompanyProfileId();
@@ -891,15 +971,23 @@ public class FoundITResource {
 	@GET
 	@Path("/teammemberprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public TeamMemberProfile getTeamMemberProfile(@PathParam("id") String id) {
+	public Response getTeamMemberProfile(@PathParam("id") String id) {
+		Response res = null;
 		
 		TeamMemberProfile u = JobsDAO.instance.getTeamMemberProfile(id);
-		if(u==null)
-			throw new RuntimeException("GET: Team Member Profile with:" + id +  " not found");
 		
-		return u;
+		if(u==null){
+			String msg = "GET: Team Member Profile with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(u).build();
+		}
 		
+		return res;
 	}
+	
 //	PUT
 //	(same as userprofile)
 	@PUT
@@ -962,6 +1050,9 @@ public class FoundITResource {
 		TeamMemberProfile existRev1 = JobsDAO.instance.getTeamMemberProfile(reviewer1);
 		TeamMemberProfile existRev2 = JobsDAO.instance.getTeamMemberProfile(reviewer2);
 		
+		if(JobsDAO.instance.assignmentAlreadyExists(existingApp)){
+			throw new RuntimeException("Error: Application already has review team assigned");
+		}
 		if(existingApp == null || existRev1 == null || existRev2 == null){
 			String errormsg = "POST:";
 			
@@ -1007,13 +1098,21 @@ public class FoundITResource {
 	@GET
 	@Path("/jobappreviewassign/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobApplicationAssignment getReviewAssignment(@PathParam("id") String id) {
+	public Response getReviewAssignment(@PathParam("id") String id) {
+		Response res = null;
 		
 		JobApplicationAssignment u = JobsDAO.instance.getJobApplicationAssignment(id);
-		if(u==null)
-			throw new RuntimeException("GET: Job Application Assignment with:" + id +  " not found");
+
+		if(u==null){
+			String msg = "GET: Job Application Assignment with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(u).build();
+		}
 		
-		return u;
+		return res;
 		
 	}
 	//PUT
@@ -1081,13 +1180,22 @@ public class FoundITResource {
 	@GET
 	@Path("/review/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Review getReview(@PathParam("id") String id) {
+	public Response getReview(@PathParam("id") String id) {
+		Response res = null;
 		
 		Review u = JobsDAO.instance.getReview(id);
-		if(u==null)
-			throw new RuntimeException("GET: Review with:" + id + " not found");
 		
-		return u;
+		if(u==null){
+			String msg = "GET: Review with:" + id + " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(220);
+			res = resBuild.build();
+		} else {
+			res = Response.ok(u).build();
+		}
+		
+		return res;
+		
 	}
 	
 //	PUT:
