@@ -47,6 +47,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 
 //TODO: remove invalid postings once companyis removed? etc..
 //TODO: prevent team member belonging to two hiring teams?
+	//if aleady in a team, return error
 
 
 //We can change this path
@@ -130,7 +131,6 @@ public class FoundITResource {
 		res = Response.ok(test).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 	
@@ -192,7 +192,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newProfile).build();
 		return res;
@@ -233,7 +232,6 @@ public class FoundITResource {
 		res = Response.ok(msg).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 //	DELETE
@@ -295,7 +293,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newJobPosting).build();
 		return res;
@@ -426,7 +423,6 @@ public class FoundITResource {
 		res = Response.ok(msg).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 //	DELETE:
@@ -497,7 +493,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newJobApp).build();
 		return res;
@@ -541,7 +536,6 @@ public class FoundITResource {
 //	Get Job Applications assigned for review
 //	Search (Job Application Assignments), if reviewer-id matches either of assigned reviewer ids, return job application-ids
 //	Return list of job-application ids and URIs
-	//TODO::
 	
 	
 //	Get All Job Applications
@@ -580,16 +574,27 @@ public class FoundITResource {
 		//check job application exists
 		//check user profile exists
 		JobPosting existingPost = JobsDAO.instance.getJobPosting(p.getJobPostId());
+		JobApplication currApp = JobsDAO.instance.getJobApplication(p.getId());
 		UserProfile existingUser = JobsDAO.instance.getUserProfile(p.getUserProfileId());
-	
-		if(existingPost == null && existingUser == null){
-			throw new RuntimeException("POST: No Job Postings found with id:" + p.getJobPostId() + " and no User found with id:" + p.getUserProfileId());
-		} else if(existingPost == null){
-			throw new RuntimeException("POST: No Job Postings found with id:" + p.getJobPostId());
-		} else if(existingUser == null){
-			throw new RuntimeException("POST: No User found with id:" + p.getUserProfileId());
+		
+		//archived already
+		if(!currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){
+			throw new RuntimeException("PUT: Application with id:" + p.getUserProfileId() + " already archived.");
 		}
 		
+		if(existingPost == null && existingUser == null){
+			throw new RuntimeException("PUT: No Job Postings found with id:" + p.getJobPostId() + " and no User found with id:" + p.getUserProfileId());
+		} else if(existingPost == null){
+			throw new RuntimeException("PUT: No Job Postings found with id:" + p.getJobPostId());
+		} else if(existingUser == null){
+			throw new RuntimeException("PUT: No User found with id:" + p.getUserProfileId());
+		}
+		
+		if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
+			if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
+				throw new RuntimeException("PUT: Application cannot be accepted or rejected without being shortlisted.");
+			}
+		}
 
 		//store profile
 		JobsDAO.instance.storeJobApplication(p);
@@ -597,7 +602,6 @@ public class FoundITResource {
 		res = Response.ok(msg).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 //	DELETE:
@@ -698,7 +702,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newHiringTeam).build();
 		return res;
@@ -764,11 +767,14 @@ public class FoundITResource {
 		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(t.getMember4id());
 		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(t.getMember5id());
 
-		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null || existCompany == null){
+		if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null || existCompany == null ||
+			JobsDAO.instance.existsInHiringTeam(teamMember1) || JobsDAO.instance.existsInHiringTeam(teamMember2) || JobsDAO.instance.existsInHiringTeam(teamMember3) || 
+			JobsDAO.instance.existsInHiringTeam(teamMember4) || JobsDAO.instance.existsInHiringTeam(teamMember5)){
+			
 			//return error that user's do not exist
-			String errormsg = new String();
+			String errormsg = "POST:";
 			if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
-				errormsg += "POST: The following members do not exist: {";
+				errormsg += "The following members do not exist: {";
 				if(teamMember1 == null){
 					errormsg +="teamMember1=" + t.getMember1id() + ",";
 				} 
@@ -784,13 +790,37 @@ public class FoundITResource {
 				if(teamMember5 == null){
 					errormsg +="teamMember5=" + t.getMember5id();
 				}
-				errormsg+= "}";
+				errormsg+= "}. ";
 			}
 			if(existCompany == null){
-				errormsg = "POST: Company with id:" + t.getCompanyProfileId() + " does not exist";
+				errormsg = "Company with id:" + t.getCompanyProfileId() + " does not exist. ";
 			}
+			//if any of them have exist in a team
+			if(JobsDAO.instance.existsInHiringTeam(teamMember1) || JobsDAO.instance.existsInHiringTeam(teamMember2) || JobsDAO.instance.existsInHiringTeam(teamMember3) || 
+					JobsDAO.instance.existsInHiringTeam(teamMember4) || JobsDAO.instance.existsInHiringTeam(teamMember5)){
+				errormsg+= "The following team members are already in a team:";
+				
+				if(JobsDAO.instance.existsInHiringTeam(teamMember1)){
+					errormsg +="teamMember1=" + t.getMember1id() + ",";
+				}
+				if(JobsDAO.instance.existsInHiringTeam(teamMember2)){
+					errormsg +="teamMember1=" + t.getMember2id() + ",";
+				}
+				if(JobsDAO.instance.existsInHiringTeam(teamMember3)){
+					errormsg +="teamMember3=" + t.getMember3id()+ ",";
+				}
+				if(JobsDAO.instance.existsInHiringTeam(teamMember4)){
+					errormsg +="teamMember4=" + t.getMember4id() + ",";
+				}
+				if(JobsDAO.instance.existsInHiringTeam(teamMember5)){
+					errormsg +="teamMember5=" + t.getMember5id();
+				}
+			}
+			
+			
 			throw new RuntimeException(errormsg);
 		}
+		
 		
 		//store profile
 		JobsDAO.instance.storeHiringTeam(t);
@@ -800,7 +830,6 @@ public class FoundITResource {
 		res = Response.ok(msg).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 	
 //	DELETE:
@@ -853,7 +882,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newTeamMemberProfile).build();
 		return res;
@@ -887,7 +915,6 @@ public class FoundITResource {
 		res = Response.ok(msg).build();
 		//res.
 		return res;
-		//TODO: Fix here so that it returns the updated job
 	}
 //	DELETE:
 //	Removal: Not supported.  
@@ -971,7 +998,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newJobApplicationAssignment).build();
 		return res;
@@ -1044,7 +1070,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		res = Response.ok(newReview).build();
 		return res;
@@ -1060,7 +1085,7 @@ public class FoundITResource {
 		
 		Review u = JobsDAO.instance.getReview(id);
 		if(u==null)
-			throw new RuntimeException("GET: Review with:" + id +  " not found");
+			throw new RuntimeException("GET: Review with:" + id + " not found");
 		
 		return u;
 	}
@@ -1140,7 +1165,6 @@ public class FoundITResource {
 			b.setDetail(detail);
 		}
 		JobsDAO.instance.getStore().put(id, b);
-		//TODO: Fix here so that it returns the new book
 		Response res = null;
 		
 		return res;

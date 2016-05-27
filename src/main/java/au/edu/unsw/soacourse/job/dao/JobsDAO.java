@@ -351,7 +351,8 @@ public enum JobsDAO {
     	if(newReview.getDecision() == Review.DECISION_REJECTED){
     		//set to not being shortlisted!
     		app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
-    		
+    		//archive the job
+    		app.setArchived(JobApplication.ARCHIVED_TRUE);
     	} else {
     		//compare with other review... if it exists!
     		//check if the review is in and is positive
@@ -362,6 +363,7 @@ public enum JobsDAO {
 						app.setStatus(JobApplication.STATUS_SHORTLISTED);
 					} else {
 						app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
+			    		app.setArchived(JobApplication.ARCHIVED_TRUE);
 					}
 				}
 				
@@ -942,6 +944,24 @@ public enum JobsDAO {
 
 		
 		return false;
+	}
+	
+	public boolean existsInHiringTeam(TeamMemberProfile member){
+		
+		String memberId = member.getId();
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			
+			//check the team
+			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
+					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
 	}
     
 }	
