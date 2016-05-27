@@ -8,7 +8,6 @@ public class JobApplication {
 	
    //job app status
     public static final String STATUS_SUBMITTED = "submitted";
-    public static final String STATUS_IN_REVIEW = "in-review";
     public static final String STATUS_SHORTLISTED = "shortlisted";
     public static final String STATUS_NOT_SHORTLISTED = "not-shortlisted";
     public static final String STATUS_ACCEPTED = "accepted-invitation";

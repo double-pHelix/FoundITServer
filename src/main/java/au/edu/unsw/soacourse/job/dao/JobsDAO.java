@@ -344,6 +344,9 @@ public enum JobsDAO {
     public void storeReview(Review newReview ){
     	loadReviewsFromFile();
     	
+    	//check whether the relevant job application has all it's reviews in to move to next stage
+    	
+    	
     	contentStoreReviews.put(newReview.getId(), newReview);
     	
     	//create storage class
@@ -890,6 +893,25 @@ public enum JobsDAO {
 				e.printStackTrace();
 			}
 	  	}
+	}
+	
+	//checks if the two given reviewer ids are from the specified company
+	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
+		
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			if(team.getCompanyProfileId() == companyId){
+				//check the team
+				if(team.getMember1id() == reviewer1 || team.getMember2id() == reviewer1 || team.getMember3id() == reviewer1 || team.getMember4id() == reviewer1 || team.getMember5id() == reviewer1){
+					if(team.getMember1id() == reviewer2 || team.getMember2id()  == reviewer2 || team.getMember3id()  == reviewer2 || team.getMember4id()  == reviewer2 || team.getMember5id() == reviewer2){
+						return true;
+					}
+				}
+			}
+		}
+
+		
+		return false;
 	}
     
 }	

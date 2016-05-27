@@ -3,6 +3,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Review {
+    public static final String DECISION_ACCEPTED = "accepted";
+    public static final String DECISION_REJECTED = "rejected";
+    
 	private String id;
     private String teamMemberProfileId;
     private String jobApplicationId;
