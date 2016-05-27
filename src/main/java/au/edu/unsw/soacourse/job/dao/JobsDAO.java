@@ -142,9 +142,9 @@ public enum JobsDAO {
         JobApplication app5 = new JobApplication("5");
 
         //test for manager grab
-        app2.setJobApplicationId("1");
-        app3.setJobApplicationId("1");
-        app4.setJobApplicationId("1");
+        app2.setJobPostId("1");
+        app3.setJobPostId("1");
+        app4.setJobPostId("1");
         contentStoreApplications.put(id, app1);
         contentStoreApplications.put("2", app2);
         contentStoreApplications.put("3", app3);
@@ -661,7 +661,7 @@ public enum JobsDAO {
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication app : contentStoreApplications.values()){
-	  		if(app.getJobApplicationId().matches(query)){
+	  		if(app.getJobPostId().matches(query)){
 	  			JobApplicationsList.add(app);
 	  		}
 	  	}
