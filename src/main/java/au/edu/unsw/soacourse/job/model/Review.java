@@ -8,7 +8,9 @@ public class Review {
     
 	private String id;
     private String teamMemberProfileId;
+    private String teamMemberProfileLink;
     private String jobApplicationId;
+    private String jobApplicationLink;
 	private String comments;
 	private String decision; // (accepted/rejected)
 	private String link;
@@ -25,7 +27,6 @@ public class Review {
 		this.jobApplicationId = jobApplicationId;
 		this.comments = comments;
 		this.decision = decision;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
 	}
 	
 	public String getId() {
@@ -60,10 +61,29 @@ public class Review {
 		this.decision = decision;
 	}
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
 		return link;
 	}
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getTeamMemberProfileLink() {
+		this.teamMemberProfileLink = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
+		return teamMemberProfileLink;
+	}
+
+	public void setTeamMemberProfileLink(String teamMemberProfileLink) {
+		this.teamMemberProfileLink = teamMemberProfileLink;
+	}
+
+	public String getJobApplicationLink() {
+		this.jobApplicationLink = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
+		return jobApplicationLink;
+	}
+
+	public void setJobApplicationLink(String jobApplicationLink) {
+		this.jobApplicationLink = jobApplicationLink;
 	}
 	
 	

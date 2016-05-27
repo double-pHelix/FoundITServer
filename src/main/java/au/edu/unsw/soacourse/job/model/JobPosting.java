@@ -16,6 +16,7 @@ public class JobPosting {
 
 	private String description;
     private String companyProfileId;
+    private String companyProfileLink;
 	private String positionType;
 	private String skills;
     private String salaryLevel;
@@ -40,7 +41,6 @@ public class JobPosting {
 		this.location = "PLEASE ENTER";
 		this.status = STATUS_OPEN;
 		this.archived = ARCHIVED_FALSE;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 	
 
@@ -58,7 +58,6 @@ public class JobPosting {
 		this.location = location;
 		this.status = STATUS_OPEN;
 		this.archived = ARCHIVED_FALSE;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 
 	public String getId() {
@@ -66,7 +65,6 @@ public class JobPosting {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
     public String getTitle() {
 		return title;
@@ -126,11 +124,21 @@ public class JobPosting {
 	}
 
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 		return link;
 	}
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getCompanyProfileLink() {
+		this.companyProfileLink = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.companyProfileId;
+		return companyProfileLink;
+	}
+
+	public void setCompanyProfileLink(String companyProfileLink) {
+		this.companyProfileLink = companyProfileLink;
 	}
 	
 	

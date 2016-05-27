@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class HiringTeam {
 	private String id;
     private String companyProfileId;
+    private String companyProfile;
     private String link;
 	
 	@XmlElement(name = "teamMemberProfile")
@@ -28,6 +29,7 @@ public class HiringTeam {
 		super();
 		this.id = id;
 		this.companyProfileId = companyProfileId;
+		this.companyProfile = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.companyProfileId;
 		this.teamMembers = teamMembers;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
@@ -39,6 +41,14 @@ public class HiringTeam {
 		this.id = id;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
+	public String getCompanyProfile() {
+		return companyProfile;
+	}
+
+	public void setCompanyProfile(String companyProfile) {
+		this.companyProfile = companyProfile;
+	}
+
 	public String getCompanyProfileId() {
 		return companyProfileId;
 	}

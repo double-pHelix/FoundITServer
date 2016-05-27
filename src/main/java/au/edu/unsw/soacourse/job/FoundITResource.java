@@ -46,6 +46,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 	//If PUT status isn't valid reject 
 
 //TODO: remove invalid postings once companyis removed? etc..
+//TODO: prevent team member belonging to two hiring teams?
 
 
 //We can change this path
@@ -958,7 +959,7 @@ public class FoundITResource {
 		JobPosting appPosting = JobsDAO.instance.getJobPosting(existingApp.getJobPostId());
 		//check they all belong to the same company
 		if(!JobsDAO.instance.reviewersFromCompany(appPosting.getCompanyProfileId(), reviewer1, reviewer2)){
-			throw new RuntimeException("POST: 1 or more reviewers do not belong to the appropriate company");
+			throw new RuntimeException("POST: 1 or more reviewers do not belong to the appropriate company id:" + appPosting.getCompanyProfileId());
 		}
 		
 		//create new ass

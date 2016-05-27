@@ -62,8 +62,8 @@ public enum JobsDAO {
 	private final String JOB_APPLICATION_FILEDIR = System.getProperty("user.dir") + "/jobappsstore.xml";
 	private final String JOB_POSTING_FILEDIR = System.getProperty("user.dir") + "/jobpostingstore.xml";
 	private final String REVIEW_FILEDIR =System.getProperty("user.dir") +  "/reviewsstore.xml";
-	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "/teammemberprofilestore/.xml";
-	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = System.getProperty("user.dir") + "/jobappassignstore/.xml";
+	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "/teammemberprofilestore.xml";
+	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = System.getProperty("user.dir") + "/jobappassignstore.xml";
 	
 	
 	//these are in place of XML storage for now! 
@@ -95,10 +95,10 @@ public enum JobsDAO {
         */
     	
     	//add test cases files (to avoid having to create manually)
-    	addTestCasesJobPostings();
-    	addTestCasesUserProfiles();
-    	addTestCasesJobApplications();
-    	addTestCasesHiringTeamMembersAndTeam();
+    	//addTestCasesJobPostings();
+    	//addTestCasesUserProfiles();
+    	//addTestCasesJobApplications();
+    	//addTestCasesHiringTeamMembersAndTeam();
     	
     }
     
@@ -341,12 +341,33 @@ public enum JobsDAO {
     	}
     }
     
-    public void storeReview(Review newReview ){
+    public void storeReview(Review newReview){
     	loadReviewsFromFile();
     	
     	//check whether the relevant job application has all it's reviews in to move to next stage
+    	String jobAppId = newReview.getJobApplicationId();
+    	JobApplication app = getJobApplication(jobAppId);
     	
-    	
+    	if(newReview.getDecision() == Review.DECISION_REJECTED){
+    		//set to not being shortlisted!
+    		app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
+    		
+    	} else {
+    		//compare with other review... if it exists!
+    		//check if the review is in and is positive
+			for(Review review : contentStoreReviews.values()){
+				//we assume there are only 2 reviews per application
+				if(review.getJobApplicationId().matches(jobAppId)){
+					if(review.getDecision().matches(Review.DECISION_ACCEPTED)){
+						app.setStatus(JobApplication.STATUS_SHORTLISTED);
+					} else {
+						app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
+					}
+				}
+				
+			}	
+    	}
+    	//now store the new review
     	contentStoreReviews.put(newReview.getId(), newReview);
     	
     	//create storage class
@@ -398,7 +419,7 @@ public enum JobsDAO {
     
     
     public void storeJobApplicationAssignment(JobApplicationAssignment newJobAppAssignment){
-    	//loadTeamMemberProfilesFromFile();
+    	loadJobApplicationAssignmentsFromFile();
     	
     	contentStoreJobApplicationAssignment.put(newJobAppAssignment.getId(), newJobAppAssignment);
     	
@@ -407,7 +428,7 @@ public enum JobsDAO {
       	JobApplicationAssignments storeThis = new JobApplicationAssignments(assgns);
     	
     	try {
-    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
     		
     		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
     		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -604,7 +625,8 @@ public enum JobsDAO {
       	//		
     	//match as a substring
     	//note (?i: PATTERN ) makes match case insensitive
-    	  
+
+  	  	loadJobPostingsFromFile();
     	  
     	keyword = "(?i:.*" + keyword + ".*)";
     	
@@ -624,7 +646,8 @@ public enum JobsDAO {
   	//		
 	//match as a substring
 	//note (?i: PATTERN ) makes match case insensitive
-	  
+
+	  loadJobPostingsFromFile();
 	  
 	query = "(?i:.*" + query + ".*)";
 	
@@ -658,23 +681,26 @@ public enum JobsDAO {
   }
   
   public JobPostings getAllJobPostings(){
-	  	//
-	  	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
-
-	  	for(JobPosting posting : contentStorePostings.values()){
-	  		
-  			jobPostingsList.add(posting);
-	  		
-	  	}
-	  	JobPostings newJobPostings = new JobPostings(jobPostingsList);
-	  	
-	  	return newJobPostings;
+	  //
+	  loadJobPostingsFromFile();
+	  List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
+	
+	  for(JobPosting posting : contentStorePostings.values()){
+		
+		  jobPostingsList.add(posting);
+		
+	  }
+	  JobPostings newJobPostings = new JobPostings(jobPostingsList);
+	
+	  return newJobPostings;
   }
+  
   public JobApplications searchJobApplicationsPostId(String query){
 	  	//		
 		//match as a substring
 		//query = ".*" + query + ".*";
-		
+	  	loadJobApplicationsFromFile();
+	  	
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication app : contentStoreApplications.values()){
@@ -690,6 +716,7 @@ public enum JobsDAO {
   
   public JobApplications getAllJobApplications(){
 	  	//
+	  	loadJobApplicationsFromFile();
 	  	List<JobApplication> jobApplicationList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication application : contentStoreApplications.values()){
@@ -897,13 +924,16 @@ public enum JobsDAO {
 	
 	//checks if the two given reviewer ids are from the specified company
 	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
+		System.out.println("company" + companyId);
 		
+		loadHiringTeamsFromFile();
 		for(HiringTeamStore team : contentStoreHiringTeam.values()){
 			//for
-			if(team.getCompanyProfileId() == companyId){
+			if(team.getCompanyProfileId().matches(companyId)){
+				System.out.println("company" + companyId);
 				//check the team
-				if(team.getMember1id() == reviewer1 || team.getMember2id() == reviewer1 || team.getMember3id() == reviewer1 || team.getMember4id() == reviewer1 || team.getMember5id() == reviewer1){
-					if(team.getMember1id() == reviewer2 || team.getMember2id()  == reviewer2 || team.getMember3id()  == reviewer2 || team.getMember4id()  == reviewer2 || team.getMember5id() == reviewer2){
+				if(team.getMember1id().matches(reviewer1) || team.getMember2id().matches(reviewer1) || team.getMember3id().matches(reviewer1) || team.getMember4id().matches(reviewer1) || team.getMember5id().matches(reviewer1)){
+					if(team.getMember1id().matches(reviewer2) || team.getMember2id().matches(reviewer2) || team.getMember3id().matches(reviewer2) || team.getMember4id().matches(reviewer2) || team.getMember5id().matches(reviewer2)){
 						return true;
 					}
 				}

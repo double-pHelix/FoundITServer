@@ -19,7 +19,9 @@ public class JobApplication {
     
 	private String id;
     private String jobPostId;
+    private String jobPostLink;
     private String userProfileId;
+    private String userProfileLink;
     private String coverLetter;
     private String resume; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
     private String status; // (shortlisted/not-shortlisted or rejected/accepted)
@@ -118,6 +120,24 @@ public class JobApplication {
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getJobPostLink() {
+		this.jobPostLink = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.jobPostId;
+		return this.jobPostLink;	
+	}
+
+	public void setJobPostLink(String jobPostLink) {
+		this.jobPostLink = jobPostLink;
+	}
+
+	public String getUserProfileLink() {
+		this.userProfileLink = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.userProfileId;
+		return userProfileLink;
+	}
+
+	public void setUserProfileLink(String userProfileLink) {
+		this.userProfileLink = userProfileLink;
 	}
     
 

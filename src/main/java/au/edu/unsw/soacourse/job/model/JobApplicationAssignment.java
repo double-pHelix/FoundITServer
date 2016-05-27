@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JobApplicationAssignment {
 	private String id;
     private String jobApplicationId;
+    private String jobApplicationLink;
     private String reviewer1;
 	private String reviewer2;
 	private String link;
@@ -56,6 +57,15 @@ public class JobApplicationAssignment {
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getJobApplicationLink() {
+		this.jobApplicationLink = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.jobApplicationId;
+		return jobApplicationLink;
+	}
+
+	public void setJobApplicationLink(String jobApplicationLink) {
+		this.jobApplicationLink = jobApplicationLink;
 	}
 
 	
