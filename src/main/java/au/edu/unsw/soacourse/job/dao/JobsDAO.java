@@ -11,6 +11,8 @@ import au.edu.unsw.soacourse.job.model.HiringTeam;
 import au.edu.unsw.soacourse.job.model.HiringTeamStore;
 import au.edu.unsw.soacourse.job.model.HiringTeams;
 import au.edu.unsw.soacourse.job.model.JobApplication;
+import au.edu.unsw.soacourse.job.model.JobApplicationAssignment;
+import au.edu.unsw.soacourse.job.model.JobApplicationAssignments;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
@@ -61,6 +63,8 @@ public enum JobsDAO {
 	private final String JOB_POSTING_FILEDIR = System.getProperty("user.dir") + "/jobpostingstore.xml";
 	private final String REVIEW_FILEDIR =System.getProperty("user.dir") +  "/reviewsstore.xml";
 	private final String TEAM_MEMBER_PROFILE_FILEDIR = System.getProperty("user.dir") + "teammemberprofilestore/.xml";
+	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = System.getProperty("user.dir") + "jobappassignstore/.xml";
+	
 	
 	//these are in place of XML storage for now! 
 	//we need to store persistently
@@ -72,6 +76,7 @@ public enum JobsDAO {
     private Map<String, JobPosting> contentStorePostings = new HashMap<String, JobPosting>();
     private Map<String, Review> contentStoreReviews = new HashMap<String, Review>();
     private Map<String, TeamMemberProfile> contentStoreTeamProfiles = new HashMap<String, TeamMemberProfile>();
+    private Map<String, JobApplicationAssignment> contentStoreJobApplicationAssignment= new HashMap<String, JobApplicationAssignment>();
 
     
     private JobsDAO() {
@@ -385,6 +390,31 @@ public enum JobsDAO {
     }
     
     
+    public void storeJobApplicationAssignment(JobApplicationAssignment newJobAppAssignment){
+    	//loadTeamMemberProfilesFromFile();
+    	
+    	contentStoreJobApplicationAssignment.put(newJobAppAssignment.getId(), newJobAppAssignment);
+    	
+    	//create storage class
+      	List<JobApplicationAssignment> assgns = new ArrayList<JobApplicationAssignment>(contentStoreJobApplicationAssignment.values());
+      	JobApplicationAssignments storeThis = new JobApplicationAssignments(assgns);
+    	
+    	try {
+    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+    }
     
 
     /*
@@ -429,6 +459,11 @@ public enum JobsDAO {
     	return contentStoreTeamProfiles.get(id);
     }
     
+    public JobApplicationAssignment getJobApplicationAssignment(String id){
+    	loadJobApplicationAssignmentsFromFile();
+    	return contentStoreJobApplicationAssignment.get(id);
+    }
+
     //DELETE
     
     public UserProfile deleteUserProfile(String id){
@@ -458,6 +493,11 @@ public enum JobsDAO {
     public TeamMemberProfile deleteTeamMemberProfile(String id){
     	return contentStoreTeamProfiles.remove(id);
     }
+    
+    public JobApplicationAssignment deleteJobApplicationAssignment(String id){
+    	return contentStoreJobApplicationAssignment.remove(id);
+    }
+    
      
  
     ///ID STUFF
@@ -520,6 +560,14 @@ public enum JobsDAO {
     	loadTeamMemberProfilesFromFile();
     	int nextId = contentStoreTeamProfiles.size() + 1;
     	while(contentStoreTeamProfiles.containsKey(Integer.toString(nextId))){
+    		nextId++;
+    	}
+    	return Integer.toString(nextId);
+    }
+    public String getJobApplicationAssignmentId(){
+        loadJobApplicationAssignmentsFromFile();
+    	int nextId = contentStoreJobApplicationAssignment.size() + 1;
+    	while(contentStoreJobApplicationAssignment.containsKey(Integer.toString(nextId))){
     		nextId++;
     	}
     	return Integer.toString(nextId);
@@ -798,6 +846,28 @@ public enum JobsDAO {
 	    		
 	    		for(TeamMemberProfile profile : profiles.getTeamMemberProfiles()){
 	    			contentStoreTeamProfiles.put(profile.getId(), profile);
+	          	}
+	    		
+	    		System.out.println(profiles);
+	    		
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	  	}
+	}
+	
+	void loadJobApplicationAssignmentsFromFile(){
+	  	if(contentStoreJobApplicationAssignment.size() == 0){
+	    	try {
+	    		
+	    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
+	
+	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+	    		JobApplicationAssignments profiles = (JobApplicationAssignments) jaxbUnmarshaller.unmarshal(file);
+	    		
+	    		for(JobApplicationAssignment ass : profiles.getJobApplicationAssignments()){
+	    			contentStoreJobApplicationAssignment.put(ass.getId(), ass);
 	          	}
 	    		
 	    		System.out.println(profiles);

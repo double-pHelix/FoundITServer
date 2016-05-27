@@ -10,7 +10,8 @@ public class UserProfile {
 	private String education;
     private String pastExperience;
     private String professionalSkills;
-	
+    private String link;
+    
     public UserProfile() {
 		super();
 	}
@@ -23,6 +24,7 @@ public class UserProfile {
 		this.education = "PLEASE ENTER";
 		this.pastExperience = "PLEASE ENTER";
 		this.professionalSkills = "PLEASE ENTER";
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
     
 	public UserProfile(String id, String name, String currentPosition,
@@ -34,6 +36,7 @@ public class UserProfile {
 		this.education = education;
 		this.pastExperience = pastExperience;
 		this.professionalSkills = professionalSkills;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -42,6 +45,7 @@ public class UserProfile {
 
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
 
 	public String getName() {

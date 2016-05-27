@@ -27,13 +27,16 @@ import au.edu.unsw.soacourse.job.model.CompanyProfile;
 import au.edu.unsw.soacourse.job.model.HiringTeam;
 import au.edu.unsw.soacourse.job.model.HiringTeamStore;
 import au.edu.unsw.soacourse.job.model.JobApplication;
+import au.edu.unsw.soacourse.job.model.JobApplicationAssignment;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
+import au.edu.unsw.soacourse.job.model.Review;
 import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
 //TODO:: Modify output to include a GET url like in the lecture slides
+//TODO:: Provide @OPTION method for classes
 
 //We can change this path
 @Path("/foundIT")
@@ -820,10 +823,48 @@ public class FoundITResource {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//POST:
 	//Assign two company team members to an application
-	
+	@POST
+	@Path("/jobappreviewassign")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newReviewAssignment(
+			@FormParam("jobapplicationid") String jobApplicationId,
+			@FormParam("reviewer1") String reviewer1,
+			@FormParam("reviewer2") String reviewer2
+	) throws IOException {
+		String id = JobsDAO.instance.getJobApplicationAssignmentId();
+		
+		//TODO: check application exists
+		
+		//TODO: check reviewers exist
+		
+		//create new ass
+		JobApplicationAssignment newJobApplicationAssignment = new JobApplicationAssignment(id, jobApplicationId, reviewer1, reviewer2);
+				
+		//store ass
+		JobsDAO.instance.storeJobApplicationAssignment(newJobApplicationAssignment);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 	//GET
 	//Get Job Application’s Assigned members
-	
+	@GET
+	@Path("/jobappreviewassign/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public JobApplicationAssignment getReviewAssignment(@PathParam("id") String id) {
+		
+		JobApplicationAssignment u = JobsDAO.instance.getJobApplicationAssignment(id);
+		if(u==null)
+			throw new RuntimeException("GET: Job Application Assignment with:" + id +  " not found");
+		
+		return u;
+		
+	}
 	//PUT
 	//Update: Not supported
 	
@@ -838,11 +879,50 @@ public class FoundITResource {
 //	POST:
 //	Create Review for a job application
 //	Return URI for review (GET address)
-	
+	@POST
+	@Path("/review")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response newReview(
+			@FormParam("teammemberprofileid") String teamMemberProfileId,
+			@FormParam("jobapplicationid") String jobApplicationId,
+			@FormParam("comments") String comments,
+			@FormParam("decision") String decision
+	) throws IOException {
+		String id = JobsDAO.instance.getNextReviewId();	
+		
+		//TODO: check member exists
+		
+		//TODO: check application exist
+
+		//create new ass
+		Review newReview = new Review(id, teamMemberProfileId, jobApplicationId, comments, decision);
+				
+		//store ass
+		JobsDAO.instance.storeReview(newReview);
+		
+		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
+		//getStore().put(id, b);
+		
+		//TODO: Fix here so that it returns the new book
+		Response res = null;
+		res = Response.ok(id).build();
+		return res;
+	}
 //	GET:
 //	Get a single review
 //	Get job application’s reviews
 //	Get all reviews
+	@GET
+	@Path("/review/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Review getReview(@PathParam("id") String id) {
+		
+		Review u = JobsDAO.instance.getReview(id);
+		if(u==null)
+			throw new RuntimeException("GET: Review with:" + id +  " not found");
+		
+		return u;
+	}
 	
 //	PUT:
 //	Not Supported: Review is finalised once submitted
@@ -850,22 +930,7 @@ public class FoundITResource {
 //	DELETE:
 //	Not Supported: Review is attached to a job application forever
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
