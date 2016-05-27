@@ -8,6 +8,7 @@ public class Review {
     private String jobApplicationId;
 	private String comments;
 	private String decision; // (accepted/rejected)
+	private String link;
 	
 	public Review() {
 		super();
@@ -21,6 +22,7 @@ public class Review {
 		this.jobApplicationId = jobApplicationId;
 		this.comments = comments;
 		this.decision = decision;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
 	}
 	
 	public String getId() {
@@ -28,6 +30,7 @@ public class Review {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
 	}
 	public String getTeamMemberProfileId() {
 		return teamMemberProfileId;
@@ -52,6 +55,12 @@ public class Review {
 	}
 	public void setDecision(String decision) {
 		this.decision = decision;
+	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
 	}
 	
 	

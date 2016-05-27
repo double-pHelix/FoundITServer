@@ -15,7 +15,8 @@ public class HiringTeamStore {
     private String member3id;
     private String member4id;
     private String member5id;
-
+    private String link;
+	
 	public HiringTeamStore() {
 		super();
 	}
@@ -31,6 +32,7 @@ public class HiringTeamStore {
 		this.member3id = member3id;
 		this.member4id = member4id;
 		this.member5id = member5id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -38,6 +40,7 @@ public class HiringTeamStore {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 	public String getCompanyProfileId() {
 		return companyProfileId;
@@ -75,6 +78,14 @@ public class HiringTeamStore {
 	}
 	public void setMember5id(String member5id) {
 		this.member5id = member5id;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 

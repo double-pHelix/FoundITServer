@@ -58,6 +58,7 @@ public class FoundITResource {
 	@POST
 	@Path("/userprofile")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response newUserProfile(
 			@FormParam("name") String name,
 			@FormParam("currentposition") String currentPosition,
@@ -67,7 +68,6 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
-		System.out.println("!!");
 		//create new profile
 		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills);
 				
@@ -79,7 +79,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newProfile).build();
 		return res;
 	}
 	
@@ -183,7 +183,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newProfile).build();
 		return res;
 	}
 //	GET:
@@ -286,7 +286,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newJobPosting).build();
 		return res;
 	}
 //	GET:
@@ -476,7 +476,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newJobApp).build();
 		return res;
 	}
 //	GET:
@@ -641,7 +641,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newHiringTeam).build();
 		return res;
 	}
 //	GET:
@@ -759,7 +759,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newTeamMemberProfile).build();
 		return res;
 	}
 //	GET
@@ -848,7 +848,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newJobApplicationAssignment).build();
 		return res;
 	}
 	//GET
@@ -905,7 +905,7 @@ public class FoundITResource {
 		
 		//TODO: Fix here so that it returns the new book
 		Response res = null;
-		res = Response.ok(id).build();
+		res = Response.ok(newReview).build();
 		return res;
 	}
 //	GET:

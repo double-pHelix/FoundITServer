@@ -15,7 +15,8 @@ public class JobPosting {
     private String location;
 	private String status; //(created, open, in-review, processed, sent invitations)
 	private String archived;
-	
+    private String link;
+    
 	public JobPosting() {
 		super();
 	}
@@ -32,6 +33,7 @@ public class JobPosting {
 		this.location = "PLEASE ENTER";
 		this.status = "default";
 		this.archived = "N";
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 	
 
@@ -49,6 +51,7 @@ public class JobPosting {
 		this.location = location;
 		this.status = "default";
 		this.archived = "N";
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 
 	public String getId() {
@@ -56,6 +59,7 @@ public class JobPosting {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
     public String getTitle() {
 		return title;
@@ -112,6 +116,14 @@ public class JobPosting {
 	}
 	public void setArchived(String archived) {
 		this.archived = archived;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 	
 	

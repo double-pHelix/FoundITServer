@@ -9,7 +9,7 @@ public class CompanyProfile {
 	private String website;
     private String industryType;
     private String address;
-    
+    private String link;
 	
 	public CompanyProfile() {
 		super();
@@ -25,6 +25,7 @@ public class CompanyProfile {
 		this.website = website;
 		this.industryType = industryType;
 		this.address = address;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.id;
 	}
 
 
@@ -33,6 +34,7 @@ public class CompanyProfile {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.id;
 	}
 	public String getName() {
 		return name;
@@ -63,6 +65,16 @@ public class CompanyProfile {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+
+	public String getLink() {
+		return link;
+	}
+
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
     

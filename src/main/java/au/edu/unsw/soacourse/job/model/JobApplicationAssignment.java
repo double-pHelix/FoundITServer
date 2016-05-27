@@ -7,6 +7,7 @@ public class JobApplicationAssignment {
     private String jobApplicationId;
     private String reviewer1;
 	private String reviewer2;
+	private String link;
 	
 
 	public JobApplicationAssignment() {
@@ -20,6 +21,7 @@ public class JobApplicationAssignment {
 		this.jobApplicationId = jobApplicationId;
 		this.reviewer1 = reviewer1;
 		this.reviewer2 = reviewer2;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobappreviewassign/" + this.id;
 	}
 	
 	public String getId() {
@@ -27,6 +29,7 @@ public class JobApplicationAssignment {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobappreviewassign/" + this.id;
 	}
 	public String getJobApplicationId() {
 		return jobApplicationId;
@@ -45,6 +48,14 @@ public class JobApplicationAssignment {
 	}
 	public void setReviewer2(String reviewer2) {
 		this.reviewer2 = reviewer2;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 	

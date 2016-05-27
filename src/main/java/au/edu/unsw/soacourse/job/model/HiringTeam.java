@@ -13,7 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class HiringTeam {
 	private String id;
     private String companyProfileId;
-    
+    private String link;
+	
 	@XmlElement(name = "teamMemberProfile")
 	private List<TeamMemberProfile> teamMembers = new ArrayList<TeamMemberProfile>();
     
@@ -28,6 +29,7 @@ public class HiringTeam {
 		this.id = id;
 		this.companyProfileId = companyProfileId;
 		this.teamMembers = teamMembers;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -35,6 +37,7 @@ public class HiringTeam {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 	public String getCompanyProfileId() {
 		return companyProfileId;
@@ -48,6 +51,14 @@ public class HiringTeam {
 
 	public void setTeamMembers(List<TeamMemberProfile> teamMembers) {
 		this.teamMembers = teamMembers;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 

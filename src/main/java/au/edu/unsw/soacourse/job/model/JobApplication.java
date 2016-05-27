@@ -12,6 +12,7 @@ public class JobApplication {
     private String resume; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
     private String status; // (shortlisted/not-shortlisted or rejected/accepted)
     private String archived; //Y or N
+    private String link;
     
     public JobApplication() {
 
@@ -26,6 +27,7 @@ public class JobApplication {
 		this.resume = "PLEASE ENTER";
 		this.status = "DEFAULT";
 		this.archived = "N";
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
     
     public JobApplication(String id, String jobApplicationId,
@@ -38,6 +40,7 @@ public class JobApplication {
 		this.resume = resume;
 		this.status = "DEFAULT";
 		this.archived = "N";
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
 
 	public String getId() {
@@ -46,6 +49,7 @@ public class JobApplication {
 
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
 
 	public String getJobApplicationId() {
@@ -94,6 +98,14 @@ public class JobApplication {
 
 	public void setArchived(String archived) {
 		this.archived = archived;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
     
 

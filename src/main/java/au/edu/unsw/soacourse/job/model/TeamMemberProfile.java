@@ -7,6 +7,7 @@ public class TeamMemberProfile {
     private String username;
     private String password;
 	private String professionalSkills;
+    private String link;
 	
 	public TeamMemberProfile() {
 		super();
@@ -19,6 +20,7 @@ public class TeamMemberProfile {
 		this.username = username;
 		this.password = password;
 		this.professionalSkills = professionalSkills;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -27,6 +29,7 @@ public class TeamMemberProfile {
 
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
 	}
 
 	public String getUsername() {
@@ -51,6 +54,14 @@ public class TeamMemberProfile {
 
 	public void setProfessionalSkills(String professionalSkills) {
 		this.professionalSkills = professionalSkills;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 	
 	

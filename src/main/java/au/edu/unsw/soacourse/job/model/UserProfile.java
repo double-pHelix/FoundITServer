@@ -87,6 +87,14 @@ public class UserProfile {
 	public void setProfessionalSkills(String professionalSkills) {
 		this.professionalSkills = professionalSkills;
 	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
+	}
     
     
 }
