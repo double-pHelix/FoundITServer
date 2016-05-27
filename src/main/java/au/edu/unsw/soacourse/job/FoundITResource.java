@@ -37,7 +37,13 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 
 //TODONE:: Modify output to include a GET url like in the lecture slides DONE!
 //TODO:: Provide @OPTION method for classes
-//TODO:: Delete only archives (Job Posting, Job Application)
+//TODONE:: Delete only archives (Job Posting, Job Application)
+//TODO: Processes for
+	//if reviews are in set status for application
+
+//TODO: input checks
+	//If job post is closed reject application
+	//If PUT status isn't valid reject 
 
 //We can change this path
 @Path("/foundIT")
@@ -266,10 +272,10 @@ public class FoundITResource {
 	public Response newJobPosting(
 			@FormParam("title") String title,
 			@FormParam("description") String description,
-			@FormParam("companyProfileId") String companyProfileId,
-			@FormParam("positionType") String positionType,
-			@FormParam("desiredSkills") String desiredSkills,
-			@FormParam("salaryLevel") String salaryLevel,
+			@FormParam("companyprofileid") String companyProfileId,
+			@FormParam("positiontype") String positionType,
+			@FormParam("desiredskills") String desiredSkills,
+			@FormParam("salarylevel") String salaryLevel,
 			@FormParam("location") String location
 	) throws IOException {
 		String id = JobsDAO.instance.getNextJobPostingId();

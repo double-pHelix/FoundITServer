@@ -5,6 +5,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class JobApplication {
+	
+   //job app status
+    public static final String STATUS_SUBMITTED = "submitted";
+    public static final String STATUS_IN_REVIEW = "in-review";
+    public static final String STATUS_SHORTLISTED = "shortlisted";
+    public static final String STATUS_NOT_SHORTLISTED = "not-shortlisted";
+    public static final String STATUS_ACCEPTED = "accepted-invitation";
+    public static final String STATUS_REJECTED = "rejected-invitation";
+    //archived status
+    public static final String ARCHIVED_TRUE = "T";
+    public static final String ARCHIVED_FALSE = "F";
+    
+    
 	private String id;
     private String jobPostId;
     private String userProfileId;
@@ -25,8 +38,8 @@ public class JobApplication {
 		this.userProfileId = "PLEASE ENTER";
 		this.coverLetter = "PLEASE ENTER";
 		this.resume = "PLEASE ENTER";
-		this.status = "DEFAULT";
-		this.archived = "N";
+		this.status = STATUS_SUBMITTED;
+		this.archived = ARCHIVED_FALSE;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
     
@@ -38,8 +51,8 @@ public class JobApplication {
 		this.userProfileId = userProfileId;
 		this.coverLetter = coverLetter;
 		this.resume = resume;
-		this.status = "DEFAULT";
-		this.archived = "N";
+		this.status = STATUS_SUBMITTED;
+		this.archived = ARCHIVED_FALSE;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
 	}
 

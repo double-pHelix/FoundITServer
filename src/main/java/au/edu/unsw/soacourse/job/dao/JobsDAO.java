@@ -78,10 +78,6 @@ public enum JobsDAO {
     private Map<String, TeamMemberProfile> contentStoreTeamProfiles = new HashMap<String, TeamMemberProfile>();
     private Map<String, JobApplicationAssignment> contentStoreJobApplicationAssignment= new HashMap<String, JobApplicationAssignment>();
 
- 
-    //job post status
-    public static final String STATUS_OPEN = "open";
-    public static final String STATUS_CLOSED = "closed";
     //archived status
     public static final String ARCHIVED_TRUE = "T";
     public static final String ARCHIVED_FALSE = "F";

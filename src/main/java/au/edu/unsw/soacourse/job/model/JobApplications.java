@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JobApplications {
-	@XmlElement(name = "jobApplications")
+	@XmlElement(name = "JobApplication")
 	List<JobApplication> jobApplications = new ArrayList<JobApplication>();
  
 	public JobApplications() {

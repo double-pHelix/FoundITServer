@@ -4,6 +4,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class JobPosting {
+    //job post status
+    public static final String STATUS_OPEN = "open";
+    public static final String STATUS_CLOSED = "closed";
+    //archived status
+    public static final String ARCHIVED_TRUE = "T";
+    public static final String ARCHIVED_FALSE = "F";
+    
 	private String id;
 	private String title;
 
@@ -31,8 +38,8 @@ public class JobPosting {
 		this.skills = "PLEASE ENTER";
 		this.salaryLevel = "PLEASE ENTER";
 		this.location = "PLEASE ENTER";
-		this.status = "default";
-		this.archived = "N";
+		this.status = STATUS_OPEN;
+		this.archived = ARCHIVED_FALSE;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 	
@@ -49,8 +56,8 @@ public class JobPosting {
 		this.skills = desiredSkills;
 		this.salaryLevel = salaryLevel;
 		this.location = location;
-		this.status = "default";
-		this.archived = "N";
+		this.status = STATUS_OPEN;
+		this.archived = ARCHIVED_FALSE;
 		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
 	}
 
