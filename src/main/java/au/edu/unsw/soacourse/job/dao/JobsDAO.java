@@ -78,6 +78,20 @@ public enum JobsDAO {
     private Map<String, TeamMemberProfile> contentStoreTeamProfiles = new HashMap<String, TeamMemberProfile>();
     private Map<String, JobApplicationAssignment> contentStoreJobApplicationAssignment= new HashMap<String, JobApplicationAssignment>();
 
+    //job app status
+    private final String STATUS_SUBMITTED = "submitted";
+    private final String STATUS_IN_REVIEW = "in-review";
+    private final String STATUS_SHORTLISTED = "shortlisted";
+    private final String STATUS_NOT_SHORTLISTED = "not-shortlisted";
+    private final String STATUS_ACCEPTED = "accepted-invitation";
+    private final String STATUS_REJECTED = "rejected-invitation";
+    //job post status
+    private final String STATUS_OPEN = "open";
+    private final String STATUS_CLOSED = "closed";
+    //archived status
+    private final String ARCHIVED_TRUE = "T";
+    private final String ARCHIVED_FALSE = "F";
+    
     
     private JobsDAO() {
   
@@ -479,11 +493,21 @@ public enum JobsDAO {
     }
     
     public JobApplication deleteJobApplication(String id){
-    	return contentStoreApplications.remove(id);
+    	//archive instead of delete
+    	JobApplication archived = contentStoreApplications.get(id);
+    	if(archived != null)
+    		archived.setArchived(ARCHIVED_TRUE);
+    	
+    	return archived;
     }
     
     public JobPosting deleteJobPosting(String id){
-    	return contentStorePostings.remove(id);
+    	//archive instead of delete
+    	JobPosting archived = contentStorePostings.get(id);
+    	if(archived != null)
+    		archived.setArchived(ARCHIVED_TRUE);
+    	
+    	return archived;
     }
     
     public Review deleteReview(String id){

@@ -37,7 +37,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 
 //TODONE:: Modify output to include a GET url like in the lecture slides DONE!
 //TODO:: Provide @OPTION method for classes
-//TODO:: Delete only archives
+//TODO:: Delete only archives (Job Posting, Job Application)
 
 //We can change this path
 @Path("/foundIT")
