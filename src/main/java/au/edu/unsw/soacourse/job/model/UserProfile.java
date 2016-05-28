@@ -1,5 +1,6 @@
 package au.edu.unsw.soacourse.job.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -11,7 +12,8 @@ public class UserProfile {
     private String pastExperience;
     private String professionalSkills;
     private String link;
-    
+	private String rel;
+	
     public UserProfile() {
 		super();
 	}
@@ -19,12 +21,6 @@ public class UserProfile {
     public UserProfile(String id) {
 		super();
 		this.id = id;
-		this.name = "PLEASE ENTER";
-		this.currentPosition = "PLEASE ENTER";
-		this.education = "PLEASE ENTER";
-		this.pastExperience = "PLEASE ENTER";
-		this.professionalSkills = "PLEASE ENTER";
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
     
 	public UserProfile(String id, String name, String currentPosition,
@@ -36,7 +32,6 @@ public class UserProfile {
 		this.education = education;
 		this.pastExperience = pastExperience;
 		this.professionalSkills = professionalSkills;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -45,7 +40,6 @@ public class UserProfile {
 
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/userprofile/" + this.id;
 	}
 
 	public String getName() {
@@ -88,12 +82,23 @@ public class UserProfile {
 		this.professionalSkills = professionalSkills;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + this.id;
 		return link;
 	}
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
 	}
     
     

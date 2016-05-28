@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,9 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class HiringTeam {
 	private String id;
     private String companyProfileId;
-    private String companyProfile;
+    private CompanyProfile companyProfileLnk;
     private String link;
-	
+    private String rel;
+    
 	@XmlElement(name = "teamMemberProfile")
 	private List<TeamMemberProfile> teamMembers = new ArrayList<TeamMemberProfile>();
     
@@ -23,15 +25,18 @@ public class HiringTeam {
 	public HiringTeam() {
 		super();
 	}
-
+	public HiringTeam(String id) {
+		super();
+		this.id = id;
+	}
+	
 	public HiringTeam(String id, String companyProfileId,
 			List<TeamMemberProfile> teamMembers) {
 		super();
 		this.id = id;
 		this.companyProfileId = companyProfileId;
-		this.companyProfile = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.companyProfileId;
+		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
 		this.teamMembers = teamMembers;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -39,15 +44,16 @@ public class HiringTeam {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
-	public String getCompanyProfile() {
-		this.companyProfile = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.companyProfileId;
-		return companyProfile;
+	
+	@XmlElement(name = "companyProfile")
+	public CompanyProfile getCompanyProfileLnk() {
+		companyProfileLnk = new CompanyProfile(this.companyProfileId);
+		return companyProfileLnk;
 	}
 
-	public void setCompanyProfile(String companyProfile) {
-		this.companyProfile = companyProfile;
+	public void setCompanyProfileLnk(CompanyProfile companyProfile) {
+		this.companyProfileLnk = companyProfile;
 	}
 
 	public String getCompanyProfileId() {
@@ -64,7 +70,9 @@ public class HiringTeam {
 		this.teamMembers = teamMembers;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 		return link;
 	}
 
@@ -72,7 +80,14 @@ public class HiringTeam {
 		this.link = link;
 	}
 
-
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
 	
 
 }

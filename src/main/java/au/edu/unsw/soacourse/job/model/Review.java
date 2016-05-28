@@ -1,4 +1,6 @@
 package au.edu.unsw.soacourse.job.model;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,12 +10,14 @@ public class Review {
     
 	private String id;
     private String teamMemberProfileId;
-    private String teamMemberProfileLink;
+    private TeamMemberProfile teamMemberProfileLink;
+    
     private String jobApplicationId;
-    private String jobApplicationLink;
+    private JobApplication jobApplicationLink;
 	private String comments;
 	private String decision; // (accepted/rejected)
 	private String link;
+	private String rel;
 	
 	public Review() {
 		super();
@@ -34,7 +38,6 @@ public class Review {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
 	}
 	public String getTeamMemberProfileId() {
 		return teamMemberProfileId;
@@ -60,29 +63,43 @@ public class Review {
 	public void setDecision(String decision) {
 		this.decision = decision;
 	}
+	
+	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/review/" + this.id;
+		this.link = "http://localhost:8080/RestfulJobService/review/" + this.id;
 		return link;
 	}
+
 	public void setLink(String link) {
 		this.link = link;
 	}
 
-	public String getTeamMemberProfileLink() {
-		this.teamMemberProfileLink = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
+
+	@XmlElement(name = "teamMemberProfile")
+	public TeamMemberProfile getTeamMemberProfileLink() {
+		this.teamMemberProfileLink = new TeamMemberProfile(this.id);
 		return teamMemberProfileLink;
 	}
 
-	public void setTeamMemberProfileLink(String teamMemberProfileLink) {
+	public void setTeamMemberProfileLink(TeamMemberProfile teamMemberProfileLink) {
 		this.teamMemberProfileLink = teamMemberProfileLink;
 	}
 
-	public String getJobApplicationLink() {
-		this.jobApplicationLink = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.id;
+	@XmlElement(name = "jobApplication")
+	public JobApplication getJobApplicationLink() {
+		this.jobApplicationLink = new JobApplication(this.id);
 		return jobApplicationLink;
 	}
 
-	public void setJobApplicationLink(String jobApplicationLink) {
+	public void setJobApplicationLink(JobApplication jobApplicationLink) {
 		this.jobApplicationLink = jobApplicationLink;
 	}
 	

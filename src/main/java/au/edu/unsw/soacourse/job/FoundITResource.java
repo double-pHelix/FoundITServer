@@ -35,6 +35,11 @@ import au.edu.unsw.soacourse.job.model.Review;
 import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
+
+//TODO::SECURITY
+//key == match
+//
+
 //TODONE:: Modify output to include a GET url like in the lecture slides DONE!
 //TODO:: Provide @OPTION method for classes
 //TODONE:: Delete only archives (Job Posting, Job Application)
@@ -50,6 +55,9 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 	//if aleady in a team, return error
 //TODONE: only one assignment per application
 //TODO: Requried Fields??
+//TODO:: stop nested elements (at most one layer)... or prevent null elements
+
+
 //We can change this path
 @Path("/")
 public class FoundITResource {
@@ -725,7 +733,7 @@ public class FoundITResource {
 			@FormParam("member4id") String member4id,
 			@FormParam("member5id") String member5id
 	) throws IOException {
-		String id = JobsDAO.instance.getNextTeamMemberProfileId();
+		String id = JobsDAO.instance.getNextHiringTeamId();
 		
 		//check company exists
 		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(companyProfileId);
@@ -764,6 +772,7 @@ public class FoundITResource {
 			throw new RuntimeException(errormsg);
 		}
 		
+		//TODO: check that company does not already have a hiring team
 		
 		//create new profile
 		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);

@@ -2,37 +2,46 @@ package au.edu.unsw.soacourse.job.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 //for storing
-@XmlRootElement(name = "HiringTeam")
+@XmlRootElement(name = "hiringTeam")
 public class HiringTeamStore {
 	private String id;
     private String companyProfileId;
+    private CompanyProfile companyProfileLnk;
     private String member1id;
     private String member2id;
     private String member3id;
     private String member4id;
     private String member5id;
     private String link;
-	
+    private String rel;
+    
 	public HiringTeamStore() {
 		super();
 	}
-	  
+	public HiringTeamStore(String id, String companyProfileId) {
+		super();
+		this.id = id;
+		this.companyProfileId = companyProfileId;
+		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
+	}
+	
 	public HiringTeamStore(String id, String companyProfileId,
 			String member1id, String member2id, String member3id,
 			String member4id, String member5id) {
 		super();
 		this.id = id;
 		this.companyProfileId = companyProfileId;
+		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
 		this.member1id = member1id;
 		this.member2id = member2id;
 		this.member3id = member3id;
 		this.member4id = member4id;
 		this.member5id = member5id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -40,7 +49,6 @@ public class HiringTeamStore {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/hiringteam/" + this.id;
 	}
 	public String getCompanyProfileId() {
 		return companyProfileId;
@@ -80,12 +88,32 @@ public class HiringTeamStore {
 		this.member5id = member5id;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 		return link;
 	}
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
+
+	@XmlElement(name = "companyProfile")
+	public CompanyProfile getCompanyProfileLnk() {
+		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
+		return this.companyProfileLnk;
+	}
+	public void setCompanyProfileLnk(CompanyProfile companyProfileLnk) {
+		this.companyProfileLnk = companyProfileLnk;
 	}
 
 

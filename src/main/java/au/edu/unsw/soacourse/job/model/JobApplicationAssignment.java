@@ -1,15 +1,17 @@
 package au.edu.unsw.soacourse.job.model;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class JobApplicationAssignment {
 	private String id;
     private String jobApplicationId;
-    private String jobApplicationLink;
+    private JobApplication jobApplicationLink;
     private String reviewer1;
 	private String reviewer2;
 	private String link;
-	
+	private String rel;
 
 	public JobApplicationAssignment() {
 		super();
@@ -22,7 +24,6 @@ public class JobApplicationAssignment {
 		this.jobApplicationId = jobApplicationId;
 		this.reviewer1 = reviewer1;
 		this.reviewer2 = reviewer2;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobappreviewassign/" + this.id;
 	}
 	
 	public String getId() {
@@ -30,7 +31,6 @@ public class JobApplicationAssignment {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobappreviewassign/" + this.id;
 	}
 	public String getJobApplicationId() {
 		return jobApplicationId;
@@ -51,7 +51,9 @@ public class JobApplicationAssignment {
 		this.reviewer2 = reviewer2;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
 		return link;
 	}
 
@@ -59,12 +61,22 @@ public class JobApplicationAssignment {
 		this.link = link;
 	}
 
-	public String getJobApplicationLink() {
-		this.jobApplicationLink = "http://localhost:8080/RestfulJobService/foundIT/jobapplication/" + this.jobApplicationId;
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
+
+	@XmlElement(name = "jobApplication")
+	public JobApplication getJobApplicationLink() {
+		this.jobApplicationLink = new JobApplication(this.jobApplicationId);
 		return jobApplicationLink;
 	}
 
-	public void setJobApplicationLink(String jobApplicationLink) {
+	public void setJobApplicationLink(JobApplication jobApplicationLink) {
 		this.jobApplicationLink = jobApplicationLink;
 	}
 

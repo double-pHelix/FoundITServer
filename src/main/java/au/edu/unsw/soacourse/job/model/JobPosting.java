@@ -1,5 +1,7 @@
 package au.edu.unsw.soacourse.job.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -16,7 +18,7 @@ public class JobPosting {
 
 	private String description;
     private String companyProfileId;
-    private String companyProfileLink;
+    private CompanyProfile companyProfileLink;
 	private String positionType;
 	private String skills;
     private String salaryLevel;
@@ -24,7 +26,8 @@ public class JobPosting {
 	private String status; //(created, open, in-review, processed, sent invitations)
 	private String archived;
     private String link;
-    
+	private String rel;
+	
 	public JobPosting() {
 		super();
 	}
@@ -32,13 +35,6 @@ public class JobPosting {
 	public JobPosting(String id) {
 		super();
 		this.id = id;
-		this.title = "PLEASE ENTER";
-		this.description = "PLEASE ENTER";
-		this.companyProfileId = "PLEASE ENTER";
-		this.positionType = "PLEASE ENTER";
-		this.skills = "PLEASE ENTER";
-		this.salaryLevel = "PLEASE ENTER";
-		this.location = "PLEASE ENTER";
 		this.status = STATUS_OPEN;
 		this.archived = ARCHIVED_FALSE;
 	}
@@ -123,8 +119,12 @@ public class JobPosting {
 		this.archived = archived;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/jobposting/" + this.id;
+		if(this.id == null)
+			return link;
+			
+		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + this.id;
 		return link;
 	}
 
@@ -132,12 +132,22 @@ public class JobPosting {
 		this.link = link;
 	}
 
-	public String getCompanyProfileLink() {
-		this.companyProfileLink = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.companyProfileId;
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
+
+	@XmlElement(name = "companyProfile")
+	public CompanyProfile getCompanyProfileLink() {
+		this.companyProfileLink = new CompanyProfile(this.companyProfileId);
 		return companyProfileLink;
 	}
 
-	public void setCompanyProfileLink(String companyProfileLink) {
+	public void setCompanyProfileLink(CompanyProfile companyProfileLink) {
 		this.companyProfileLink = companyProfileLink;
 	}
 	

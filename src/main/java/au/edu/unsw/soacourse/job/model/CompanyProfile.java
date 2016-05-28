@@ -1,4 +1,5 @@
 package au.edu.unsw.soacourse.job.model;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -10,9 +11,15 @@ public class CompanyProfile {
     private String industryType;
     private String address;
     private String link;
-	
+    private String rel;
+    
 	public CompanyProfile() {
 		super();
+	}
+
+	public CompanyProfile(String id) {
+		super();
+		this.id = id;
 	}
 
 
@@ -25,7 +32,6 @@ public class CompanyProfile {
 		this.website = website;
 		this.industryType = industryType;
 		this.address = address;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.id;
 	}
 
 
@@ -34,7 +40,6 @@ public class CompanyProfile {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/companyprofile/" + this.id;
 	}
 	public String getName() {
 		return name;
@@ -67,8 +72,9 @@ public class CompanyProfile {
 		this.address = address;
 	}
 
-
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/companyprofile/" + this.id;
 		return link;
 	}
 
@@ -76,7 +82,15 @@ public class CompanyProfile {
 	public void setLink(String link) {
 		this.link = link;
 	}
-
+	
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "company";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
     
     
     

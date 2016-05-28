@@ -54,8 +54,19 @@ import javax.xml.bind.Unmarshaller;
 
 public enum JobsDAO {
 	instance;
-
-	//metadata
+	
+	String homeDir = System.getProperty("catalina.home")+"/webapps/{root context}/WEB-INF/";
+	/*
+	private final String COMPANY_PROFILE_FILEDIR = homeDir + "/compprofilestore.xml";
+	private final String USER_PROFILE_FILEDIR = homeDir +  "/userprofilestore.xml";
+	private final String HIRING_TEAM_FILEDIR = homeDir + "/hiringteamstore.xml";
+	private final String JOB_APPLICATION_FILEDIR = homeDir + "/jobappsstore.xml";
+	private final String JOB_POSTING_FILEDIR = homeDir + "/jobpostingstore.xml";
+	private final String REVIEW_FILEDIR = homeDir +  "/reviewsstore.xml";
+	private final String TEAM_MEMBER_PROFILE_FILEDIR = homeDir + "/teammemberprofilestore.xml";
+	private final String JOB_APPLICATION_ASSIGNMENT_FILEDIR = homeDir + "/jobappassignstore.xml";
+	*/
+	//metadata	
 	private final String COMPANY_PROFILE_FILEDIR = System.getProperty("user.dir") + "/compprofilestore.xml";
 	private final String USER_PROFILE_FILEDIR =System.getProperty("user.dir") +  "/userprofilestore.xml";
 	private final String HIRING_TEAM_FILEDIR = System.getProperty("user.dir") + "/hiringteamstore.xml";
@@ -553,8 +564,9 @@ public enum JobsDAO {
     
     public String getNextCompanyProfileId(){
     	loadCompanyProfilesFromFile();
+    	
     	int nextId = contentStoreUserProfiles.size() + 1;
-    	while(contentStoreUserProfiles.containsKey(Integer.toString(nextId))){
+    	while(contentStoreCompProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
     	}
     	return Integer.toString(nextId);
@@ -781,7 +793,7 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(COMPANY_PROFILE_FILEDIR);
-	    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
+	    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 	    		CompanyProfiles profiles = (CompanyProfiles) jaxbUnmarshaller.unmarshal(file);
@@ -790,7 +802,7 @@ public enum JobsDAO {
 	    			contentStoreCompProfiles.put(profile.getId(), profile);
 	          	}
 	    		
-	    		System.out.println(profiles);
+	    		System.out.println(contentStoreCompProfiles.size());
 	    		
 			} catch (JAXBException e) {
 				e.printStackTrace();

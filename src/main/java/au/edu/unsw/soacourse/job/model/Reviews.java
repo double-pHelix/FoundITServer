@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Reviews {
-	@XmlElement(name = "Review")
+	@XmlElement(name = "review")
 	List<Review> reviews = new ArrayList<Review>();
 
 	public Reviews() {

@@ -1,4 +1,5 @@
 package au.edu.unsw.soacourse.job.model;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,11 +9,16 @@ public class TeamMemberProfile {
     private String password;
 	private String professionalSkills;
     private String link;
+	private String rel;
 	
 	public TeamMemberProfile() {
 		super();
 	}
-
+	public TeamMemberProfile(String id) {
+		super();
+		this.id = id;
+	}
+	
 	public TeamMemberProfile(String id, String username, String password,
 			String professionalSkills) {
 		super();
@@ -20,7 +26,6 @@ public class TeamMemberProfile {
 		this.username = username;
 		this.password = password;
 		this.professionalSkills = professionalSkills;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -29,7 +34,6 @@ public class TeamMemberProfile {
 
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/foundIT/teammemberprofile/" + this.id;
 	}
 
 	public String getUsername() {
@@ -56,13 +60,23 @@ public class TeamMemberProfile {
 		this.professionalSkills = professionalSkills;
 	}
 
+	@XmlAttribute(name = "href")
 	public String getLink() {
+		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + this.id;
 		return link;
 	}
 
 	public void setLink(String link) {
 		this.link = link;
 	}
-	
+
+	@XmlAttribute(name = "rel")
+	public String getRel() {
+		rel = "hiringteam";
+		return rel;
+	}
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
 	
 }
