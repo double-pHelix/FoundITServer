@@ -95,6 +95,10 @@ public class JobAlertDAO {
 		//Download career one file
 		writeFile();
 		
+		//Write the transform
+		//Doesn't seem to work :/
+		writeXSLTTrans();
+		
 		//Parse it into readable format
 		parseXsltCareer();
 		
@@ -107,6 +111,8 @@ public class JobAlertDAO {
 		//Parse our job xml into more readable format
 		//TODO: Uncomment when the xslt works
 		//parseXsltJob();
+		
+		//writeXSLTTransJob();
 		
 		//Merges into documents to allow easier query
 		mergeDocuments();
@@ -390,6 +396,7 @@ public class JobAlertDAO {
 			}
 			out.close();
 			fw.close();
+			inputStream.close();
 		} catch (XQException | IOException e) {
 			e.printStackTrace();
 		}
@@ -439,6 +446,9 @@ public class JobAlertDAO {
 	        	line = br.readLine();
 	        	//System.out.println(line);
 	        }
+	        fw.close();
+	        br.close();
+	        is.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -587,4 +597,97 @@ public class JobAlertDAO {
 		readFile();
 	}
 	
+	private void writeXSLTTrans() {
+		BufferedWriter bw = null;
+		FileWriter fr = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(TRANS_XSLT));
+			//fr = new FileWriter("careerTrans.xslt");
+			String xslt = 	"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+							"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">\n" +
+							"<xsl:output method=\"xml\" indent=\"yes\"/>\n" +
+							"<xsl:template match=\"channel\">\n" +
+							"<xsl:element name=\"JobList\">\n" +
+							"<xsl:apply-templates/>\n" +
+							"</xsl:element>\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"title\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"description\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"link\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"image\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"item\">\n" +
+							"<xsl:element name=\"Job\">\n" +
+							"<xsl:element name=\"Title\">\n" +
+							"<xsl:value-of select=\"title\"/>\n" +
+							"</xsl:element>\n" +
+							"<xsl:element name=\"Description\">\n" +
+							"<xsl:value-of select=\"description\"/>\n" +
+							"</xsl:element>\n" +
+							"</xsl:element>\n" +
+							"</xsl:template>\n" +
+							"</xsl:stylesheet>";
+			//System.out.println(xslt);
+			
+			String split[] = xslt.split("\n");
+			int i = 0;
+			while (i != split.length) {
+				System.out.println(split[i]);
+				bw.write(split[i] + "\n");
+				//bw.write(i);
+				i = i+1;
+			}
+			bw.close();
+			//fw.close();
+			//bw.write(xslt);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	//TODO: Write xslt
+	private void writeXSLTTransJob() {
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(JOB_TRANS_XSLT));
+			
+			String xslt = 	"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+							"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">\n" +
+							"<xsl:output method=\"xml\" indent=\"yes\"/>\n" +
+							"<xsl:template match=\"channel\">\n" +
+							"<xsl:element name=\"JobList\">\n" +
+							"<xsl:apply-templates/>\n" +
+							"</xsl:element>\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"title\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"description\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"link\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"image\">\n" +
+							"</xsl:template>\n" +
+							"<xsl:template match=\"item\">\n" +
+							"<xsl:element name=\"Job\">\n" +
+							"<xsl:element name=\"Title\">\n" +
+							"<xsl:value-of select=\"title\"/>\n" +
+							"</xsl:element>\n" +
+							"<xsl:element name=\"Description\">\n" +
+							"<xsl:value-of select=\"description\"/>\n" +
+							"</xsl:element>\n" +
+							"</xsl:element>\n" +
+							"</xsl:template>\n" +
+							"</xsl:stylesheet>\n";
+			
+			bw.write(xslt);
+			bw.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 }
