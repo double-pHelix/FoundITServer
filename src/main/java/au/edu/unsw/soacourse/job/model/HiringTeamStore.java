@@ -19,7 +19,10 @@ public class HiringTeamStore {
     private String member5id;
     private String link;
     private String rel;
-    
+	private boolean sendVersion = false;
+	public void setSendVersion(boolean set){
+		this.sendVersion = set;
+	}
 	public HiringTeamStore() {
 		super();
 	}
@@ -27,7 +30,7 @@ public class HiringTeamStore {
 		super();
 		this.id = id;
 		this.companyProfileId = companyProfileId;
-		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 	}
 	
 	public HiringTeamStore(String id, String companyProfileId,
@@ -42,6 +45,7 @@ public class HiringTeamStore {
 		this.member3id = member3id;
 		this.member4id = member4id;
 		this.member5id = member5id;
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -51,6 +55,9 @@ public class HiringTeamStore {
 		this.id = id;
 	}
 	public String getCompanyProfileId() {
+		if(sendVersion == true)
+			return null;
+		
 		return companyProfileId;
 	}
 	public void setCompanyProfileId(String companyProfileId) {
@@ -90,7 +97,6 @@ public class HiringTeamStore {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 		return link;
 	}
 
@@ -109,6 +115,9 @@ public class HiringTeamStore {
 
 	@XmlElement(name = "companyProfile")
 	public CompanyProfile getCompanyProfileLnk() {
+		if(this.companyProfileId == null)
+			return null;
+		
 		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
 		return this.companyProfileLnk;
 	}

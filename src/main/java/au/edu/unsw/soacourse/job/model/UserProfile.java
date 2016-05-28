@@ -20,7 +20,7 @@ public class UserProfile {
 
     public UserProfile(String id) {
 		super();
-		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + id;
 	}
     
 	public UserProfile(String id, String name, String currentPosition,
@@ -32,6 +32,7 @@ public class UserProfile {
 		this.education = education;
 		this.pastExperience = pastExperience;
 		this.professionalSkills = professionalSkills;
+		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -84,7 +85,6 @@ public class UserProfile {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + this.id;
 		return link;
 	}
 

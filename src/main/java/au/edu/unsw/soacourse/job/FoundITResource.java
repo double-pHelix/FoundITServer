@@ -93,7 +93,7 @@ public class FoundITResource {
 				
 		//store profile
 		JobsDAO.instance.storeUserProfile(newProfile);
-		
+				
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
@@ -128,7 +128,6 @@ public class FoundITResource {
 		} else {
 			res = Response.ok(u).build();
 		}
-		
 		
 		return res;
 	}
@@ -325,8 +324,13 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
+		JobPosting sendJobPosting= new JobPosting(id, title, description, companyProfileId,
+				positionType, desiredSkills, salaryLevel,
+				location);
+		sendJobPosting.setSendVersion(true);
+		
 		Response res = null;
-		res = Response.ok(newJobPosting).build();
+		res = Response.ok(sendJobPosting).build();
 		return res;
 	}
 //	GET:
@@ -350,10 +354,15 @@ public class FoundITResource {
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
 		} else {
-			res = Response.ok(p).build();
+			JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+					p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+					p.getLocation());
+			sendJobPosting.setSendVersion(true);
+			
+			res = Response.ok(sendJobPosting).build();
 		}
 		
-		
+
 		return res;
 		
 	}
@@ -549,11 +558,15 @@ public class FoundITResource {
 		//store application
 		JobsDAO.instance.storeJobApplication(newJobApp);
 		
+		JobApplication sendJobApp= new JobApplication(id, jobpostId,
+				userProfileId, coverLetter, resume);
+		sendJobApp.setSendVersion(true);
+		
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
 		Response res = null;
-		res = Response.ok(newJobApp).build();
+		res = Response.ok(sendJobApp).build();
 		return res;
 	}
 //	GET:
@@ -574,7 +587,9 @@ public class FoundITResource {
 			resBuild.status(220);
 			res = resBuild.build();
 		} else {
-			res = Response.ok(a).build();
+			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+			res = Response.ok(sendVersion).build();
 		}
 		
 		return res;
@@ -780,11 +795,14 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeHiringTeam(newHiringTeam);
 		
+		HiringTeamStore sendHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
+		sendHiringTeam.setSendVersion(true);
+		
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
 		Response res = null;
-		res = Response.ok(newHiringTeam).build();
+		res = Response.ok(sendHiringTeam).build();
 		return res;
 	}
 //	GET:
@@ -805,7 +823,10 @@ public class FoundITResource {
 			resBuild.status(220);
 			res = resBuild.build();
 		} else {
-			res = Response.ok(reqHiringTeam).build();
+			HiringTeamStore sendVersion = new HiringTeamStore(reqHiringTeam.getId(), reqHiringTeam.getCompanyProfileId(), reqHiringTeam.getMember1id(), 
+					reqHiringTeam.getMember2id(), reqHiringTeam.getMember3id(), reqHiringTeam.getMember4id(), reqHiringTeam.getMember5id());
+			sendVersion.setSendVersion(true);	
+			res = Response.ok(sendVersion).build();
 		}
 		
 		return res;
@@ -968,9 +989,6 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeTeamMemberProfile(newTeamMemberProfile);
 		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
-		
 		Response res = null;
 		res = Response.ok(newTeamMemberProfile).build();
 		return res;
@@ -1095,6 +1113,10 @@ public class FoundITResource {
 		//store ass
 		JobsDAO.instance.storeJobApplicationAssignment(newJobApplicationAssignment);
 		
+		//send version
+		JobApplicationAssignment sendJobApplicationAssignment = new JobApplicationAssignment(id, jobApplicationId, reviewer1, reviewer2);
+		sendJobApplicationAssignment.setSendVersion(true);
+		
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
@@ -1118,7 +1140,10 @@ public class FoundITResource {
 			resBuild.status(220);
 			res = resBuild.build();
 		} else {
-			res = Response.ok(u).build();
+			JobApplicationAssignment sendJobApplicationAssignment = new JobApplicationAssignment(id, u.getJobApplicationId(), u.getReviewer1(), u.getReviewer2());
+			sendJobApplicationAssignment.setSendVersion(true);
+
+			res = Response.ok(sendJobApplicationAssignment).build();
 		}
 		
 		return res;
@@ -1175,11 +1200,12 @@ public class FoundITResource {
 		//store rev
 		JobsDAO.instance.storeReview(newReview);
 		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
+		//send version
+		Review sendReview = new Review(id, teamMemberProfileId, jobApplicationId, comments, decision);
+		sendReview.setSendVersion(true);
 		
 		Response res = null;
-		res = Response.ok(newReview).build();
+		res = Response.ok(sendReview).build();
 		return res;
 	}
 //	GET:
@@ -1200,7 +1226,11 @@ public class FoundITResource {
 			resBuild.status(220);
 			res = resBuild.build();
 		} else {
-			res = Response.ok(u).build();
+			//send version
+			Review sendReview = new Review(id, u.getTeamMemberProfileId(), u.getJobApplicationId(), u.getComments(), u.getDecision());
+			sendReview.setSendVersion(true);
+			
+			res = Response.ok(sendReview).build();
 		}
 		
 		return res;

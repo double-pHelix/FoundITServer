@@ -11,13 +11,16 @@ public class Review {
 	private String id;
     private String teamMemberProfileId;
     private TeamMemberProfile teamMemberProfileLink;
-    
     private String jobApplicationId;
     private JobApplication jobApplicationLink;
 	private String comments;
 	private String decision; // (accepted/rejected)
 	private String link;
 	private String rel;
+	private boolean sendVersion = false;
+	public void setSendVersion(boolean set){
+		this.sendVersion = set;
+	}
 	
 	public Review() {
 		super();
@@ -31,6 +34,7 @@ public class Review {
 		this.jobApplicationId = jobApplicationId;
 		this.comments = comments;
 		this.decision = decision;
+		this.link = "http://localhost:8080/RestfulJobService/review/" + this.id;
 	}
 	
 	public String getId() {
@@ -40,12 +44,16 @@ public class Review {
 		this.id = id;
 	}
 	public String getTeamMemberProfileId() {
+		if(sendVersion == true)
+			return null;
 		return teamMemberProfileId;
 	}
 	public void setTeamMemberProfileId(String teamMemberProfileId) {
 		this.teamMemberProfileId = teamMemberProfileId;
 	}
 	public String getJobApplicationId() {
+		if(sendVersion == true)
+			return null;
 		return jobApplicationId;
 	}
 	public void setJobApplicationId(String jobApplicationId) {
@@ -66,7 +74,6 @@ public class Review {
 	
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/review/" + this.id;
 		return link;
 	}
 
@@ -85,7 +92,10 @@ public class Review {
 
 	@XmlElement(name = "teamMemberProfile")
 	public TeamMemberProfile getTeamMemberProfileLink() {
-		this.teamMemberProfileLink = new TeamMemberProfile(this.id);
+		if(this.teamMemberProfileId == null)
+			return null;
+		
+		this.teamMemberProfileLink = new TeamMemberProfile(this.teamMemberProfileId);
 		return teamMemberProfileLink;
 	}
 
@@ -95,7 +105,10 @@ public class Review {
 
 	@XmlElement(name = "jobApplication")
 	public JobApplication getJobApplicationLink() {
-		this.jobApplicationLink = new JobApplication(this.id);
+		if(this.jobApplicationId == null)
+			return null;
+		
+		this.jobApplicationLink = new JobApplication(this.jobApplicationId);
 		return jobApplicationLink;
 	}
 

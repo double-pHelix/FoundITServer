@@ -19,7 +19,7 @@ public class CompanyProfile {
 
 	public CompanyProfile(String id) {
 		super();
-		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/companyprofile/" + id;
 	}
 
 
@@ -32,6 +32,7 @@ public class CompanyProfile {
 		this.website = website;
 		this.industryType = industryType;
 		this.address = address;
+		this.link = "http://localhost:8080/RestfulJobService/companyprofile/" + this.id;
 	}
 
 
@@ -74,10 +75,8 @@ public class CompanyProfile {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/companyprofile/" + this.id;
 		return link;
 	}
-
 
 	public void setLink(String link) {
 		this.link = link;

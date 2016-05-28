@@ -16,7 +16,7 @@ public class TeamMemberProfile {
 	}
 	public TeamMemberProfile(String id) {
 		super();
-		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + id;
 	}
 	
 	public TeamMemberProfile(String id, String username, String password,
@@ -26,6 +26,7 @@ public class TeamMemberProfile {
 		this.username = username;
 		this.password = password;
 		this.professionalSkills = professionalSkills;
+		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + this.id;
 	}
 
 	public String getId() {
@@ -62,7 +63,6 @@ public class TeamMemberProfile {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + this.id;
 		return link;
 	}
 

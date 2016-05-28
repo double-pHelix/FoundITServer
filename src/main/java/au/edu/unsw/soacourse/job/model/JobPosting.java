@@ -27,16 +27,17 @@ public class JobPosting {
 	private String archived;
     private String link;
 	private String rel;
-	
+	private boolean sendVersion = false;
+	public void setSendVersion(boolean set){
+		this.sendVersion = set;
+	}
 	public JobPosting() {
 		super();
 	}
 	
 	public JobPosting(String id) {
 		super();
-		this.id = id;
-		this.status = STATUS_OPEN;
-		this.archived = ARCHIVED_FALSE;
+		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + id;
 	}
 	
 
@@ -54,6 +55,7 @@ public class JobPosting {
 		this.location = location;
 		this.status = STATUS_OPEN;
 		this.archived = ARCHIVED_FALSE;
+		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + this.id;
 	}
 
 	public String getId() {
@@ -76,6 +78,9 @@ public class JobPosting {
 		this.description = description;
 	}
 	public String getCompanyProfileId() {
+		if(sendVersion == true)
+			return null;
+		
 		return companyProfileId;
 	}
 	public void setCompanyProfileId(String companyProfileId) {
@@ -121,10 +126,6 @@ public class JobPosting {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		if(this.id == null)
-			return link;
-			
-		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + this.id;
 		return link;
 	}
 
@@ -143,6 +144,9 @@ public class JobPosting {
 
 	@XmlElement(name = "companyProfile")
 	public CompanyProfile getCompanyProfileLink() {
+		if(this.companyProfileId == null)
+			return null;
+		
 		this.companyProfileLink = new CompanyProfile(this.companyProfileId);
 		return companyProfileLink;
 	}

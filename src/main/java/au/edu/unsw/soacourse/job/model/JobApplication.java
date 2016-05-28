@@ -30,16 +30,18 @@ public class JobApplication {
     private String archived; //Y or N
     private String link;
     private String rel;
-    
+	private boolean sendVersion = false;
+	public void setSendVersion(boolean set){
+		this.sendVersion = set;
+	}
+	
     public JobApplication() {
 
 	}
     
     public JobApplication(String id) {
 		super();
-		this.id = id;
-		this.status = STATUS_SUBMITTED;
-		this.archived = ARCHIVED_FALSE;
+		this.link = "http://localhost:8080/RestfulJobService/jobapplication/" + id;
 	}
     
     public JobApplication(String id, String jobPostId,
@@ -52,6 +54,7 @@ public class JobApplication {
 		this.resume = resume;
 		this.status = STATUS_SUBMITTED;
 		this.archived = ARCHIVED_FALSE;
+		this.link = "http://localhost:8080/RestfulJobService/jobapplication/" + this.id;
 	}
 
 	public String getId() {
@@ -63,6 +66,8 @@ public class JobApplication {
 	}
 
 	public String getJobPostId() {
+		if(sendVersion == true)
+			return null;
 		return jobPostId;
 	}
 
@@ -71,6 +76,8 @@ public class JobApplication {
 	}
 
 	public String getUserProfileId() {
+		if(sendVersion == true)
+			return null;
 		return userProfileId;
 	}
 
@@ -112,7 +119,6 @@ public class JobApplication {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/jobapplication/" + this.id;
 		return link;
 	}
 
@@ -131,6 +137,9 @@ public class JobApplication {
 
 	@XmlElement(name = "jobPosting")
 	public JobPosting getJobPostLink() {
+		if(this.jobPostId == null)
+			return null;
+		
 		this.jobPostLink = new JobPosting(this.jobPostId);
 		return this.jobPostLink;	
 	}
@@ -141,6 +150,9 @@ public class JobApplication {
 	
 	@XmlElement(name = "userProfile")
 	public UserProfile getUserProfileLink() {
+		if(this.userProfileId == null)
+			return null;
+		
 		this.userProfileLink = new UserProfile(this.userProfileId);
 		return userProfileLink;
 	}

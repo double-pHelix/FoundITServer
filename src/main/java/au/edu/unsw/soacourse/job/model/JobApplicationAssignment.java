@@ -12,7 +12,11 @@ public class JobApplicationAssignment {
 	private String reviewer2;
 	private String link;
 	private String rel;
-
+	private boolean sendVersion = false;
+	public void setSendVersion(boolean set){
+		this.sendVersion = set;
+	}
+	
 	public JobApplicationAssignment() {
 		super();
 	}
@@ -24,6 +28,7 @@ public class JobApplicationAssignment {
 		this.jobApplicationId = jobApplicationId;
 		this.reviewer1 = reviewer1;
 		this.reviewer2 = reviewer2;
+		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
 	}
 	
 	public String getId() {
@@ -31,6 +36,7 @@ public class JobApplicationAssignment {
 	}
 	public void setId(String id) {
 		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
 	}
 	public String getJobApplicationId() {
 		return jobApplicationId;
@@ -53,7 +59,6 @@ public class JobApplicationAssignment {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
 		return link;
 	}
 
@@ -72,6 +77,9 @@ public class JobApplicationAssignment {
 
 	@XmlElement(name = "jobApplication")
 	public JobApplication getJobApplicationLink() {
+		if(this.jobApplicationId == null)
+			return null;
+		
 		this.jobApplicationLink = new JobApplication(this.jobApplicationId);
 		return jobApplicationLink;
 	}

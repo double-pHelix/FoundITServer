@@ -27,7 +27,7 @@ public class HiringTeam {
 	}
 	public HiringTeam(String id) {
 		super();
-		this.id = id;
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + id;
 	}
 	
 	public HiringTeam(String id, String companyProfileId,
@@ -37,6 +37,7 @@ public class HiringTeam {
 		this.companyProfileId = companyProfileId;
 		this.companyProfileLnk = new CompanyProfile(this.companyProfileId);
 		this.teamMembers = teamMembers;
+		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 	}
 
 	public String getId() {
@@ -48,6 +49,9 @@ public class HiringTeam {
 	
 	@XmlElement(name = "companyProfile")
 	public CompanyProfile getCompanyProfileLnk() {
+		if(this.companyProfileId == null)
+			return null;
+		
 		companyProfileLnk = new CompanyProfile(this.companyProfileId);
 		return companyProfileLnk;
 	}
@@ -72,7 +76,6 @@ public class HiringTeam {
 
 	@XmlAttribute(name = "href")
 	public String getLink() {
-		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
 		return link;
 	}
 
