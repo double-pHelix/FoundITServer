@@ -50,13 +50,15 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 	//If job post is closed reject application
 	//If PUT status isn't valid reject 
 
-//TODO: remove invalid postings once companyis removed? etc..
+//TODONE: remove invalid postings once companyis removed? etc..
+	//TOO HARD WE AVOID THIS!
 //TODONE: prevent team member belonging to two hiring teams?
 	//if aleady in a team, return error
 //TODONE: only one assignment per application
 //TODO: Requried Fields??
-//TODO:: stop nested elements (at most one layer)... or prevent null elements
-
+//TODONE:: stop nested elements (at most one layer)... or prevent null elements
+//TODO::Update Members1-5 to be a list of TeamMemberProfile of size 5...
+//TODO::Change reviewer to TeamMemberProfile with URI
 
 //We can change this path
 @Path("/")
@@ -93,11 +95,7 @@ public class FoundITResource {
 				
 		//store profile
 		JobsDAO.instance.storeUserProfile(newProfile);
-				
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
-		
-		//TODO: Fix here so that it returns the new book
+						
 		Response res = null;
 		res = Response.ok(newProfile).build();
 		return res;
@@ -146,7 +144,6 @@ public class FoundITResource {
 		
 		//store profile
 		JobsDAO.instance.storeUserProfile(u);
-		//Probably should modify test to be in xml format or something :/
 		res = Response.ok(test).build();
 		//res.
 		return res;
@@ -1244,146 +1241,4 @@ public class FoundITResource {
 //	Not Supported: Review is attached to a job application forever
 
 
-	
-	
-	
-	
-	/*
-	// Return the list of Jobs for client applications/programs
-	@GET
-	//Create a new path for job posting, hiring etc..
-	@Path("/jobsearch")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<JobApplication> getJobPostings() {
-		List<JobApplication> bs = new ArrayList<JobApplication>();
-		bs.addAll( JobsDAO.instance.getStore().values() );
-		return bs; 
-	}
-	
-	@GET
-	//Create a new path for job posting, hiring etc..
-	@Path("/jobapps")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<JobApplication> getJobApplications() {
-		List<JobApplication> bs = new ArrayList<JobApplication>();
-		bs.addAll( JobsDAO.instance.getStore().values() );
-		return bs; 
-	}
-	
-	@GET
-	//Create a new path for job posting, hiring etc..
-	@Path("/appinvitations")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<JobApplication> getApplicationInvitations() {
-		List<JobApplication> bs = new ArrayList<JobApplication>();
-		bs.addAll( JobsDAO.instance.getStore().values() );
-		return bs; 
-	}
-	
-	// Return the list of Jobs for client applications/programs
-	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<JobApplication> getBooks() {
-		List<JobApplication> bs = new ArrayList<JobApplication>();
-		bs.addAll( JobsDAO.instance.getStore().values() );
-		return bs; 
-	}
-	
-	// Return the number of books in the bookstore
-	@GET
-	@Path("count")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getCount() {
-		int count = JobsDAO.instance.getStore().size();
-		return String.valueOf(count);
-	}
-	
-	// POST should not expect an id
-	// It should generate an id and let user know in response
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response newBook(
-			@FormParam("title") String title,
-			@FormParam("detail") String detail
-	) throws IOException {
-		String id = "hi";
-		JobApplication b = new JobApplication(id,title);
-		if (detail!=null){
-			b.setDetail(detail);
-		}
-		JobsDAO.instance.getStore().put(id, b);
-		Response res = null;
-		
-		return res;
-	}
-	
-	
-	//Calling Get on the URL
-	@GET
-	@Path("{book}")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobApplication getBook(@PathParam("book") String id) {
-		JobApplication b = JobsDAO.instance.getStore().get(id);
-		if(b==null)
-			throw new RuntimeException("GET: Book with" + id +  " not found");
-		return b;
-	}
-	
-	//Calling Put on the URL
-	//Parameter book
-	//Expect type job application for some reason 
-
-//	
-//	  <jobApplication>
-//		  <id>Tove</id>
-//		  <title>Jani</title>
-//		</jobApplication>
-//	 
-	@PUT
-	@Path("{jobApp}")
-	@Consumes(MediaType.APPLICATION_XML)
-	public Response putBook(JobApplication b) {
-		Response res = null;
-		String test = "test";
-		//Probably should modify test to be in xml format or something :/
-		res = Response.ok(test).build();
-		//res.
-		return res;
-	}
-	
-	//Calling Delete on the URL
-	//Maybe return a response to tell the user it has been deleted
-	@DELETE
-	@Path("{jobDelete}")
-	public Response deleteBook(@PathParam("jobDelete") String id) {
-		JobApplication delb = JobsDAO.instance.getStore().remove(id);
-		Response res = null;
-		int errorCode = 220;
-		
-		if(delb==null) {
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
-			String msg = "DELETE: Job with " + id +  " not found";
-			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
-			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
-		} else {
-			String msg = "Deleted Job" + id;
-			res = Response.ok(msg).build();
-		}
-		return res;
-	}
-	
-	private Response putAndGetResponse(JobApplication b) {
-		Response res;
-		if(JobsDAO.instance.getStore().containsKey(b.getId())) {
-			res = Response.noContent().build();
-		} else {
-			res = Response.created(uriInfo.getAbsolutePath()).build();
-		}
-		JobsDAO.instance.getStore().put(b.getId(), b);
-		return res;
-	}
-	
-		*/
 }
