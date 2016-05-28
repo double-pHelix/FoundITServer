@@ -72,7 +72,7 @@ public class TeamMemberProfile {
 
 	@XmlAttribute(name = "rel")
 	public String getRel() {
-		rel = "hiringteam";
+		rel = "teammemberprofile";
 		return rel;
 	}
 	public void setRel(String rel) {

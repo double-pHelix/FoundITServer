@@ -122,7 +122,7 @@ public class JobApplication {
 
 	@XmlAttribute(name = "rel")
 	public String getRel() {
-		rel = "hiringteam";
+		rel = "jobapplication";
 		return rel;
 	}
 	public void setRel(String rel) {

@@ -94,7 +94,7 @@ public class UserProfile {
 
 	@XmlAttribute(name = "rel")
 	public String getRel() {
-		rel = "hiringteam";
+		rel = "userprofile";
 		return rel;
 	}
 	public void setRel(String rel) {

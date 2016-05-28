@@ -76,7 +76,7 @@ public class Review {
 
 	@XmlAttribute(name = "rel")
 	public String getRel() {
-		rel = "hiringteam";
+		rel = "review";
 		return rel;
 	}
 	public void setRel(String rel) {
