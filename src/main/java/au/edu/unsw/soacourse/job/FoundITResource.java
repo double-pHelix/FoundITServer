@@ -1381,7 +1381,10 @@ public class FoundITResource {
 			@QueryParam("email") String email) {
 		Response res = null;
 
+		System.out.println("Received " + keyword + " " + sortAttribute + " " + email);
 		JobAlertDAO jobAlert = new JobAlertDAO();
+		
+		System.out.println("Created Class");
 		int errorCode = 400;
 		
 		if(keyword == null || email == null) {
@@ -1390,11 +1393,13 @@ public class FoundITResource {
 			resBuild.status(errorCode);
 			res = resBuild.build();
 		}
+		
+		//System.out.println("Received " + keyword + " " + sortAttribute + " " + email);
 		//This only needs to be called once..
 		jobAlert.setupFile();
 		
 		String sort = sortAttribute;
-		if (sort.length() < 2 ) {
+		if (sort != null && sort.length() < 2 ) {
 			sort = null;
 		}
 		
@@ -1405,7 +1410,7 @@ public class FoundITResource {
 		jobAlert.sendEmailToUser(email, emailID);
 		
 		//Successful email sent
-		String msg = "Email Sent";
+		String msg = "Email Sent, Have a nice day!";
 		ResponseBuilder resBuild = Response.ok(msg);
 		resBuild.status(200);
 		res = resBuild.build();

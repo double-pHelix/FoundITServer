@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
 
 
 public class JobAlertDAO {
-
+	
 	private final String  CAREER_SITE = "http://rss.jobsearch.careerone.com.au/rssquery.ashx?"
 			+ "q=Java&rad_units=km&cy=AU&pp=25&sort=rv.di.dt&baseurl="
 			+ "jobview.careerone.com.au";
@@ -97,19 +97,24 @@ public class JobAlertDAO {
 	//Only needs to be done once
 	public void setupFile() {
 		//Download career one file
+		System.out.println("Downloading career xml");
 		writeFile();
 		
 		//Write the transform
 		//Doesn't seem to work :/
+		System.out.println("Writing xslt transform for career xml");
 		writeXSLTTrans();
 		
 		//Parse it into readable format
+		System.out.println("Parsing career xml into better");
 		parseXsltCareer();
 		
 		//Download teach website
+		System.out.println("Downloading teach html file");
 		downloadHtml();
 		
 		//Parse html into more better format
+		System.out.println("Parsing teach html file");
 		parseHtml();
 		
 		//Parse our job xml into more readable format
@@ -119,6 +124,7 @@ public class JobAlertDAO {
 		//writeXSLTTransJob();
 		
 		//Merges into documents to allow easier query
+		System.out.println("Merging documents");
 		mergeDocuments();
 	}
 
