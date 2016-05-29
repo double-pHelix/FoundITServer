@@ -41,6 +41,7 @@ public class MailService {
 		
 		System.out.println("Preparing Email");
 		try {
+			System.out.println("Sending mail to " + recipientEmail + " with id " + fileLocation);
 			Message msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
 			msg.setRecipients(Message.RecipientType.TO,
@@ -63,7 +64,7 @@ public class MailService {
 			msg.setContent(multipart);
 			
 			Transport.send(msg);
-			System.out.println("Email Sent");
+			System.out.println("Email Successfully Sent");
 		} catch (AddressException e) {
 			System.out.println("Address");
 		} catch (MessagingException e) {
