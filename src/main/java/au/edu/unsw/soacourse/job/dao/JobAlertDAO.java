@@ -76,7 +76,11 @@ public class JobAlertDAO {
 	private final String TEACH_HTML = System.getProperty("user.dir") + "/teachJobs.html";
 	private final String TEACH_XML = System.getProperty("user.dir") + "/teachJobsMod.xml";
 	private final String QUERY_XQ = System.getProperty("user.dir") + "/query.xq";
+	
+	//Location of the query matched
 	private final String QUERY_MATCH = System.getProperty("user.dir") + "/result.xml";
+	
+	
 	private final String JOB_LIST = System.getProperty("user.dir") + "/joblist.xml";
 	
 	//TODO: This is not created, has to be moved there
@@ -304,6 +308,7 @@ public class JobAlertDAO {
 							"<Job> \n" +
 							"{ $job/Title } \n" +
 							"{ $job/Description } \n"+
+							"{ $job/Link } \n"+
 							"</Job>\n"+
 							"}\n" +
 							"</QueryMatch>";
@@ -331,7 +336,7 @@ public class JobAlertDAO {
 			bw.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 			bw.write("<JobList>\n");
 			while (line != null) {
-				if(line.contains("Job>") || line.contains("<Description>") ||  line.contains("<Title>")) {
+				if(line.contains("Job>") || line.contains("<Description>") ||  line.contains("<Title>") || line.contains("<Link>")) {
 					bw.write(line+"\n");
 				}
 				line = br.readLine();
@@ -340,7 +345,7 @@ public class JobAlertDAO {
 			br = new BufferedReader(new FileReader(TEACH_XML));
 			line = br.readLine();
 			while (line != null) {
-				if(line.contains("Job>") || line.contains("<Description>") ||  line.contains("<Title>")) {
+				if(line.contains("Job>") || line.contains("<Description>") ||  line.contains("<Title>") || line.contains("<Link>")) {
 					bw.write(line+"\n");
 				}
 				line = br.readLine();
@@ -489,13 +494,14 @@ public class JobAlertDAO {
 						i=i+1;
 						continue;
 					}
-					
+					//System.out.println(splitsP[i]);
 					if(title.contains("positions")) {
 						String splitLi[] = splitsP[i].split("<li>");
 
 						int j = 0;
 						
 						while(j != splitLi.length) {
+							//System.out.println(splitLi[j]);
 							String splitBr[] = splitLi[j].split(">");
 							String newTitle = splitBr[1].replace("</a", "");
 							String des = splitBr[2].replace("</li", "");
@@ -505,22 +511,30 @@ public class JobAlertDAO {
 								j = j+1;
 								continue;
 							}
-							
+							String splitLink[] = splitLi[j].split("href=");
+							String link = splitLink[1].trim();
 							des = des.replaceAll("<.*?>", "");
 							//System.out.println("title2: "+ title);
-							//System.out.println("des2: " + des);
+							//System.out.println("des1: " + des);
+							//System.out.println("link: " + link);
 							out.write("<Job>\n");
 							out.write("<Title>" + newTitle + "</Title>\n");
 							out.write("<Description>" + des + "</Description>\n");
+							out.write("<Link>" + link + "</Link>\n");
 							out.write("</Job>\n");
 							j = j+1;
 						}
 					} else {
+						String splitLink[] = splitsP[i].split("href=");
+						String link = splitLink[1].trim();
 						String description = splitDes[1];
 						description = description.replaceAll("<.*?>", "");
+						//System.out.println("des1.5: "+ description);
+						//System.out.println("link: " + link);
 						out.write("<Job>\n");
 						out.write("<Title>" + title + "</Title>\n");
 						out.write("<Description>" + description + "</Description>\n");
+						out.write("<Link>" + link + "</Link>\n");
 						out.write("</Job>\n");
 					}
 					
@@ -542,11 +556,15 @@ public class JobAlertDAO {
 							j = j+1;
 							continue;
 						}
+						String splitLink[] = splitLi[j].split("href=");
+						String link = splitLink[1].trim();
 						//System.out.println("title2: "+ title);
 						//System.out.println("des2: " + des);
+						//System.out.println("link: " + link);
 						out.write("<Job>\n");
 						out.write("<Title>" + title + "</Title>\n");
 						out.write("<Description>" + des + "</Description>\n");
+						out.write("<Link>" + link + "</Link>\n");
 						out.write("</Job>\n");
 						j = j+1;
 					}
@@ -566,15 +584,22 @@ public class JobAlertDAO {
 						i = i+1;
 						continue;
 					}
+					//System.out.println(splitsP[i]);
+					String splitLink[] = splitsP[i].split("href=");
+					String link = splitLink[3].trim();
+					
 					String school = splitEnd[1].replace("</a", "");
-					String des = splitAEnd[1];
+					String des = splitsP[i];
 					des = des.replaceAll("<.*?>", "");
+					des = des.replaceAll("<a.*?\"", "");
 					//System.out.println("title3: " + title);
 					//System.out.println(school);
-					//System.out.println("des3: " + school + description);
+					//System.out.println("des3: " + des);
+					//System.out.println("link: " + link);
 					out.write("<Job>\n");
 					out.write("<Title>" + title + "</Title>\n");
 					out.write("<Description>" + school + des + "</Description>\n");
+					out.write("<Link>" + link + "</Link>\n");
 					out.write("</Job>\n");
 				}
 				
@@ -593,6 +618,7 @@ public class JobAlertDAO {
 	//PLay with tests here
 	public void testJobAlert() {
 		setupFile();
+		parseHtml();
 		executeQuery("Math", "title");
 		readFile();
 	}
@@ -627,6 +653,9 @@ public class JobAlertDAO {
 							"<xsl:element name=\"Description\">\n" +
 							"<xsl:value-of select=\"description\"/>\n" +
 							"</xsl:element>\n" +
+							"<xsl:element name=\"Link\">\n" +
+							"<xsl:value-of select=\"link\"/>\n" +
+							"</xsl:element>\n" +
 							"</xsl:element>\n" +
 							"</xsl:template>\n" +
 							"</xsl:stylesheet>";
@@ -635,7 +664,7 @@ public class JobAlertDAO {
 			String split[] = xslt.split("\n");
 			int i = 0;
 			while (i != split.length) {
-				System.out.println(split[i]);
+				//System.out.println(split[i]);
 				bw.write(split[i] + "\n");
 				//bw.write(i);
 				i = i+1;
@@ -689,5 +718,10 @@ public class JobAlertDAO {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+	
+	//Gets the file location?
+	public String getQueryMatchLocation() {
+		return QUERY_MATCH;
 	}
 }
