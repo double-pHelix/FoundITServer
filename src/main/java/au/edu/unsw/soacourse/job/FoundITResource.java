@@ -1,3 +1,4 @@
+
 package au.edu.unsw.soacourse.job;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import au.edu.unsw.soacourse.job.model.HiringTeam;
 import au.edu.unsw.soacourse.job.model.HiringTeamStore;
 import au.edu.unsw.soacourse.job.model.JobApplication;
 import au.edu.unsw.soacourse.job.model.JobApplicationAssignment;
+import au.edu.unsw.soacourse.job.model.JobApplicationAssignments;
 import au.edu.unsw.soacourse.job.model.JobApplications;
 import au.edu.unsw.soacourse.job.model.JobPosting;
 import au.edu.unsw.soacourse.job.model.JobPostings;
@@ -59,9 +61,9 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 //TODONE: only one assignment per application
 //TODONE: Requried Fields?? For post
 //TODONE:: stop nested elements (at most one layer)... or prevent null elements
-//TODO::Update Members1-5 to be a list of TeamMemberProfile of size 5... (note passwords being sent as well lol)
-//TODO::Change reviewer to TeamMemberProfile with URI
-//TODO::ERROR HANDLING CODES...
+//TODONE::Update Members1-5 to be a list of TeamMemberProfile of size 5... (note passwords being sent as well lol)
+//TODONE::Change reviewer to TeamMemberProfile with URI
+//TODONE::ERROR HANDLING CODES...
 
 //We can change this path
 @Path("/")
@@ -96,7 +98,16 @@ public class FoundITResource {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
 		Response res = null;
-
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+		
 		//check no input is empty
 		if(name == null || currentPosition == null || education == null || 
 				pastExperience == null || professionalSkills == null){
@@ -123,8 +134,22 @@ public class FoundITResource {
 	@GET
 	@Path("/userprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getUserProfile(@PathParam("id") String id) {
+	public Response getUserProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
+		
+		
 		UserProfile u = JobsDAO.instance.getUserProfile(id);
 		
 		if(u == null){
@@ -152,8 +177,22 @@ public class FoundITResource {
 	@PUT
 	@Path("/userprofile")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putUserProfile(UserProfile u) {
+	public Response putUserProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			UserProfile u) {
 		Response res = null;
+		
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
+		
 		String test = "test";
 		
 		//store profile
@@ -170,12 +209,25 @@ public class FoundITResource {
 //	Look up (User Profile) with given “id” and delete
 	@DELETE
 	@Path("/userprofile/{id}")
-	public Response deleteUserProfile(@PathParam("id") String id) {
+	public Response deleteUserProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+
+		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		
 		UserProfile delProfile = JobsDAO.instance.deleteUserProfile(id);
 		//modify.s
 		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delProfile == null) {
@@ -205,6 +257,8 @@ public class FoundITResource {
 	@Path("/companyprofile")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newCompanyProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("name") String name,
 			@FormParam("description") String description,
 			@FormParam("website") String website,
@@ -213,10 +267,18 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextCompanyProfileId();
 
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
 		//check no input is empty
 		if(name == null || description == null || website == null || 
 				industryType == null || address == null){
-			Response res = null;
 			//res.status();
 			res = Response.status(201).entity("POST: Missing field/s").build();
 			return res;
@@ -230,7 +292,6 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		Response res = null;
 		res = Response.status(201).entity(newProfile).build();
 		return res;
 	}
@@ -241,8 +302,21 @@ public class FoundITResource {
 	@GET
 	@Path("/companyprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getCompanyProfile(@PathParam("id") String id) {
+	public Response getCompanyProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
+		
 		CompanyProfile c = JobsDAO.instance.getCompanyProfile(id);
 		
 		//if(c==null)
@@ -272,8 +346,21 @@ public class FoundITResource {
 	@PUT
 	@Path("/companyprofile")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putCompanyProfile(CompanyProfile u) {
+	public Response putCompanyProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			CompanyProfile u) {
 		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
+		
 		String msg = "success";
 		
 		//store profile
@@ -289,12 +376,24 @@ public class FoundITResource {
 //	Look up (Company Profile) with given “id” and delete
 	@DELETE
 	@Path("/companyprofile/{id}")
-	public Response deleteCompanyProfile(@PathParam("id") String id) {
+	public Response deleteCompanyProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		
 		CompanyProfile delProfile = JobsDAO.instance.deleteCompanyProfile(id);
 		//modify.s
 		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delProfile == null) {
@@ -322,6 +421,8 @@ public class FoundITResource {
 	@Path("/jobposting")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newJobPosting(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("title") String title,
 			@FormParam("description") String description,
 			@FormParam("companyprofileid") String companyProfileId,
@@ -333,6 +434,15 @@ public class FoundITResource {
 		String id = JobsDAO.instance.getNextJobPostingId();
 
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+		
 		//check no input is empty
 		if(title == null || description == null || 
 				positionType == null || desiredSkills == null || 
@@ -376,11 +486,22 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getJobPosting(@PathParam("id") String id) {
+	public Response getJobPosting(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 				
 		JobPosting p = JobsDAO.instance.getJobPosting(id);
 		Response res = null;
-
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
+		
 		if(p == null){
 			String msg = "GET: Job Posting with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
@@ -407,14 +528,25 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getSearchJobPostings(@QueryParam("keyword") String keyword, //title
+	public Response getSearchJobPostings(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@QueryParam("keyword") String keyword, //title
 			@QueryParam("title") String title,
 			@QueryParam("skills") String skills,
 			@QueryParam("status") String status,
 			@QueryParam("description") String description
 														) {
 		Response res = null;
-
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
+		
 		//search description
 		JobPostings allJobPosts;
 		if(keyword != null){
@@ -489,8 +621,19 @@ public class FoundITResource {
 	@GET
 	@Path("/jobposting/all")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getAllJobPostings() {
+	public Response getAllJobPostings(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey) {
 		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 		
 		JobPostings allJobPosts = JobsDAO.instance.getAllJobPostings();
 		
@@ -516,8 +659,20 @@ public class FoundITResource {
 	@PUT
 	@Path("/jobposting")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putJobPosting(JobPosting p) {
+	public Response putJobPosting(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			JobPosting p) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
+		
 		String msg = "success";
 		
 		//store profile
@@ -534,12 +689,25 @@ public class FoundITResource {
 //	Set flag to be archived
 	@DELETE
 	@Path("/jobposting/{id}")
-	public Response deleteJobPosting(@PathParam("id") String id) {
+	public Response deleteJobPosting(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+		
+
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		
 		JobPosting delProfile = JobsDAO.instance.deleteJobPosting(id);
 		//modify.s
 		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delProfile == null) {
@@ -566,6 +734,8 @@ public class FoundITResource {
 	@Path("/jobapplication")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newJobApplication(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("jobpostid") String jobpostId,
 			@FormParam("userprofileid") String userProfileId,
 			@FormParam("coverletter") String coverLetter,
@@ -574,6 +744,14 @@ public class FoundITResource {
 		String id = JobsDAO.instance.getNextJobApplicationId();
 
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
 		//check no input is empty
 		if(coverLetter == null || 
 				resume == null){
@@ -608,8 +786,16 @@ public class FoundITResource {
 			res = resBuild.build();
 			
 			//throw new RuntimeException("POST: No User found with id:" + userProfileId);
+		} else if(existingPost.getStatus().matches(JobPosting.STATUS_CLOSED)){
+			String msg = "POST: Job Application closed id:" + userProfileId;
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(400);
+			res = resBuild.build();
+			
 		} else {
 		
+			
+			
 			//create new application
 			JobApplication newJobApp= new JobApplication(id, jobpostId,
 					userProfileId, coverLetter, resume);
@@ -636,9 +822,19 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getJobApplication(@PathParam("id") String id) {
+	public Response getJobApplication(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
-		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 		JobApplication a = JobsDAO.instance.getJobApplication(id);
 
 		if(a==null){
@@ -661,9 +857,20 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getSearchJobApplications(@QueryParam("jobpostid") String queryJobPost,
-											@QueryParam("userprofileid") String queryUser) {
+	public Response getSearchJobApplications(
+								@HeaderParam("SecurityKey") String securityKey,
+								@HeaderParam("ShortKey") String shortKey,
+								@QueryParam("jobpostid") String queryJobPost,
+								@QueryParam("userprofileid") String queryUser) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
 		
 		if(queryJobPost != null){
 			//search description
@@ -719,8 +926,18 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/all")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getAllJobApplications() {
+	public Response getAllJobApplications(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 		
 		JobApplications allJobApps = JobsDAO.instance.getAllJobApplications();
 				
@@ -749,8 +966,19 @@ public class FoundITResource {
 	@PUT
 	@Path("/jobapplication")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putJobApplication(JobApplication p) {
+	public Response putJobApplication(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			JobApplication p) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
 		
 		//check job application exists
 		//check user profile exists
@@ -821,12 +1049,22 @@ public class FoundITResource {
 //	Returns Success
 	@DELETE
 	@Path("/jobapplication/{id}")
-	public Response deleteJobApplication(@PathParam("id") String id) {
-		
+	public Response deleteJobApplication(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+				
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		JobApplication delApp = JobsDAO.instance.deleteJobApplication(id);
 		//modify.s
-		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delApp == null) {
@@ -858,6 +1096,8 @@ public class FoundITResource {
 	@Path("/hiringteam")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newHiringTeam(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("companyprofileid") String companyProfileId,
 			@FormParam("member1id") String member1id,
 			@FormParam("member2id") String member2id,
@@ -868,6 +1108,15 @@ public class FoundITResource {
 		String id = JobsDAO.instance.getNextHiringTeamId();
 
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+		
 		//check no input is empty
 		/*
 		if(companyProfileId == "" || member1id == "" || member2id == "" || 
@@ -919,7 +1168,7 @@ public class FoundITResource {
 			//throw new RuntimeException(errormsg);
 		}
 		
-		//TODO: check that company does not already have a hiring team
+		//TODONE: check that company does not already have a hiring team
 		
 		//create new profile
 		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
@@ -942,8 +1191,19 @@ public class FoundITResource {
 	@GET
 	@Path("/hiringteam/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getHiringTeam(@PathParam("id") String id) {
+	public Response getHiringTeam(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 		
 		//get Hiring Team Store
 		HiringTeamStore reqHiringTeam = JobsDAO.instance.getHiringTeam(id);
@@ -996,8 +1256,19 @@ public class FoundITResource {
 	@PUT
 	@Path("/hiringteam")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putHiringTeam(HiringTeamStore t) {
+	public Response putHiringTeam(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			HiringTeamStore t) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
 		
 		//check company exists
 		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(t.getCompanyProfileId());
@@ -1077,12 +1348,24 @@ public class FoundITResource {
 //	Remove the hiring team from a company
 	@DELETE
 	@Path("/hiringteam/{id}")
-	public Response deleteHiringTeam(@PathParam("id") String id) {
+	public Response deleteHiringTeam(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		
 		HiringTeamStore delProfile = JobsDAO.instance.deleteHiringTeam(id);
 		//modify.s
 		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delProfile == null) {
@@ -1108,12 +1391,23 @@ public class FoundITResource {
 	@Path("/teammemberprofile")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newTeamMemberProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("professionalskills") String professionalSkills
 	) throws IOException {
-		String id = JobsDAO.instance.getNextTeamMemberProfileId();
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
+		String id = JobsDAO.instance.getNextTeamMemberProfileId();
 		//check no input is empty
 		if(username == null || password == null || professionalSkills == null){
 			//res.status();
@@ -1135,8 +1429,19 @@ public class FoundITResource {
 	@GET
 	@Path("/teammemberprofile/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getTeamMemberProfile(@PathParam("id") String id) {
+	public Response getTeamMemberProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 		
 		TeamMemberProfile u = JobsDAO.instance.getTeamMemberProfile(id);
 		
@@ -1157,8 +1462,20 @@ public class FoundITResource {
 	@PUT
 	@Path("/teammemberprofile")
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putTeamMemberProfile(TeamMemberProfile p) {
+	public Response putTeamMemberProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			TeamMemberProfile p) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("PUT: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			return res;
+		}
+		
 		String msg = "success";
 		
 		//store profile
@@ -1172,12 +1489,24 @@ public class FoundITResource {
 //	Removal: Not supported.  
 	@DELETE
 	@Path("/teammemberprofile/{id}")
-	public Response deleteTeamMemberProfile(@PathParam("id") String id) {
+	public Response deleteTeamMemberProfile(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
+			//reject
+			res = Response.status(401).entity("DELETE: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			return res;
+		}
 		
 		TeamMemberProfile delProfile = JobsDAO.instance.deleteTeamMemberProfile(id);
 		//modify.s
 		
-		Response res = null;
 		int errorCode = 400;
 		
 		if(delProfile == null) {
@@ -1202,12 +1531,24 @@ public class FoundITResource {
 	@Path("/jobappreviewassign")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newReviewAssignment(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("jobapplicationid") String jobApplicationId,
 			@FormParam("reviewer1") String reviewer1,
 			@FormParam("reviewer2") String reviewer2
 	) throws IOException {
-		String id = JobsDAO.instance.getJobApplicationAssignmentId();
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEW_ASSIGNMENT, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
+		String id = JobsDAO.instance.getJobApplicationAssignmentId();
+		
 		//check no input is empty
 		/*
 		if(jobApplicationId == null || reviewer1 == null || reviewer2 == null){
@@ -1274,9 +1615,20 @@ public class FoundITResource {
 	@GET
 	@Path("/jobappreviewassign/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getReviewAssignment(@PathParam("id") String id) {
+	public Response getReviewAssignment(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
-		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEW_ASSIGNMENT, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
 		JobApplicationAssignment u = JobsDAO.instance.getJobApplicationAssignment(id);
 
 		if(u==null){
@@ -1305,12 +1657,12 @@ public class FoundITResource {
 			@HeaderParam("ShortKey") String shortKey,
 			@PathParam("id") String id) {
 		Response res = null;
-		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEWS, shortKey)){
 			//reject
-			res = Response.status(201).entity("POST: User permission denied").build();
+			res = Response.status(401).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(201).entity("POST: Security key incorrect").build();
+			res = Response.status(403).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1329,7 +1681,6 @@ public class FoundITResource {
 		return res;
 		
 	}
-		
 	
 	//PUT
 	//Update: Not supported
@@ -1349,14 +1700,28 @@ public class FoundITResource {
 	@Path("/review")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response newReview(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
 			@FormParam("teammemberprofileid") String teamMemberProfileId,
 			@FormParam("jobapplicationid") String jobApplicationId,
 			@FormParam("comments") String comments,
 			@FormParam("decision") String decision
 	) throws IOException {
-		String id = JobsDAO.instance.getNextReviewId();	
 
 		Response res = null;
+		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEWS, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
+		
+		String id = JobsDAO.instance.getNextReviewId();	
+
 		//check no input is empty
 		if(comments == null || 
 				decision == null){
@@ -1405,9 +1770,20 @@ public class FoundITResource {
 	@GET
 	@Path("/review/{id}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getReview(@PathParam("id") String id) {
+	public Response getReview(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
 		Response res = null;
-		
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEWS, shortKey)){
+			//reject
+			res = Response.status(401).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
 		Review u = JobsDAO.instance.getReview(id);
 		
 		if(u==null){
@@ -1442,10 +1818,21 @@ public class FoundITResource {
 	@GET
 	@Path("/jobalerts")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getJobAlerts(@QueryParam("keyword") String keyword, //title
+	public Response getJobAlerts(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@QueryParam("keyword") String keyword, //title
 			@QueryParam("sort_by") String sortAttribute,
 			@QueryParam("email") String email) {
 		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
+			//reject
+			res = Response.status(401).entity("GET: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(403).entity("GET: Security key incorrect").build();
+			return res;
+		}
 
 		System.out.println("Received " + keyword + " " + sortAttribute + " " + email);
 		JobAlertDAO jobAlert = new JobAlertDAO();

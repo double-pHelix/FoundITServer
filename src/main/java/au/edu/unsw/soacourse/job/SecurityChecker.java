@@ -35,7 +35,8 @@ public enum SecurityChecker {
 	
 	private int READ = 0;
 	private int WRITE = 1;
-			
+
+	private int ERROR = 999;
 			
 	private SecurityChecker(){
 		readPermission = new boolean[NUM_RESOURCES][NUM_USERS];
@@ -62,7 +63,7 @@ public enum SecurityChecker {
 		readPermission[JOB_POSTING][REVIEWER] = true;
 		
 		readPermission[REVIEWS][CANDIDATE] = false;
-		readPermission[REVIEWS][REVIEWER] = true;
+		readPermission[REVIEWS][MANAGER] = true;
 		readPermission[REVIEWS][REVIEWER] = true;
 		
 		readPermission[REVIEW_ASSIGNMENT][CANDIDATE] = false;
@@ -117,7 +118,7 @@ public enum SecurityChecker {
 			return REVIEWER;
 		}
 		
-		return 999;
+		return ERROR;
 	}
 	
 	public int convertMethod(String method){
@@ -132,10 +133,12 @@ public enum SecurityChecker {
 			return WRITE;
 		}
 		
-		return 999;
+		return ERROR;
 	}
 	
 	public boolean keyAccepted(String givenKey){
+		if(givenKey == null)
+			return false;
 		
 		if(secretKeyString.matches(givenKey)){
 			return true;
@@ -145,8 +148,15 @@ public enum SecurityChecker {
 	}
 	
 	public boolean checkPermisionResource(String method, int resource, String shortKey){
+		if(shortKey == null)
+			return false;
+		
 		int userVal = convertUser(shortKey);
 		int toRead = convertMethod(method);
+		
+		if(toRead == ERROR || userVal == ERROR){
+			return false;
+		}
 		
 		if(toRead == READ){
 			return readPermission[resource][userVal];
