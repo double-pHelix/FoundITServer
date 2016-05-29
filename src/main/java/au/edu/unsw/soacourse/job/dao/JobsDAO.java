@@ -733,6 +733,23 @@ public enum JobsDAO {
 	  	return newJobApplications;
   }
   
+  public JobApplications searchJobApplicationsUserId(String query){
+	  	//		
+		//match as a substring
+		//query = ".*" + query + ".*";
+	  	loadJobApplicationsFromFile();
+	  	
+	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
+
+	  	for(JobApplication app : contentStoreApplications.values()){
+	  		if(app.getUserProfileId().matches(query)){
+	  			JobApplicationsList.add(app);
+	  		}
+	  	}
+	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
+	  	
+	  	return newJobApplications;
+}
   
   public JobApplications getAllJobApplications(){
 	  	//
