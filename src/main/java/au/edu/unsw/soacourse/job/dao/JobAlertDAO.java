@@ -286,14 +286,14 @@ public class JobAlertDAO {
 		}
 	}
 	
-	private void writeXquery(String keyword, String sort) {
+	private void writeXquery(String keyword, String sort, String id) {
 		FileWriter fw = null;
 		//Do something if keyword is null
 		if(keyword == null) {
 			keyword = "";
 		}
 		try {
-			fw = new FileWriter(QUERY_XQ);
+			fw = new FileWriter(QUERY_XQ + id);
 			
 			String query = 	"<QueryMatch>\n" +
 							"{ \n" +
@@ -320,9 +320,16 @@ public class JobAlertDAO {
 		}
 	}
 	
-	public void executeQuery(String keyword, String sort) {
-		writeXquery(keyword, sort);
-		executeQueryAll();
+	public void executeQuery(String keyword, String sort, String id) {
+		writeXquery(keyword, sort, id);
+		executeQueryAll(id);
+	}
+	
+	public void sendEmailToUser(String email, String id) {
+		MailService m = new MailService();
+		//String recAddress = "fasor@outlook.com";
+		String subject = "JobAlerts";
+		m.sendMail(email, subject, QUERY_MATCH+id);
 	}
 	
 	private void mergeDocuments() {
@@ -374,10 +381,10 @@ public class JobAlertDAO {
 
 	}
 
-	private void executeQueryAll() {
+	private void executeQueryAll(String id) {
 		InputStream inputStream = null;
 		try {
-			inputStream = new FileInputStream(new File(QUERY_XQ));
+			inputStream = new FileInputStream(new File(QUERY_XQ+id));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -391,7 +398,7 @@ public class JobAlertDAO {
 			exp = conn.prepareExpression(inputStream);
 			result = exp.executeQuery();
 			
-			fw = new FileWriter(QUERY_MATCH);
+			fw = new FileWriter(QUERY_MATCH+id);
 			BufferedWriter out = new BufferedWriter(fw);
 			out.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 			while (result.next()) {
@@ -617,10 +624,17 @@ public class JobAlertDAO {
 	
 	//PLay with tests here
 	public void testJobAlert() {
-		setupFile();
-		parseHtml();
-		executeQuery("Math", "title");
-		readFile();
+		//setupFile();
+		//parseHtml();
+		//executeQuery("Math", "title");
+		//readFile();
+		
+		//Send mail
+		MailService m = new MailService();
+		String recAddress = "Place email here";
+		String subject = "JobAlerts";
+		m.sendMail(recAddress, subject, QUERY_MATCH);
+		//m.sendEmailEx();
 	}
 	
 	private void writeXSLTTrans() {
