@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import au.edu.unsw.soacourse.job.dao.JobAlertDAO;
 import au.edu.unsw.soacourse.job.dao.JobsDAO;
 import au.edu.unsw.soacourse.job.model.CompanyProfile;
 import au.edu.unsw.soacourse.job.model.HiringTeam;
@@ -1376,9 +1377,39 @@ public class FoundITResource {
 	@Path("/jobalerts/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getJobAlerts(@QueryParam("keyword") String keyword, //title
-			@QueryParam("sort_by") String sortAttribute) {
+			@QueryParam("sort_by") String sortAttribute,
+			@QueryParam("email") String email) {
 		Response res = null;
 
+		JobAlertDAO jobAlert = new JobAlertDAO();
+		int errorCode = 400;
+		
+		if(keyword == null || email == null) {
+			String msg = "Keyword or email was not given";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(errorCode);
+			res = resBuild.build();
+		}
+		//This only needs to be called once..
+		jobAlert.setupFile();
+		
+		String sort = sortAttribute;
+		if (sort.length() < 2 ) {
+			sort = null;
+		}
+		
+		//Execute query
+		String emailID = email.replace(".", "");
+		emailID = emailID.replace("@","");
+		jobAlert.executeQuery(keyword, sort, emailID);
+		jobAlert.sendEmailToUser(email, emailID);
+		
+		//Successful email sent
+		String msg = "Email Sent";
+		ResponseBuilder resBuild = Response.ok(msg);
+		resBuild.status(200);
+		res = resBuild.build();
+		
 		/*
 		//search description
 		JobPostings allJobPosts;
