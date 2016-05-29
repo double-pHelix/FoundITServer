@@ -62,6 +62,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 //TODO::Update Members1-5 to be a list of TeamMemberProfile of size 5... (note passwords being sent as well lol)
 //TODO::Change reviewer to TeamMemberProfile with URI
 //TODO::ERROR HANDLING CODES...
+
 //We can change this path
 @Path("/")
 public class FoundITResource {
@@ -94,12 +95,8 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
-		if(!SecurityChecker.instance.checkPermisionResource("POST", SecurityChecker.USER_PROFILE, shortKey) ||
-				!SecurityChecker.instance.keyAccepted(securityKey)){
-			//reject
-			
-		}
 		Response res = null;
+
 		//check no input is empty
 		if(name == null || currentPosition == null || education == null || 
 				pastExperience == null || professionalSkills == null){
@@ -1297,6 +1294,43 @@ public class FoundITResource {
 		return res;
 		
 	}
+	
+	//GET
+	//Get Job Application’s Assigned members
+	@GET
+	@Path("/jobappreviewassign/reviewer/{id}")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getReviewersAssignment(
+			@HeaderParam("SecurityKey") String securityKey,
+			@HeaderParam("ShortKey") String shortKey,
+			@PathParam("id") String id) {
+		Response res = null;
+		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
+			//reject
+			res = Response.status(201).entity("POST: User permission denied").build();
+			return res;
+		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
+			res = Response.status(201).entity("POST: Security key incorrect").build();
+			return res;
+		}
+
+		JobApplications u = JobsDAO.instance.searchApplicationsTeamMembertId(id);
+
+		if(u==null){
+			String msg = "GET: Job Application Assignment with:" + id +  " not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(400);
+			res = resBuild.build();
+		} else {
+
+			res = Response.ok(u).build();
+		}
+		
+		return res;
+		
+	}
+		
+	
 	//PUT
 	//Update: Not supported
 	

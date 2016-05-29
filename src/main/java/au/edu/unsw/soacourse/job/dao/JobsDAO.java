@@ -742,6 +742,29 @@ public enum JobsDAO {
 	  	return newJobApplications;
   }
   
+  public JobApplications searchApplicationsTeamMembertId(String query){
+	  	//		
+		//match as a substring
+		//query = ".*" + query + ".*";
+	  	loadJobApplicationAssignmentsFromFile();
+	  	
+	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
+
+	  	for(JobApplicationAssignment appAss : contentStoreJobApplicationAssignment.values()){
+	  		if(appAss.getReviewer1().matches(query) || appAss.getReviewer2().matches(query)){
+	  			
+	  			//add job...
+	  			JobApplicationsList.add(getJobApplication(appAss.getJobApplicationId()));
+	  		}
+	  	}
+	  	
+	  	if(JobApplicationsList.size() == 0)
+	  		return null;
+	  	
+	  	
+	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
+	  	return newJobApplications;
+}
   public JobApplications searchJobApplicationsUserId(String query){
 	  	//		
 		//match as a substring
