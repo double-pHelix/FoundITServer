@@ -710,31 +710,7 @@ public class FoundITResource {
 		return res;
 		
 	}
-//	Get User’s Applications (for Manager)
-//	Go through all applications that have job_application id matching the given job posting->id
-//	Return XML of Job Applications
-	@GET
-	@Path("/jobapplication/search")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getSearchUsersJobApplications(@DefaultValue(".*") @QueryParam("userprofileid") String query) {
-		Response res = null;
-		
-		//search description
-		//System.out.println("Search Job Application Id:" + query);
-		JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsPostId(query);
-		
-		if(allJobApplications==null){
-			String msg = "GET: No Job Applications with Job Application Id:" + query;
-			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
-			res = resBuild.build();
-		} else {
-			res = Response.ok(allJobApplications).build();
-		}
-		
-		return res;
-		
-	}
+
 //	Get Job Applications assigned for review
 //	Search (Job Application Assignments), if reviewer-id matches either of assigned reviewer ids, return job application-ids
 //	Return list of job-application ids and URIs
