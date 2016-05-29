@@ -34,7 +34,7 @@ public class Review {
 		this.jobApplicationId = jobApplicationId;
 		this.comments = comments;
 		this.decision = decision;
-		this.link = "http://localhost:8080/RestfulJobService/review/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/review/" + this.id;
 	}
 	
 	public String getId() {

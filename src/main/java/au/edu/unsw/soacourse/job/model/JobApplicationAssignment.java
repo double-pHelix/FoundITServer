@@ -30,7 +30,7 @@ public class JobApplicationAssignment {
 		this.jobApplicationId = jobApplicationId;
 		this.reviewer1 = reviewer1;
 		this.reviewer2 = reviewer2;
-		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/jobappreviewassign/" + this.id;
 	}
 	
 	public String getId() {
@@ -38,7 +38,7 @@ public class JobApplicationAssignment {
 	}
 	public void setId(String id) {
 		this.id = id;
-		this.link = "http://localhost:8080/RestfulJobService/jobappreviewassign/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/jobappreviewassign/" + this.id;
 	}
 	public String getJobApplicationId() {
 		if(sendVersion == true)

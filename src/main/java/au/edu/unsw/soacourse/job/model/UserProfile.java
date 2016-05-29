@@ -20,7 +20,7 @@ public class UserProfile {
 
     public UserProfile(String id) {
 		super();
-		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + id;
+		this.link = "http://localhost:8080/FoundITServer/userprofile/" + id;
 	}
     
 	public UserProfile(String id, String name, String currentPosition,
@@ -32,7 +32,7 @@ public class UserProfile {
 		this.education = education;
 		this.pastExperience = pastExperience;
 		this.professionalSkills = professionalSkills;
-		this.link = "http://localhost:8080/RestfulJobService/userprofile/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/userprofile/" + this.id;
 	}
 
 	public String getId() {

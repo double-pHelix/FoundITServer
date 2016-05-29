@@ -35,7 +35,7 @@ public class HiringTeamStore {
 		super();
 		this.id = id;
 		this.companyProfileId = companyProfileId;
-		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/hiringteam/" + this.id;
 	}
 	
 	public HiringTeamStore(String id, String companyProfileId,
@@ -50,7 +50,7 @@ public class HiringTeamStore {
 		this.member3id = member3id;
 		this.member4id = member4id;
 		this.member5id = member5id;
-		this.link = "http://localhost:8080/RestfulJobService/hiringteam/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/hiringteam/" + this.id;
 	}
 
 	public String getId() {

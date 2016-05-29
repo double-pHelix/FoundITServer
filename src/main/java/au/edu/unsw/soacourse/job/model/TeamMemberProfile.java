@@ -16,7 +16,7 @@ public class TeamMemberProfile {
 	}
 	public TeamMemberProfile(String id) {
 		super();
-		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + id;
+		this.link = "http://localhost:8080/FoundITServer/teammemberprofile/" + id;
 	}
 	
 	public TeamMemberProfile(String id, String username, String password,
@@ -26,7 +26,7 @@ public class TeamMemberProfile {
 		this.username = username;
 		this.password = password;
 		this.professionalSkills = professionalSkills;
-		this.link = "http://localhost:8080/RestfulJobService/teammemberprofile/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/teammemberprofile/" + this.id;
 	}
 
 	public String getId() {

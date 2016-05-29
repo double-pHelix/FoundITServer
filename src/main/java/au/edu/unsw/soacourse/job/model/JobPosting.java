@@ -37,7 +37,7 @@ public class JobPosting {
 	
 	public JobPosting(String id) {
 		super();
-		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + id;
+		this.link = "http://localhost:8080/FoundITServer/jobposting/" + id;
 	}
 	
 
@@ -55,7 +55,7 @@ public class JobPosting {
 		this.location = location;
 		this.status = STATUS_OPEN;
 		this.archived = ARCHIVED_FALSE;
-		this.link = "http://localhost:8080/RestfulJobService/jobposting/" + this.id;
+		this.link = "http://localhost:8080/FoundITServer/jobposting/" + this.id;
 	}
 
 	public String getId() {
