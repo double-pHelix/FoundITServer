@@ -694,7 +694,9 @@ public enum JobsDAO {
   		} 
   		
   	}
-  	
+  	if(jobPostingsList.size() == 0)
+  		return null;
+	  
   	JobPostings newJobPostings = new JobPostings(jobPostingsList);
   	
   	return newJobPostings;
@@ -710,6 +712,9 @@ public enum JobsDAO {
 		  jobPostingsList.add(posting);
 		
 	  }
+	  if(jobPostingsList.size() == 0)
+		  return null;
+	  
 	  JobPostings newJobPostings = new JobPostings(jobPostingsList);
 	
 	  return newJobPostings;
@@ -728,8 +733,12 @@ public enum JobsDAO {
 	  			JobApplicationsList.add(app);
 	  		}
 	  	}
-	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
 	  	
+	  	if(JobApplicationsList.size() == 0)
+	  		return null;
+	  	
+	  	
+	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
 	  	return newJobApplications;
   }
   
@@ -746,6 +755,11 @@ public enum JobsDAO {
 	  			JobApplicationsList.add(app);
 	  		}
 	  	}
+	  	
+	  	if(JobApplicationsList.size() == 0)
+	  		return null;
+	  	
+	  	
 	  	JobApplications newJobApplications = new JobApplications(JobApplicationsList);
 	  	
 	  	return newJobApplications;
