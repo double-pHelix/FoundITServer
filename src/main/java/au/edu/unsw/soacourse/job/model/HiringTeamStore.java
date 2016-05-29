@@ -142,7 +142,7 @@ public class HiringTeamStore {
 		this.companyProfileId = companyProfileLnk.getId();
 		
 	}
-	@XmlElement(name = "teamMemberProfile")
+	@XmlElement(name = "teamMemberProfile1")
 	public TeamMemberProfile getMember1Link() {
 		if(this.member1id == null)
 			return null;
@@ -153,7 +153,7 @@ public class HiringTeamStore {
 	public void setMember1Link(TeamMemberProfile member1Link) {
 		this.member1Link = member1Link;
 	}
-	@XmlElement(name = "teamMemberProfile")
+	@XmlElement(name = "teamMemberProfile2")
 	public TeamMemberProfile getMember2Link() {
 		if(this.member2id == null)
 			return null;
@@ -164,7 +164,7 @@ public class HiringTeamStore {
 	public void setMember2Link(TeamMemberProfile member2Link) {
 		this.member2Link = member2Link;
 	}
-	@XmlElement(name = "teamMemberProfile")
+	@XmlElement(name = "teamMemberProfile3")
 	public TeamMemberProfile getMember3Link() {
 		if(this.member3id == null)
 			return null;
@@ -175,7 +175,7 @@ public class HiringTeamStore {
 	public void setMember3Link(TeamMemberProfile member3Link) {
 		this.member3Link = member3Link;
 	}
-	@XmlElement(name = "teamMemberProfile")
+	@XmlElement(name = "teamMemberProfile4")
 	public TeamMemberProfile getMember4Link() {
 		if(this.member4id == null)
 			return null;
@@ -186,7 +186,7 @@ public class HiringTeamStore {
 	public void setMember4Link(TeamMemberProfile member4Link) {
 		this.member4Link = member4Link;
 	}
-	@XmlElement(name = "teamMemberProfile")
+	@XmlElement(name = "teamMemberProfile5")
 	public TeamMemberProfile getMember5Link() {
 		if(this.member5id == null)
 			return null;
