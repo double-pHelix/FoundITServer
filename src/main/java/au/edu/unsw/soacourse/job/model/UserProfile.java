@@ -90,6 +90,7 @@ public class UserProfile {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")

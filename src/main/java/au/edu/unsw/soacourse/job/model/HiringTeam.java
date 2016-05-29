@@ -58,6 +58,7 @@ public class HiringTeam {
 
 	public void setCompanyProfileLnk(CompanyProfile companyProfile) {
 		this.companyProfileLnk = companyProfile;
+		this.companyProfileId = companyProfileLnk.getId();
 	}
 
 	public String getCompanyProfileId() {
@@ -81,6 +82,7 @@ public class HiringTeam {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")

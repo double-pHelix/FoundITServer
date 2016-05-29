@@ -79,6 +79,7 @@ public class Review {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")
@@ -101,6 +102,8 @@ public class Review {
 
 	public void setTeamMemberProfileLink(TeamMemberProfile teamMemberProfileLink) {
 		this.teamMemberProfileLink = teamMemberProfileLink;
+		this.teamMemberProfileId = teamMemberProfileLink.getId();
+		
 	}
 
 	@XmlElement(name = "jobApplication")
@@ -114,6 +117,7 @@ public class Review {
 
 	public void setJobApplicationLink(JobApplication jobApplicationLink) {
 		this.jobApplicationLink = jobApplicationLink;
+		this.jobApplicationId = jobApplicationLink.getId();
 	}
 	
 	

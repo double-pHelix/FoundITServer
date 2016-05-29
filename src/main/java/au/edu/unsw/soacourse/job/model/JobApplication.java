@@ -124,6 +124,7 @@ public class JobApplication {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")
@@ -146,6 +147,7 @@ public class JobApplication {
 
 	public void setJobPostLink(JobPosting jobPostLink) {
 		this.jobPostLink = jobPostLink;
+		this.jobPostId = jobPostLink.getId();
 	}
 	
 	@XmlElement(name = "userProfile")
@@ -159,6 +161,7 @@ public class JobApplication {
 
 	public void setUserProfileLink(UserProfile userProfileLink) {
 		this.userProfileLink = userProfileLink;
+		this.userProfileId = userProfileLink.getId();
 	}
     
 

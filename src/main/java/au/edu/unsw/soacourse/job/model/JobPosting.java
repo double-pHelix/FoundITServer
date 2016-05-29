@@ -131,6 +131,7 @@ public class JobPosting {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")
@@ -153,6 +154,7 @@ public class JobPosting {
 
 	public void setCompanyProfileLink(CompanyProfile companyProfileLink) {
 		this.companyProfileLink = companyProfileLink;
+		this.companyProfileId = companyProfileLink.getId();
 	}
 	
 	

@@ -102,6 +102,7 @@ public class HiringTeamStore {
 
 	public void setLink(String link) {
 		this.link = link;
+		this.id = link.substring(link.length()-1);
 	}
 
 	@XmlAttribute(name = "rel")
@@ -123,6 +124,8 @@ public class HiringTeamStore {
 	}
 	public void setCompanyProfileLnk(CompanyProfile companyProfileLnk) {
 		this.companyProfileLnk = companyProfileLnk;
+		this.companyProfileId = companyProfileLnk.getId();
+		
 	}
 
 
