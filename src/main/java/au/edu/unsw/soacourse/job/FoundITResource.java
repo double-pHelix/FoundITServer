@@ -93,6 +93,11 @@ public class FoundITResource {
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
+		if(!SecurityChecker.instance.checkPermisionResource("POST", SecurityChecker.USER_PROFILE, shortKey) ||
+				!SecurityChecker.instance.keyAccepted(securityKey)){
+			//reject
+			
+		}
 		Response res = null;
 		//check no input is empty
 		if(name == null || currentPosition == null || education == null || 
@@ -658,7 +663,59 @@ public class FoundITResource {
 	@GET
 	@Path("/jobapplication/search")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getSearchJobApplications(@DefaultValue(".*") @QueryParam("jobpostid") String query) {
+	public Response getSearchJobApplications(@QueryParam("jobpostid") String queryJobPost,
+											@QueryParam("userprofileid") String queryUser) {
+		Response res = null;
+		
+		if(queryJobPost != null){
+			//search description
+			//System.out.println("Search Job Application Id:" + query);
+			JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsPostId(queryJobPost);
+			
+			if(allJobApplications==null){
+				String msg = "GET: No Job Applications with Job Application Id:" + queryJobPost;
+				ResponseBuilder resBuild = Response.ok(msg);
+				resBuild.status(400);
+				res = resBuild.build();
+			} else {
+				res = Response.ok(allJobApplications).build();
+			}
+		} else if(queryUser != null){
+			JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsUserId(queryUser);
+			
+			if(allJobApplications==null){
+				String msg = "GET: No Job Applications for User Id:" + queryUser;
+				ResponseBuilder resBuild = Response.ok(msg);
+				resBuild.status(400);
+				res = resBuild.build();
+			} else {
+				res = Response.ok(allJobApplications).build();
+			}
+		} else {
+			//default returns all
+			String query = ".*";
+			JobApplications allJobApplications = JobsDAO.instance.searchJobApplicationsPostId(query);
+			
+			if(allJobApplications==null){
+				String msg = "GET: No Job Applications exist";
+				ResponseBuilder resBuild = Response.ok(msg);
+				resBuild.status(400);
+				res = resBuild.build();
+			} else {
+				res = Response.ok(allJobApplications).build();
+			}
+		}
+		
+		return res;
+		
+	}
+//	Get User’s Applications (for Manager)
+//	Go through all applications that have job_application id matching the given job posting->id
+//	Return XML of Job Applications
+	@GET
+	@Path("/jobapplication/search")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getSearchUsersJobApplications(@DefaultValue(".*") @QueryParam("userprofileid") String query) {
 		Response res = null;
 		
 		//search description
@@ -677,7 +734,6 @@ public class FoundITResource {
 		return res;
 		
 	}
-	
 //	Get Job Applications assigned for review
 //	Search (Job Application Assignments), if reviewer-id matches either of assigned reviewer ids, return job application-ids
 //	Return list of job-application ids and URIs
@@ -1373,7 +1429,7 @@ public class FoundITResource {
 	//http://foundit-server/jobalerts?keyword={keyword}
    // http://foundit-server/jobalerts?keyword={keyword}&sort_by=jobtitle 
 	@GET
-	@Path("/jobalerts/search")
+	@Path("/jobalerts")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getJobAlerts(@QueryParam("keyword") String keyword, //title
 			@QueryParam("sort_by") String sortAttribute) {
