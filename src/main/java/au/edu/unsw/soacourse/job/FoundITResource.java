@@ -40,7 +40,7 @@ import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
 
-//TODO::SECURITY
+//TODONE::SECURITY
 //key == match
 //
 
@@ -50,7 +50,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 //TODONE: Processes for
 	//if reviews are in set status for application
 
-//TODO: input checks
+//TODONE: input checks
 	//If job post is closed reject application
 	//If PUT status isn't valid reject 
 
@@ -1622,10 +1622,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEW_ASSIGNMENT, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(401).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(403).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1777,10 +1777,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEWS, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(401).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(403).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
