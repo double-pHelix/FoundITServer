@@ -1366,5 +1366,70 @@ public class FoundITResource {
 //	DELETE:
 //	Not Supported: Review is attached to a job application forever
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Job Alerts
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//http://foundit-server/jobalerts?keyword={keyword}
+   // http://foundit-server/jobalerts?keyword={keyword}&sort_by=jobtitle 
+	@GET
+	@Path("/jobalerts/search")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getJobAlerts(@QueryParam("keyword") String keyword, //title
+			@QueryParam("sort_by") String sortAttribute) {
+		Response res = null;
 
+		/*
+		//search description
+		JobPostings allJobPosts;
+		if(keyword != null){
+			allJobPosts = JobsDAO.instance.searchJobPostingKeyword(keyword);
+		} else { //the rest
+			if(title != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(title, "title");
+			} else if(skills != null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
+			} else if(status!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
+			} else if(description!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
+			} else {
+				allJobPosts = null;
+			}
+			
+		}
+		
+		//if there was an error
+		if(allJobPosts==null){
+			String msg = new String();
+
+			//res = Response.status(Response.Status.BAD_REQUEST).build();
+			if(keyword != null){
+				msg = "GET: No Job Postings not found for keyword:" + keyword;
+			} else if(title != null){
+				msg = "GET: No Job Postings not found for title:" + title;
+			} else if(skills != null){
+				msg = "GET: No Job Postings not found for skills:" + skills;
+			} else if(status!= null){
+				msg = "GET: No Job Postings not found for status:" + status;
+			} else if(description!= null){
+				msg = "GET: No Job Postings not found for description:" + description;
+			} else {
+				msg = "GET: No Query Provided";
+			}
+			
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(400);
+			res = resBuild.build();
+			
+		} else {
+			res = Response.ok(allJobPosts).build();
+		}
+		*/
+		
+		return res;
+		
+	}
+	
+	
 }
