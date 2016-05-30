@@ -337,7 +337,7 @@ public class FoundITResource {
 			Integer.parseInt(u.getId());
 
 			//store profile
-			String msg = "success";
+			String msg = "PUT: Success";
 			//store profile
 			JobsDAO.instance.storeCompanyProfile(u);
 			//Probably should modify test to be in xml format or something :/
@@ -629,17 +629,25 @@ public class FoundITResource {
 			return res;
 		}
 		
+		CompanyProfile existingProfile = JobsDAO.instance.getCompanyProfile(p.getCompanyProfileId());
+		if(existingProfile == null){
+			String msg = "PUT: Given CompanyProfile does not exist";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+			return res;
+		}
+		
 		try {
 			Integer.parseInt(p.getId());
 
 			//store profile
-			String msg = "success";
+			String msg = "PUT Success";
 			
 			//store profile
 			JobsDAO.instance.storeJobPosting(p);
 			//Probably should modify test to be in xml format or something :/
 			res = Response.ok(msg).build();
-			return res;
 			
 		} catch (Exception e){
 			String msg = "PUT: jobPostingId Not a integer";
@@ -1130,7 +1138,7 @@ public class FoundITResource {
 			
 		}
 		
-		//TODO: check that company does not already have a hiring team
+		//TODONE: check that company does not already have a hiring team? Give the user the choice. A company may have more than one team.
 		
 		//create new profile
 		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
@@ -1279,7 +1287,7 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeHiringTeam(t);
 		
-		String msg = "success";		
+		String msg = "PUT: Success";		
 		//Probably should modify test to be in xml format or something :/
 		res = Response.ok(msg).build();
 		//res.
@@ -1416,7 +1424,7 @@ public class FoundITResource {
 		try {
 			Integer.parseInt(p.getId());
 			
-			String msg = "success";
+			String msg = "PUT: Success";
 			
 			//store profile
 			JobsDAO.instance.storeTeamMemberProfile(p);
