@@ -691,6 +691,10 @@ public enum JobsDAO {
   			if(posting.getDescription().matches(query)){
   	  			jobPostingsList.add(posting);
   	  		}
+  		} else if(attrbute == "companyid"){
+  			if(posting.getCompanyProfileId().matches(query)){
+  	  			jobPostingsList.add(posting);
+  	  		}
   		} 
   		
   	}

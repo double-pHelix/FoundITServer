@@ -455,7 +455,7 @@ public class FoundITResource {
 		CompanyProfile existingComp = JobsDAO.instance.getCompanyProfile(companyProfileId);
 		if(existingComp == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Company with id:" + companyProfileId + "does not exist").build();
+			res = Response.status(201).entity("POST: Company with id:" + companyProfileId + " does not exist").build();
 			return res;
 		}
 		
@@ -535,6 +535,7 @@ public class FoundITResource {
 			@QueryParam("title") String title,
 			@QueryParam("skills") String skills,
 			@QueryParam("status") String status,
+			@QueryParam("companyid") String companyid,
 			@QueryParam("description") String description
 														) {
 		Response res = null;
@@ -558,6 +559,8 @@ public class FoundITResource {
 				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
 			} else if(status!= null){
 				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
+			} else if(companyid!= null){
+				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "companyid");
 			} else if(description!= null){
 				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
 			} else {
