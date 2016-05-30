@@ -1267,7 +1267,6 @@ public class FoundITResource {
 	public Response newTeamMemberProfile(
 			@HeaderParam("SecurityKey") String securityKey,
 			@HeaderParam("ShortKey") String shortKey,
-			@FormParam("userprofileid") String userProfileId,
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("professionalskills") String professionalSkills
@@ -1282,25 +1281,16 @@ public class FoundITResource {
 			return res;
 		}
 
-		
+		String id = JobsDAO.instance.getNextTeamMemberProfileId();
 		//check no input is empty
-		if(userProfileId == null ||username == null || password == null || professionalSkills == null){
+		if(username == null || password == null || professionalSkills == null){
 			//res.status();
 			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		
-		
-		//check userProfileId exists
-		UserProfile existingUser = JobsDAO.instance.getUserProfile(userProfileId);
-		
-		if(existingUser == null){
-			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: User with id:" + userProfileId + " does not exist.").build();
-			return res;
-		}
-		
 		//create new profile
-		TeamMemberProfile newTeamMemberProfile = new TeamMemberProfile(userProfileId, username, password, professionalSkills);
+		TeamMemberProfile newTeamMemberProfile = new TeamMemberProfile(id, username, password, professionalSkills);
 				
 		//store profile
 		JobsDAO.instance.storeTeamMemberProfile(newTeamMemberProfile);
