@@ -149,7 +149,6 @@ public class FoundITResource {
 			UserProfile u) {
 		Response res = null;
 		
-		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
 			//reject
 			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
@@ -159,11 +158,31 @@ public class FoundITResource {
 			return res;
 		}
 		
-		String test = "test";
+		if(u == null){
+			String msg = "PUT: Userprofile not found";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+			
+		} else {
+			res = Response.ok(u).build();
+		}
 		
-		//store profile
-		JobsDAO.instance.storeUserProfile(u);
-		res = Response.ok(test).build();
+		try {
+			Integer.parseInt(u.getId());
+
+			//store profile
+			JobsDAO.instance.storeUserProfile(u);
+			res = Response.ok("PUT: Success").build();
+			
+			
+		} catch (Exception e){
+			String msg = "PUT: userProfileId Not a integer";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}
+		
 		//res.
 		return res;
 	}
@@ -314,13 +333,24 @@ public class FoundITResource {
 			return res;
 		}
 		
-		String msg = "success";
+		try {
+			Integer.parseInt(u.getId());
+
+			//store profile
+			String msg = "success";
+			//store profile
+			JobsDAO.instance.storeCompanyProfile(u);
+			//Probably should modify test to be in xml format or something :/
+			res = Response.ok(msg).build();
+			
+		} catch (Exception e){
+			String msg = "PUT: companyProfileId Not a integer";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}
 		
-		//store profile
-		JobsDAO.instance.storeCompanyProfile(u);
-		//Probably should modify test to be in xml format or something :/
-		res = Response.ok(msg).build();
-		//res.
+
 		return res;
 	}
 	
@@ -599,13 +629,25 @@ public class FoundITResource {
 			return res;
 		}
 		
-		String msg = "success";
+		try {
+			Integer.parseInt(p.getId());
+
+			//store profile
+			String msg = "success";
+			
+			//store profile
+			JobsDAO.instance.storeJobPosting(p);
+			//Probably should modify test to be in xml format or something :/
+			res = Response.ok(msg).build();
+			return res;
+			
+		} catch (Exception e){
+			String msg = "PUT: jobPostingId Not a integer";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}
 		
-		//store profile
-		JobsDAO.instance.storeJobPosting(p);
-		//Probably should modify test to be in xml format or something :/
-		res = Response.ok(msg).build();
-		//res.
 		return res;
 	}
 	
@@ -905,6 +947,18 @@ public class FoundITResource {
 
 		String msg = new String();
 		
+		try {
+			Integer.parseInt(p.getId());
+
+		} catch (Exception e){
+			msg = "PUT: jobApplicationId Not a integer";
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+			return res;
+		}
+		
+		
 		//archived already
 		if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
 			msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
@@ -1148,6 +1202,16 @@ public class FoundITResource {
 			return res;
 		}
 		
+		try {
+			Integer.parseInt(t.getId());
+
+		} catch (Exception e){
+			ResponseBuilder resBuild = Response.ok("PUT: hiringTeamId Not a integer");
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+			return res;
+		}
+		
 		//check company exists
 		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(t.getCompanyProfileId());
 		//get users
@@ -1349,13 +1413,22 @@ public class FoundITResource {
 			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
+		try {
+			Integer.parseInt(p.getId());
+			
+			String msg = "success";
+			
+			//store profile
+			JobsDAO.instance.storeTeamMemberProfile(p);
+			//Probably should modify test to be in xml format or something :/
+			res = Response.ok(msg).build();
+		} catch (Exception e){
+			ResponseBuilder resBuild = Response.ok("PUT: teamMemberProfileId Not a integer");
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}
 		
-		String msg = "success";
-		
-		//store profile
-		JobsDAO.instance.storeTeamMemberProfile(p);
-		//Probably should modify test to be in xml format or something :/
-		res = Response.ok(msg).build();
+
 		//res.
 		return res;
 	}
