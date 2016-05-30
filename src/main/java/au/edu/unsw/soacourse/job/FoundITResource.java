@@ -39,37 +39,8 @@ import au.edu.unsw.soacourse.job.model.Review;
 import au.edu.unsw.soacourse.job.model.TeamMemberProfile;
 import au.edu.unsw.soacourse.job.model.UserProfile;
 
-
-//TODONE::SECURITY
-//key == match
-//
-
-//TODONE:: Modify output to include a GET url like in the lecture slides DONE!
-//TODONE:: Provide @OPTION method for classes (NOPE)
-//TODONE:: Delete only archives (Job Posting, Job Application)
-//TODONE: Processes for
-	//if reviews are in set status for application
-
-//TODONE: input checks
-	//If job post is closed reject application
-	//If PUT status isn't valid reject 
-
-//TODONE: remove invalid postings once companyis removed? etc..
-	//TOO HARD WE AVOID THIS!
-//TODONE: prevent team member belonging to two hiring teams?
-	//if aleady in a team, return error
-//TODONE: only one assignment per application
-//TODONE: Requried Fields?? For post
-//TODONE:: stop nested elements (at most one layer)... or prevent null elements
-//TODONE::Update Members1-5 to be a list of TeamMemberProfile of size 5... (note passwords being sent as well lol)
-//TODONE::Change reviewer to TeamMemberProfile with URI
-//TODONE::ERROR HANDLING CODES...
-
-//We can change this path
 @Path("/")
 public class FoundITResource {
-	// Allows to insert contextual objects into the class, 
-	// e.g. ServletContext, Request, Response, UriInfo
 	@Context
 	UriInfo uriInfo;
 	@Context
@@ -121,7 +92,6 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeUserProfile(newProfile);
 						
-		//res.status();
 		res = Response.status(Response.Status.CREATED).entity(newProfile).build();
 		return res;
 	}
@@ -153,14 +123,11 @@ public class FoundITResource {
 		UserProfile u = JobsDAO.instance.getUserProfile(id);
 		
 		if(u == null){
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "GET: Job with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-			//throw new RuntimeException("GET: Book with:" + id +  " not found");
-
 		} else {
 			res = Response.ok(u).build();
 		}
@@ -227,7 +194,6 @@ public class FoundITResource {
 		UserProfile delProfile = JobsDAO.instance.deleteUserProfile(id);
 				
 		if(delProfile == null) {
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Profile with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
@@ -311,17 +277,12 @@ public class FoundITResource {
 		
 		CompanyProfile c = JobsDAO.instance.getCompanyProfile(id);
 		
-		//if(c==null)
-		//	throw new RuntimeException("GET: Profile with:" + id +  " not found");
 		if(c == null){
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "GET: Profile with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
-			//throw new RuntimeException("GET: Book with:" + id +  " not found");
 		} else {
 			res = Response.ok(c).build();
 		}
@@ -384,8 +345,7 @@ public class FoundITResource {
 		}
 		
 		CompanyProfile delProfile = JobsDAO.instance.deleteCompanyProfile(id);
-		//modify.s
-				
+		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Profile with " + id +  " not found";
@@ -437,14 +397,12 @@ public class FoundITResource {
 		if(title == null || description == null || 
 				positionType == null || desiredSkills == null || 
 						salaryLevel == null || location == null){
-			//res.status();
 			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		//check company id exists
 		CompanyProfile existingComp = JobsDAO.instance.getCompanyProfile(companyProfileId);
 		if(existingComp == null){
-			//res.status();
 			res = Response.status(Response.Status.CREATED).entity("POST: Company with id:" + companyProfileId + " does not exist").build();
 			return res;
 		}
@@ -456,10 +414,7 @@ public class FoundITResource {
 				
 		//store profile
 		JobsDAO.instance.storeJobPosting(newJobPosting);
-		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
-		
+				
 		JobPosting sendJobPosting= new JobPosting(id, title, description, companyProfileId,
 				positionType, desiredSkills, salaryLevel,
 				location);
@@ -497,7 +452,6 @@ public class FoundITResource {
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
 		} else {
 			JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
@@ -507,7 +461,6 @@ public class FoundITResource {
 			
 			res = Response.ok(sendJobPosting).build();
 		}
-		
 
 		return res;
 		
@@ -589,27 +542,7 @@ public class FoundITResource {
 		return res;
 		
 	}
-	/* ADVANCED SEARCH??
-	@GET
-	@Path("/jobposting/search/advanced")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public JobPostings getSearchJobPostingsAdvanced(@DefaultValue("^$") @QueryParam("keyword") String keyword, //title
-			@DefaultValue("^$") @QueryParam("skills") String skills,
-			@DefaultValue("^$") @QueryParam("status") String status,
-			@DefaultValue("^$") @QueryParam("query") String query
-														) {
 
-		//search description
-		System.out.println("Search query:" + query);
-		JobPostings allJobPosts = JobsDAO.instance.searchJobPostingDescription(keyword, skills, status, query);
-		
-		if(allJobPosts==null)
-			throw new RuntimeException("GET: No Job Postings not found for query:" + query);
-		
-		return allJobPosts;
-		
-	}
-	*/
 //	Get All
 	@GET
 	@Path("/jobposting/all")
@@ -699,16 +632,12 @@ public class FoundITResource {
 		}
 		
 		JobPosting delProfile = JobsDAO.instance.deleteJobPosting(id);
-		//modify.s
-		
 		
 		if(delProfile == null) {
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Posting with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			String msg = "Deleted Posting:" + id;
 			res = Response.ok(msg).build();
@@ -747,7 +676,6 @@ public class FoundITResource {
 		//check no input is empty
 		if(coverLetter == null || 
 				resume == null){
-			//res.status();
 			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s= coverletter/resume").build();
 			return res;
 		}
@@ -785,9 +713,6 @@ public class FoundITResource {
 			res = resBuild.build();
 			
 		} else {
-		
-			
-			
 			//create new application
 			JobApplication newJobApp= new JobApplication(id, jobpostId,
 					userProfileId, coverLetter, resume);
@@ -988,7 +913,6 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 			
-			//throw new RuntimeException("PUT: Application with id:" + p.getUserProfileId() + " already archived.");
 		}
 		
 		if(existingPost == null && existingUser == null){
@@ -998,7 +922,6 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 			
-			//throw new RuntimeException("PUT: No Job Postings found with id:" + p.getJobPostId() + " and no User found with id:" + p.getUserProfileId());
 		} else if(existingPost == null){
 			msg = "PUT: No Job Postings found with id:" + p.getJobPostId();
 			ResponseBuilder resBuild = Response.ok(msg);
@@ -1006,14 +929,12 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 			
-			//throw new RuntimeException("PUT: No Job Postings found with id:" + p.getJobPostId());
 		} else if(existingUser == null){
 			msg = "PUT: No User found with id:" + p.getUserProfileId();
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
-			//throw new RuntimeException("PUT: No User found with id:" + p.getUserProfileId());
 		}
 		
 		if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
@@ -1023,7 +944,6 @@ public class FoundITResource {
 				resBuild.status(Response.Status.BAD_REQUEST);
 				res = resBuild.build();
 				return res;
-				//throw new RuntimeException("PUT: Application cannot be accepted or rejected without being shortlisted.");
 			}
 		}
 
@@ -1056,10 +976,8 @@ public class FoundITResource {
 			return res;
 		}
 		JobApplication delApp = JobsDAO.instance.deleteJobApplication(id);
-		//modify.s
 		
 		if(delApp == null) {
-			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Application with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
@@ -1156,10 +1074,9 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 			
-			//throw new RuntimeException(errormsg);
 		}
 		
-		//TODONE: check that company does not already have a hiring team
+		//TODO: check that company does not already have a hiring team
 		
 		//create new profile
 		HiringTeamStore newHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
@@ -1169,9 +1086,6 @@ public class FoundITResource {
 		
 		HiringTeamStore sendHiringTeam = new HiringTeamStore(id, companyProfileId, member1id, member2id, member3id, member4id, member5id);
 		sendHiringTeam.setSendVersion(true);
-		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
 		
 		res = Response.status(Response.Status.CREATED).entity(sendHiringTeam).build();
 		return res;
@@ -1212,34 +1126,7 @@ public class FoundITResource {
 		}
 		
 		return res;
-		
-		/*
-		String companyProfileId = reqHiringTeam.getCompanyProfileId();
-		String member1id = reqHiringTeam.getMember1id();
-		String member2id = reqHiringTeam.getMember2id();
-		String member3id = reqHiringTeam.getMember3id();
-		String member4id = reqHiringTeam.getMember4id();
-		String member5id = reqHiringTeam.getMember5id();
-		
-		//get users
-		TeamMemberProfile teamMember1 = JobsDAO.instance.getTeamMemberProfile(member1id);
-		TeamMemberProfile teamMember2 = JobsDAO.instance.getTeamMemberProfile(member2id);
-		TeamMemberProfile teamMember3 = JobsDAO.instance.getTeamMemberProfile(member3id);
-		TeamMemberProfile teamMember4 = JobsDAO.instance.getTeamMemberProfile(member4id);
-		TeamMemberProfile teamMember5 = JobsDAO.instance.getTeamMemberProfile(member5id);
-		
-		List<TeamMemberProfile> teamMembers = new ArrayList<TeamMemberProfile>();
-		teamMembers.add(teamMember1);
-		teamMembers.add(teamMember2);
-		teamMembers.add(teamMember3);
-		teamMembers.add(teamMember4);
-		teamMembers.add(teamMember5);
-		
-		//create new profile to transfer
-		HiringTeam newHiringTeam = new HiringTeam(id, companyProfileId, teamMembers);
-		
-		return newHiringTeam;
-		*/
+	
 	}
 //	PUT:
 //	Unsupported
@@ -1362,7 +1249,6 @@ public class FoundITResource {
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			String msg = "Deleted Team Profile:" + id;
 			res = Response.ok(msg).build();
@@ -1381,6 +1267,7 @@ public class FoundITResource {
 	public Response newTeamMemberProfile(
 			@HeaderParam("SecurityKey") String securityKey,
 			@HeaderParam("ShortKey") String shortKey,
+			@FormParam("userprofileid") String userProfileId,
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("professionalskills") String professionalSkills
@@ -1395,16 +1282,25 @@ public class FoundITResource {
 			return res;
 		}
 
-		String id = JobsDAO.instance.getNextTeamMemberProfileId();
+		
 		//check no input is empty
-		if(username == null || password == null || professionalSkills == null){
+		if(userProfileId == null ||username == null || password == null || professionalSkills == null){
 			//res.status();
 			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		
+		
+		//check userProfileId exists
+		UserProfile existingUser = JobsDAO.instance.getUserProfile(userProfileId);
+		
+		if(existingUser == null){
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: User with id:" + userProfileId + " does not exist.").build();
+			return res;
+		}
+		
 		//create new profile
-		TeamMemberProfile newTeamMemberProfile = new TeamMemberProfile(id, username, password, professionalSkills);
+		TeamMemberProfile newTeamMemberProfile = new TeamMemberProfile(userProfileId, username, password, professionalSkills);
 				
 		//store profile
 		JobsDAO.instance.storeTeamMemberProfile(newTeamMemberProfile);
@@ -1501,7 +1397,6 @@ public class FoundITResource {
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			String msg = "Deleted Team Member Profile:" + id;
 			res = Response.ok(msg).build();
@@ -1589,10 +1484,7 @@ public class FoundITResource {
 		//send version
 		JobApplicationAssignment sendJobApplicationAssignment = new JobApplicationAssignment(id, jobApplicationId, reviewer1, reviewer2);
 		sendJobApplicationAssignment.setSendVersion(true);
-		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
-		
+				
 		res = Response.status(Response.Status.CREATED).entity(newJobApplicationAssignment).build();
 		return res;
 	}
@@ -1832,7 +1724,6 @@ public class FoundITResource {
 			res = resBuild.build();
 		}
 		
-		//System.out.println("Received " + keyword + " " + sortAttribute + " " + email);
 		//This only needs to be called once..
 		jobAlert.setupFile();
 		
@@ -1852,55 +1743,7 @@ public class FoundITResource {
 		ResponseBuilder resBuild = Response.ok(msg);
 		resBuild.status(200);
 		res = resBuild.build();
-		
-		/*
-		//search description
-		JobPostings allJobPosts;
-		if(keyword != null){
-			allJobPosts = JobsDAO.instance.searchJobPostingKeyword(keyword);
-		} else { //the rest
-			if(title != null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(title, "title");
-			} else if(skills != null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(skills, "skills");
-			} else if(status!= null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(status, "status");
-			} else if(description!= null){
-				allJobPosts = JobsDAO.instance.searchJobPostingAttribute(description, "description");
-			} else {
-				allJobPosts = null;
-			}
 			
-		}
-		
-		//if there was an error
-		if(allJobPosts==null){
-			String msg = new String();
-
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
-			if(keyword != null){
-				msg = "GET: No Job Postings not found for keyword:" + keyword;
-			} else if(title != null){
-				msg = "GET: No Job Postings not found for title:" + title;
-			} else if(skills != null){
-				msg = "GET: No Job Postings not found for skills:" + skills;
-			} else if(status!= null){
-				msg = "GET: No Job Postings not found for status:" + status;
-			} else if(description!= null){
-				msg = "GET: No Job Postings not found for description:" + description;
-			} else {
-				msg = "GET: No Query Provided";
-			}
-			
-			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(Response.Status.BAD_REQUEST);
-			res = resBuild.build();
-			
-		} else {
-			res = Response.ok(allJobPosts).build();
-		}
-		*/
-		
 		return res;
 		
 	}
