@@ -112,7 +112,7 @@ public class FoundITResource {
 		if(name == null || currentPosition == null || education == null || 
 				pastExperience == null || professionalSkills == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		//create new profile
@@ -122,7 +122,7 @@ public class FoundITResource {
 		JobsDAO.instance.storeUserProfile(newProfile);
 						
 		//res.status();
-		res = Response.status(201).entity(newProfile).build();
+		res = Response.status(Response.Status.CREATED).entity(newProfile).build();
 		return res;
 	}
 	
@@ -275,7 +275,7 @@ public class FoundITResource {
 		if(name == null || description == null || website == null || 
 				industryType == null || address == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		//create new profile
@@ -284,7 +284,7 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeCompanyProfile(newProfile);
 		
-		res = Response.status(201).entity(newProfile).build();
+		res = Response.status(Response.Status.CREATED).entity(newProfile).build();
 		return res;
 	}
 //	GET:
@@ -438,14 +438,14 @@ public class FoundITResource {
 				positionType == null || desiredSkills == null || 
 						salaryLevel == null || location == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		//check company id exists
 		CompanyProfile existingComp = JobsDAO.instance.getCompanyProfile(companyProfileId);
 		if(existingComp == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Company with id:" + companyProfileId + " does not exist").build();
+			res = Response.status(Response.Status.CREATED).entity("POST: Company with id:" + companyProfileId + " does not exist").build();
 			return res;
 		}
 		
@@ -465,7 +465,7 @@ public class FoundITResource {
 				location);
 		sendJobPosting.setSendVersion(true);
 		
-		res = Response.status(201).entity(sendJobPosting).build();
+		res = Response.status(Response.Status.CREATED).entity(sendJobPosting).build();
 		return res;
 	}
 //	GET:
@@ -748,7 +748,7 @@ public class FoundITResource {
 		if(coverLetter == null || 
 				resume == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s= coverletter/resume").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s= coverletter/resume").build();
 			return res;
 		}
 		//check job application exists
@@ -802,7 +802,7 @@ public class FoundITResource {
 			//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 			//getStore().put(id, b);
 			
-			res = Response.status(201).entity(sendJobApp).build();
+			res = Response.status(Response.Status.CREATED).entity(sendJobApp).build();
 		}
 
 		return res;
@@ -1113,7 +1113,7 @@ public class FoundITResource {
 		if(companyProfileId == "" || member1id == "" || member2id == "" || 
 				member3id == "" || member4id == "" || member5id == ""){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		*/
@@ -1173,7 +1173,7 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		res = Response.status(201).entity(sendHiringTeam).build();
+		res = Response.status(Response.Status.CREATED).entity(sendHiringTeam).build();
 		return res;
 	}
 //	GET:
@@ -1399,7 +1399,7 @@ public class FoundITResource {
 		//check no input is empty
 		if(username == null || password == null || professionalSkills == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		
@@ -1409,7 +1409,7 @@ public class FoundITResource {
 		//store profile
 		JobsDAO.instance.storeTeamMemberProfile(newTeamMemberProfile);
 		
-		res = Response.status(201).entity(newTeamMemberProfile).build();
+		res = Response.status(Response.Status.CREATED).entity(newTeamMemberProfile).build();
 		return res;
 	}
 //	GET
@@ -1540,7 +1540,7 @@ public class FoundITResource {
 		if(jobApplicationId == null || reviewer1 == null || reviewer2 == null){
 			
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s").build();
 			return res;
 		}
 		*/
@@ -1593,7 +1593,7 @@ public class FoundITResource {
 		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
 		//getStore().put(id, b);
 		
-		res = Response.status(201).entity(newJobApplicationAssignment).build();
+		res = Response.status(Response.Status.CREATED).entity(newJobApplicationAssignment).build();
 		return res;
 	}
 	//GET
@@ -1712,7 +1712,7 @@ public class FoundITResource {
 		if(comments == null || 
 				decision == null){
 			//res.status();
-			res = Response.status(201).entity("POST: Missing field/s = comments/field").build();
+			res = Response.status(Response.Status.BAD_REQUEST).entity("POST: Missing field/s = comments/field").build();
 			return res;
 		}
 		
@@ -1746,7 +1746,7 @@ public class FoundITResource {
 		Review sendReview = new Review(id, teamMemberProfileId, jobApplicationId, comments, decision);
 		sendReview.setSendVersion(true);
 		
-		res = Response.status(201).entity(sendReview).build();
+		res = Response.status(Response.Status.CREATED).entity(sendReview).build();
 		return res;
 	}
 //	GET:
