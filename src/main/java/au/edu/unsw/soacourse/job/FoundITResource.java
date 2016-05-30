@@ -154,7 +154,7 @@ public class FoundITResource {
 		
 		if(u == null){
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
-			String msg = "DELETE: Job with " + id +  " not found";
+			String msg = "GET: Job with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();

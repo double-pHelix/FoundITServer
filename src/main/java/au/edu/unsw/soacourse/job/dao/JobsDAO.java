@@ -646,9 +646,14 @@ public enum JobsDAO {
     	
       	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
-      	for(JobPosting posting : contentStorePostings.values()){
-      		if(posting.getTitle().matches(keyword) || posting.getSkills().matches(keyword) || posting.getStatus().matches(keyword) || posting.getDescription().matches(keyword)){
-      			jobPostingsList.add(posting);
+      	for(JobPosting p : contentStorePostings.values()){
+    		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+    				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+    				p.getLocation());
+      		
+    		sendJobPosting.setSendVersion(true);
+      		if(p.getTitle().matches(keyword) || p.getSkills().matches(keyword) || p.getStatus().matches(keyword) || p.getDescription().matches(keyword)){
+      			jobPostingsList.add(sendJobPosting);
       		}
       	}
       	
@@ -674,27 +679,32 @@ public enum JobsDAO {
 	
   	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
-  	for(JobPosting posting : contentStorePostings.values()){
+  	for(JobPosting p : contentStorePostings.values()){
   		
+  		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+				p.getLocation());
+  		
+		sendJobPosting.setSendVersion(true);
   		if(attrbute == "title"){
-  			if(posting.getTitle().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getTitle().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "skills"){
-  			if(posting.getSkills().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getSkills().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "status"){
-  			if(posting.getStatus().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getStatus().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "description"){
-  			if(posting.getDescription().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getDescription().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "companyid"){
-  			if(posting.getCompanyProfileId().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getCompanyProfileId().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} 
   		
@@ -712,9 +722,14 @@ public enum JobsDAO {
 	  loadJobPostingsFromFile();
 	  List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 	
-	  for(JobPosting posting : contentStorePostings.values()){
+	  for(JobPosting p : contentStorePostings.values()){
 		
-		  jobPostingsList.add(posting);
+		  JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+					p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+					p.getLocation());
+
+		  sendJobPosting.setSendVersion(true);
+		  jobPostingsList.add(sendJobPosting);
 		
 	  }
 	  if(jobPostingsList.size() == 0)
@@ -733,9 +748,13 @@ public enum JobsDAO {
 	  	
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication app : contentStoreApplications.values()){
-	  		if(app.getJobPostId().matches(query)){
-	  			JobApplicationsList.add(app);
+	  	for(JobApplication a : contentStoreApplications.values()){
+	  		
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+	  		
+	  		if(a.getJobPostId().matches(query)){
+	  			JobApplicationsList.add(sendVersion);
 	  		}
 	  	}
 	  	
@@ -759,7 +778,13 @@ public enum JobsDAO {
 	  		if(appAss.getReviewer1().matches(query) || appAss.getReviewer2().matches(query)){
 	  			
 	  			//add job...
-	  			JobApplicationsList.add(getJobApplication(appAss.getJobApplicationId()));
+	  			JobApplication a = getJobApplication(appAss.getJobApplicationId());
+	  			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+				sendVersion.setSendVersion(true);
+	  			
+	  			JobApplicationsList.add(sendVersion);
+	  			
+	  			
 	  		}
 	  	}
 	  	
@@ -778,9 +803,12 @@ public enum JobsDAO {
 	  	
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication app : contentStoreApplications.values()){
-	  		if(app.getUserProfileId().matches(query)){
-	  			JobApplicationsList.add(app);
+	  	for(JobApplication a : contentStoreApplications.values()){
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+	  		
+	  		if(a.getUserProfileId().matches(query)){
+	  			JobApplicationsList.add(sendVersion);
 	  		}
 	  	}
 	  	
@@ -798,9 +826,11 @@ public enum JobsDAO {
 	  	loadJobApplicationsFromFile();
 	  	List<JobApplication> jobApplicationList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication application : contentStoreApplications.values()){
-	  		
-	  		jobApplicationList.add(application);
+	  	for(JobApplication a : contentStoreApplications.values()){
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+			
+	  		jobApplicationList.add(sendVersion);
 	  		
 	  	}
 	  	JobApplications newJobApplications = new JobApplications(jobApplicationList);
