@@ -24,6 +24,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 import au.edu.unsw.soacourse.job.model.UserProfiles;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -110,7 +111,7 @@ public enum JobsDAO {
     	//addTestCasesUserProfiles();
     	//addTestCasesJobApplications();
     	//addTestCasesHiringTeamMembersAndTeam();
-    	//addTestCasesJobApplicationAssignment();
+    	
     }
     
     private void addTestCasesJobPostings(){
@@ -139,50 +140,8 @@ public enum JobsDAO {
     }
     
     private void addTestCasesUserProfiles(){
-    	/*
-    	  	private String id;
-		    private String name;
-		    private String currentPosition;
-			private String education;
-		    private String pastExperience;
-		    private String professionalSkills;
-		    private String link;
-			private String rel;
-	
-    	 */
-    	String id1 = "1";
-    	String id2 = "2";
-    	String name1 = "Bob";
-    	String name2 = "John";
-    	String currentpos1 = "Tiler";
-    	String currentpos2 = "Smoker";
-    	String education1 = "LOL";
-    	String education2 = "MEME";
-    	String pastExp1 = "Clown";
-    	String pastExp2 = "Steroids Consultant";
-    	String profSk1 = "Teaching";
-    	String profSk2 = "Attacking";
     	
-    	//Skip links
     	
-    	UserProfile user1 = new UserProfile(id1);
-    	user1.setEducation(education1);
-    	user1.setCurrentPosition(currentpos1);
-    	user1.setId(id1);
-    	user1.setPastExperience(pastExp1);
-    	user1.setProfessionalSkills(profSk1);
-    	user1.setName(name1);
-    	
-    	UserProfile user2 = new UserProfile(id2);
-    	user2.setEducation(education2);
-    	user2.setCurrentPosition(currentpos2);
-    	user2.setId(id2);
-    	user2.setPastExperience(pastExp2);
-    	user2.setProfessionalSkills(profSk2);
-    	user2.setName(name2);
-    	
-    	storeUserProfile(user1);
-    	storeUserProfile(user2);
     }
     
     private void addTestCasesJobApplications(){
@@ -218,25 +177,25 @@ public enum JobsDAO {
         storeCompanyProfile(newCompProf);
         
         String id2 ="1";
-        String username2 = "review1";
-        String password2 = "review1";
-    	String professionalSkills2 = "skill";
+        String username2 = "";
+        String password2 = "";
+    	String professionalSkills2 = "";
     	String id3="2";
-        String username3 = "review2";
-        String password3 = "review2";
-    	String professionalSkills3 = "skill";
+        String username3 = "";
+        String password3 = "";
+    	String professionalSkills3 = "";
     	String id4="3";
-        String username4 = "review3";
-        String password4 = "review3";
-    	String professionalSkills4 = "skill";
+        String username4 = "";
+        String password4 = "";
+    	String professionalSkills4 = "";
     	String id5="4";
-        String username5 = "review4";
-        String password5 = "review4";
-    	String professionalSkills5 = "skill";
+        String username5 = "";
+        String password5 = "";
+    	String professionalSkills5 = "";
     	String id6="5";
-        String username6 = "review5";
-        String password6 = "review5";
-    	String professionalSkills6 = "skill";
+        String username6 = "";
+        String password6 = "";
+    	String professionalSkills6 = "";
         
     	TeamMemberProfile memProf1 = new TeamMemberProfile(id2, username2, password2, professionalSkills2);
     	TeamMemberProfile memProf2 = new TeamMemberProfile(id3, username3, password3, professionalSkills3);
@@ -256,41 +215,6 @@ public enum JobsDAO {
     	storeHiringTeam(newHiringTeam);
     }
     
-    private void addTestCasesJobApplicationAssignment() {
-    	
-    	String reviewer2 = "3";
-		String reviewer1 = "4";
-		//String jobApplicationId1 = "15";
-		//String jobApplicationId2 = "16";
-		//String id1 = "test1";
-		//String id2 = "test2";
-		
-		String id1 = "6"; 
-        String jobApplicationId1= "15"; 
-        String userProfileId1= "1"; 
-        String coverLetter1= "Trees are life"; 
-        String resume1= "resume.pdf"; //Maybe just a text pretending to be an attachment (i.e. “resume.pdf”)
-
-        String id2 = "7"; 
-        String jobApplicationId2= "16"; 
-        String userProfileId2= "2"; 
-        String coverLetter2= "I am not real"; 
-        String resume2= "bomb.pdf";
-        
-        JobApplication app1 = new JobApplication(id1, jobApplicationId1, userProfileId1, coverLetter1, resume1);
-        JobApplication app2 = new JobApplication(id2, jobApplicationId2, userProfileId2, coverLetter2, resume2);
-		
-        storeJobApplication(app1);
-        storeJobApplication(app2);
-        //contentStoreApplications.put("1", app1);
-        //contentStoreApplications.put("2", app2);
-        
-		JobApplicationAssignment newJobApplicationAssignment1 = new JobApplicationAssignment("test1", id1, reviewer1, reviewer2);
-		JobApplicationAssignment newJobApplicationAssignment2 = new JobApplicationAssignment("test2", id2, reviewer1, reviewer2);
-		
-		storeJobApplicationAssignment(newJobApplicationAssignment1);
-		storeJobApplicationAssignment(newJobApplicationAssignment2);
-    }
     //CREATE/UPDATE
     
     //what do we want to do?
@@ -559,12 +483,18 @@ public enum JobsDAO {
     
     public JobApplication getJobApplication(String id){
     	loadJobApplicationsFromFile();
-    	return contentStoreApplications.get(id);
+    	if(contentStoreApplications.get(id).getArchived().matches(JobApplication.ARCHIVED_FALSE))
+    		return contentStoreApplications.get(id);
+    	
+    	return null;
     }
     
     public JobPosting getJobPosting(String id){
     	loadJobPostingsFromFile();
-    	return contentStorePostings.get(id);
+    	if(contentStorePostings.get(id).getArchived().matches(JobPosting.ARCHIVED_FALSE))
+    		return contentStorePostings.get(id);
+    	
+    	return null;
     }
     
     public Review getReview(String id){
@@ -642,7 +572,7 @@ public enum JobsDAO {
     public String getNextCompanyProfileId(){
     	loadCompanyProfilesFromFile();
     	
-    	int nextId = contentStoreUserProfiles.size() + 1;
+    	int nextId = contentStoreCompProfiles.size() + 1;
     	while(contentStoreCompProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
     	}
@@ -702,16 +632,7 @@ public enum JobsDAO {
     	return Integer.toString(nextId);
     }
     
-    //QUERY JOB POSTINGS
-//  private String description;
-//  private String companyProfileId;
-//	  private String positionType;
-//	  private String desiredSkills;
-//  private String salaryLevel;
-//  private String location;
-//	  private String status; //(created, open, in-review, processed, sent invitations)
-//	  private String archived;
-	
+    //QUERY JOB POSTINGS	
     public JobPostings searchJobPostingKeyword(String keyword){
       	//		
     	//match as a substring
@@ -723,9 +644,19 @@ public enum JobsDAO {
     	
       	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
-      	for(JobPosting posting : contentStorePostings.values()){
-      		if(posting.getTitle().matches(keyword) || posting.getSkills().matches(keyword) || posting.getStatus().matches(keyword) || posting.getDescription().matches(keyword)){
-      			jobPostingsList.add(posting);
+      	for(JobPosting p : contentStorePostings.values()){
+      		if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+      			continue;
+      		
+    		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+    				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+    				p.getLocation());
+      		
+    		sendJobPosting.setSendVersion(true);
+      		if(p.getTitle().matches(keyword) || p.getSkills().matches(keyword) || p.getStatus().matches(keyword) || p.getDescription().matches(keyword)){
+      			
+
+      			jobPostingsList.add(sendJobPosting);
       		}
       	}
       	
@@ -746,27 +677,39 @@ public enum JobsDAO {
 
 	loadJobPostingsFromFile();
 	  
-	query = "(?i:.*" + query + ".*)";
+	if(attrbute != "companyid")
+		query = "(?i:.*" + query + ".*)";
 	
   	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
-  	for(JobPosting posting : contentStorePostings.values()){
+  	for(JobPosting p : contentStorePostings.values()){
+  		if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+  			continue;
   		
+  		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+				p.getLocation());
+  		
+		sendJobPosting.setSendVersion(true);
   		if(attrbute == "title"){
-  			if(posting.getTitle().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getTitle().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "skills"){
-  			if(posting.getSkills().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getSkills().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "status"){
-  			if(posting.getStatus().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getStatus().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} else if(attrbute == "description"){
-  			if(posting.getDescription().matches(query)){
-  	  			jobPostingsList.add(posting);
+  			if(p.getDescription().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
+  	  		}
+  		} else if(attrbute == "companyid"){
+  			if(p.getCompanyProfileId().matches(query)){
+  	  			jobPostingsList.add(sendJobPosting);
   	  		}
   		} 
   		
@@ -784,9 +727,16 @@ public enum JobsDAO {
 	  loadJobPostingsFromFile();
 	  List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 	
-	  for(JobPosting posting : contentStorePostings.values()){
-		
-		  jobPostingsList.add(posting);
+	  for(JobPosting p : contentStorePostings.values()){
+		  if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+      			continue;
+    		
+		  JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
+					p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
+					p.getLocation());
+
+		  sendJobPosting.setSendVersion(true);
+		  jobPostingsList.add(sendJobPosting);
 		
 	  }
 	  if(jobPostingsList.size() == 0)
@@ -805,9 +755,15 @@ public enum JobsDAO {
 	  	
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication app : contentStoreApplications.values()){
-	  		if(app.getJobPostId().matches(query)){
-	  			JobApplicationsList.add(app);
+	  	for(JobApplication a : contentStoreApplications.values()){
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;
+			  
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+	  		
+	  		if(a.getJobPostId().matches(query)){
+	  			JobApplicationsList.add(sendVersion);
 	  		}
 	  	}
 	  	
@@ -828,11 +784,20 @@ public enum JobsDAO {
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplicationAssignment appAss : contentStoreJobApplicationAssignment.values()){
+			
 	  		if(appAss.getReviewer1().matches(query) || appAss.getReviewer2().matches(query)){
 	  			
 	  			//add job...
-	  			System.out.println("Found id " + appAss.getJobApplicationId());
-	  			JobApplicationsList.add(getJobApplication(appAss.getJobApplicationId()));
+	  			JobApplication a = getJobApplication(appAss.getJobApplicationId());
+				if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+					continue;		
+	  			
+	  			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+				sendVersion.setSendVersion(true);
+	  			
+	  			JobApplicationsList.add(sendVersion);
+	  			
+	  			
 	  		}
 	  	}
 	  	
@@ -851,9 +816,15 @@ public enum JobsDAO {
 	  	
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication app : contentStoreApplications.values()){
-	  		if(app.getUserProfileId().matches(query)){
-	  			JobApplicationsList.add(app);
+	  	for(JobApplication a : contentStoreApplications.values()){
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;
+	  		
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+	  		
+	  		if(a.getUserProfileId().matches(query)){
+	  			JobApplicationsList.add(sendVersion);
 	  		}
 	  	}
 	  	
@@ -871,38 +842,30 @@ public enum JobsDAO {
 	  	loadJobApplicationsFromFile();
 	  	List<JobApplication> jobApplicationList = new ArrayList<JobApplication>();
 
-	  	for(JobApplication application : contentStoreApplications.values()){
+	  	for(JobApplication a : contentStoreApplications.values()){
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;	
 	  		
-	  		jobApplicationList.add(application);
+	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			sendVersion.setSendVersion(true);
+			
+	  		jobApplicationList.add(sendVersion);
 	  		
 	  	}
 	  	JobApplications newJobApplications = new JobApplications(jobApplicationList);
 	  	
 	  	return newJobApplications;
 }
-	  
-  
-  
-/*	
-  public JobPosting searchJobPostingPositionType(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingDesiredSkills(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingSalaryLevel(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingLocation(String query){
-  	return contentStorePostings.remove(id);
-  }
-*/
+
+ 
 //loads from file if we've reset from last time
-	void loadUserProfilesFromFile(){
+	void loadUserProfilesFromFile() {
 	  	if(contentStoreUserProfiles.size() == 0){
 	    	try {
 	    		
 	    		File file = new File(USER_PROFILE_FILEDIR);
+	            file.createNewFile();
+	            
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -914,7 +877,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -925,6 +888,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(COMPANY_PROFILE_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -936,7 +901,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(contentStoreCompProfiles.size());
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -947,6 +912,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(HIRING_TEAM_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -958,7 +925,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(teams);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -969,6 +936,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_APPLICATION_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -980,7 +949,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(apps);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -991,6 +960,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_POSTING_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1002,7 +973,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(posts);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -1013,6 +984,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(REVIEW_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1024,7 +997,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(reviews);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -1035,6 +1008,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1046,7 +1021,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -1057,6 +1032,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1068,7 +1045,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
