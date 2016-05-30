@@ -101,10 +101,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		
@@ -142,10 +142,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -156,9 +156,8 @@ public class FoundITResource {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Job with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
 			//throw new RuntimeException("GET: Book with:" + id +  " not found");
 
@@ -186,10 +185,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -218,25 +217,21 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.USER_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		
 		UserProfile delProfile = JobsDAO.instance.deleteUserProfile(id);
-		//modify.s
-		
-		int errorCode = 400;
-		
+				
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Profile with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
-			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			String msg = "Deleted Profile:" + id;
 			res = Response.ok(msg).build();
@@ -270,10 +265,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		//check no input is empty
@@ -288,9 +283,6 @@ public class FoundITResource {
 				
 		//store profile
 		JobsDAO.instance.storeCompanyProfile(newProfile);
-		
-		//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-		//getStore().put(id, b);
 		
 		res = Response.status(201).entity(newProfile).build();
 		return res;
@@ -310,10 +302,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -325,7 +317,7 @@ public class FoundITResource {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "GET: Profile with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
@@ -354,10 +346,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -384,23 +376,21 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.COMP_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		
 		CompanyProfile delProfile = JobsDAO.instance.deleteCompanyProfile(id);
 		//modify.s
-		
-		int errorCode = 400;
-		
+				
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Profile with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
@@ -436,10 +426,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		
@@ -495,17 +485,17 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
 		if(p == null){
 			String msg = "GET: Job Posting with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 			
@@ -541,10 +531,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -589,7 +579,7 @@ public class FoundITResource {
 			}
 			
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 		} else {
@@ -631,10 +621,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -643,7 +633,7 @@ public class FoundITResource {
 		if(allJobPosts==null){
 			String msg = "GET: No Job Postings found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			res = Response.ok(allJobPosts).build();
@@ -669,10 +659,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -701,23 +691,22 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		
 		JobPosting delProfile = JobsDAO.instance.deleteJobPosting(id);
 		//modify.s
 		
-		int errorCode = 400;
 		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Posting with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
@@ -749,10 +738,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		//check no input is empty
@@ -771,28 +760,28 @@ public class FoundITResource {
 		if(existingPost == null && existingUser == null){
 			String msg = "POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 			//throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId);
 		} else if(existingPost == null){
 			String msg = "POST: No Job Postings found with id:" + jobpostId;
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 			//throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId);
 		} else if(existingUser == null){
 			String msg = "POST: No User found with id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 			//throw new RuntimeException("POST: No User found with id:" + userProfileId);
 		} else if(existingPost.getStatus().matches(JobPosting.STATUS_CLOSED)){
 			String msg = "POST: Job Application closed id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 		} else {
@@ -832,10 +821,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		JobApplication a = JobsDAO.instance.getJobApplication(id);
@@ -843,7 +832,7 @@ public class FoundITResource {
 		if(a==null){
 			String msg = "GET: Job Application with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
@@ -868,10 +857,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		
@@ -883,7 +872,7 @@ public class FoundITResource {
 			if(allJobApplications==null){
 				String msg = "GET: No Job Applications with Job Application Id:" + queryJobPost;
 				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(400);
+				resBuild.status(Response.Status.BAD_REQUEST);
 				res = resBuild.build();
 			} else {
 				res = Response.ok(allJobApplications).build();
@@ -894,7 +883,7 @@ public class FoundITResource {
 			if(allJobApplications==null){
 				String msg = "GET: No Job Applications for User Id:" + queryUser;
 				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(400);
+				resBuild.status(Response.Status.BAD_REQUEST);
 				res = resBuild.build();
 			} else {
 				res = Response.ok(allJobApplications).build();
@@ -907,7 +896,7 @@ public class FoundITResource {
 			if(allJobApplications==null){
 				String msg = "GET: No Job Applications exist";
 				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(400);
+				resBuild.status(Response.Status.BAD_REQUEST);
 				res = resBuild.build();
 			} else {
 				res = Response.ok(allJobApplications).build();
@@ -935,10 +924,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -947,7 +936,7 @@ public class FoundITResource {
 		if(allJobApps==null){
 			String msg = "GET: No Job Applications found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			res = Response.ok(allJobApps).build();
@@ -976,10 +965,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -995,7 +984,7 @@ public class FoundITResource {
 		if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
 			msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
 			
@@ -1005,7 +994,7 @@ public class FoundITResource {
 		if(existingPost == null && existingUser == null){
 			msg = "PUT: No Job Postings found with id:" + p.getJobPostId() + " and no User found with id:" + p.getUserProfileId();
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
 			
@@ -1013,7 +1002,7 @@ public class FoundITResource {
 		} else if(existingPost == null){
 			msg = "PUT: No Job Postings found with id:" + p.getJobPostId();
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
 			
@@ -1021,7 +1010,7 @@ public class FoundITResource {
 		} else if(existingUser == null){
 			msg = "PUT: No User found with id:" + p.getUserProfileId();
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
 			//throw new RuntimeException("PUT: No User found with id:" + p.getUserProfileId());
@@ -1031,7 +1020,7 @@ public class FoundITResource {
 			if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
 				msg = "PUT: Application cannot be accepted or rejected without being shortlisted.";
 				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(400);
+				resBuild.status(Response.Status.BAD_REQUEST);
 				res = resBuild.build();
 				return res;
 				//throw new RuntimeException("PUT: Application cannot be accepted or rejected without being shortlisted.");
@@ -1060,21 +1049,20 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.JOB_APPLICATION, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		JobApplication delApp = JobsDAO.instance.deleteJobApplication(id);
 		//modify.s
-		int errorCode = 400;
 		
 		if(delApp == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Application with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
@@ -1113,10 +1101,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 		
@@ -1164,7 +1152,7 @@ public class FoundITResource {
 				errormsg = "POST: Company with id:" + companyProfileId + " does not exist";
 			}
 			ResponseBuilder resBuild = Response.ok(errormsg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			return res;
 			
@@ -1201,10 +1189,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -1214,7 +1202,7 @@ public class FoundITResource {
 		if(reqHiringTeam==null){
 			String msg = "GET: Hiring Team Store with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			HiringTeamStore sendVersion = new HiringTeamStore(reqHiringTeam.getId(), reqHiringTeam.getCompanyProfileId(), reqHiringTeam.getMember1id(), 
@@ -1266,10 +1254,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -1359,23 +1347,20 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.HIRE_TEAM, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		
 		HiringTeamStore delProfile = JobsDAO.instance.deleteHiringTeam(id);
-		//modify.s
-		
-		int errorCode = 400;
 		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Team with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
@@ -1403,10 +1388,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 
@@ -1439,10 +1424,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 		
@@ -1451,7 +1436,7 @@ public class FoundITResource {
 		if(u==null){
 			String msg = "GET: Team Member Profile with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			res = Response.ok(u).build();
@@ -1472,10 +1457,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.PUT_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("PUT: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("PUT: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("PUT: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("PUT: Security key incorrect").build();
 			return res;
 		}
 		
@@ -1500,23 +1485,21 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.DELETE_METHOD, SecurityChecker.REVIEW_PROFILE, shortKey)){
 			//reject
-			res = Response.status(401).entity("DELETE: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("DELETE: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("DELETE: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("DELETE: Security key incorrect").build();
 			return res;
 		}
 		
 		TeamMemberProfile delProfile = JobsDAO.instance.deleteTeamMemberProfile(id);
 		//modify.s
 		
-		int errorCode = 400;
-		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
 			String msg = "DELETE: Team Member Profile with " + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
@@ -1543,10 +1526,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEW_ASSIGNMENT, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 
@@ -1625,10 +1608,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEW_ASSIGNMENT, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1637,7 +1620,7 @@ public class FoundITResource {
 		if(u==null){
 			String msg = "GET: Job Application Assignment with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			JobApplicationAssignment sendJobApplicationAssignment = new JobApplicationAssignment(id, u.getJobApplicationId(), u.getReviewer1(), u.getReviewer2());
@@ -1662,10 +1645,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEWS, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1674,7 +1657,7 @@ public class FoundITResource {
 		if(u==null){
 			String msg = "GET: Job Application Assignment with:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 
@@ -1715,10 +1698,10 @@ public class FoundITResource {
 		
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.POST_METHOD, SecurityChecker.REVIEWS, shortKey)){
 			//reject
-			res = Response.status(401).entity("POST: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("POST: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("POST: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("POST: Security key incorrect").build();
 			return res;
 		}
 
@@ -1780,10 +1763,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.REVIEWS, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1792,7 +1775,7 @@ public class FoundITResource {
 		if(u==null){
 			String msg = "GET: Review with:" + id + " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
 			//send version
@@ -1830,10 +1813,10 @@ public class FoundITResource {
 		Response res = null;
 		if(!SecurityChecker.instance.checkPermisionResource(SecurityChecker.GET_METHOD, SecurityChecker.JOB_POSTING, shortKey)){
 			//reject
-			res = Response.status(401).entity("GET: User permission denied").build();
+			res = Response.status(Response.Status.UNAUTHORIZED).entity("GET: User permission denied").build();
 			return res;
 		} else if(!SecurityChecker.instance.keyAccepted(securityKey)){
-			res = Response.status(403).entity("GET: Security key incorrect").build();
+			res = Response.status(Response.Status.FORBIDDEN).entity("GET: Security key incorrect").build();
 			return res;
 		}
 
@@ -1841,12 +1824,11 @@ public class FoundITResource {
 		JobAlertDAO jobAlert = new JobAlertDAO();
 		
 		System.out.println("Created Class");
-		int errorCode = 400;
 		
 		if(keyword == null || email == null) {
 			String msg = "Keyword or email was not given";
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(errorCode);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		}
 		
@@ -1911,7 +1893,7 @@ public class FoundITResource {
 			}
 			
 			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(400);
+			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
 		} else {

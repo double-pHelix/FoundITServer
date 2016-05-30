@@ -669,7 +669,8 @@ public enum JobsDAO {
 
 	loadJobPostingsFromFile();
 	  
-	query = "(?i:.*" + query + ".*)";
+	if(attrbute != "companyid")
+		query = "(?i:.*" + query + ".*)";
 	
   	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
