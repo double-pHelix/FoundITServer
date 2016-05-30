@@ -213,12 +213,12 @@ public class FoundITResource {
 		UserProfile delProfile = JobsDAO.instance.deleteUserProfile(id);
 				
 		if(delProfile == null) {
-			String msg = "DELETE: Profile with " + id +  " not found";
+			String msg = "DELETE: Profile with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
-			String msg = "Deleted Profile:" + id;
+			String msg = "Deleted Profile with id::" + id;
 			res = Response.ok(msg).build();
 		}
 		return res;
@@ -741,21 +741,18 @@ public class FoundITResource {
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-			//throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId);
 		} else if(existingPost == null){
 			String msg = "POST: No Job Postings found with id:" + jobpostId;
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-			//throw new RuntimeException("POST: No Job Postings found with id:" + jobpostId);
 		} else if(existingUser == null){
 			String msg = "POST: No User found with id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-			//throw new RuntimeException("POST: No User found with id:" + userProfileId);
 		} else if(existingPost.getStatus().matches(JobPosting.STATUS_CLOSED)){
 			String msg = "POST: Job Application closed id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
@@ -773,9 +770,6 @@ public class FoundITResource {
 			JobApplication sendJobApp= new JobApplication(id, jobpostId,
 					userProfileId, coverLetter, resume);
 			sendJobApp.setSendVersion(true);
-			
-			//System.out.println("Name Recorded is:" + JobsDAO.instance.getUserProfile("hi").getName());
-			//getStore().put(id, b);
 			
 			res = Response.status(Response.Status.CREATED).entity(sendJobApp).build();
 		}
@@ -805,7 +799,7 @@ public class FoundITResource {
 		JobApplication a = JobsDAO.instance.getJobApplication(id);
 
 		if(a==null){
-			String msg = "GET: Job Application with:" + id +  " not found";
+			String msg = "GET: Job Application with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1040,13 +1034,13 @@ public class FoundITResource {
 		JobApplication delApp = JobsDAO.instance.deleteJobApplication(id);
 		
 		if(delApp == null) {
-			String msg = "DELETE: Application with " + id +  " not found";
+			String msg = "DELETE: Application with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			//res = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
-			String msg = "Deleted Application:" + id;
+			String msg = "Deleted Application with id:" + id;
 			res = Response.ok(msg).build();
 		}
 		return res;
@@ -1317,7 +1311,7 @@ public class FoundITResource {
 		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
-			String msg = "DELETE: Team with " + id +  " not found";
+			String msg = "DELETE: Team with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1392,7 +1386,7 @@ public class FoundITResource {
 		TeamMemberProfile u = JobsDAO.instance.getTeamMemberProfile(id);
 		
 		if(u==null){
-			String msg = "GET: Team Member Profile with:" + id +  " not found";
+			String msg = "GET: Team Member Profile with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1464,7 +1458,7 @@ public class FoundITResource {
 		
 		if(delProfile == null) {
 			//throw new RuntimeException("DELETE: Book with " + id +  " not found");
-			String msg = "DELETE: Team Member Profile with " + id +  " not found";
+			String msg = "DELETE: Team Member Profile with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1581,7 +1575,7 @@ public class FoundITResource {
 		JobApplicationAssignment u = JobsDAO.instance.getJobApplicationAssignment(id);
 
 		if(u==null){
-			String msg = "GET: Job Application Assignment with:" + id +  " not found";
+			String msg = "GET: Job Application Assignment with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1618,7 +1612,7 @@ public class FoundITResource {
 		JobApplications u = JobsDAO.instance.searchApplicationsTeamMembertId(id);
 
 		if(u==null){
-			String msg = "GET: Job Application Assignment with:" + id +  " not found";
+			String msg = "GET: Job Application Assignment with id:" + id +  " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -1736,7 +1730,7 @@ public class FoundITResource {
 		Review u = JobsDAO.instance.getReview(id);
 		
 		if(u==null){
-			String msg = "GET: Review with:" + id + " not found";
+			String msg = "GET: Review with id:" + id + " not found";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
