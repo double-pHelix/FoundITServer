@@ -24,6 +24,7 @@ import au.edu.unsw.soacourse.job.model.UserProfile;
 import au.edu.unsw.soacourse.job.model.UserProfiles;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -631,16 +632,7 @@ public enum JobsDAO {
     	return Integer.toString(nextId);
     }
     
-    //QUERY JOB POSTINGS
-//  private String description;
-//  private String companyProfileId;
-//	  private String positionType;
-//	  private String desiredSkills;
-//  private String salaryLevel;
-//  private String location;
-//	  private String status; //(created, open, in-review, processed, sent invitations)
-//	  private String archived;
-	
+    //QUERY JOB POSTINGS	
     public JobPostings searchJobPostingKeyword(String keyword){
       	//		
     	//match as a substring
@@ -864,29 +856,16 @@ public enum JobsDAO {
 	  	
 	  	return newJobApplications;
 }
-	  
-  
-  
-/*	
-  public JobPosting searchJobPostingPositionType(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingDesiredSkills(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingSalaryLevel(String query){
-  	return contentStorePostings.remove(id);
-  }
-  public JobPosting searchJobPostingLocation(String query){
-  	return contentStorePostings.remove(id);
-  }
-*/
+
+ 
 //loads from file if we've reset from last time
-	void loadUserProfilesFromFile(){
+	void loadUserProfilesFromFile() {
 	  	if(contentStoreUserProfiles.size() == 0){
 	    	try {
 	    		
 	    		File file = new File(USER_PROFILE_FILEDIR);
+	            file.createNewFile();
+	            
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -898,7 +877,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -909,6 +888,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(COMPANY_PROFILE_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -920,7 +901,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(contentStoreCompProfiles.size());
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -931,6 +912,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(HIRING_TEAM_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -942,7 +925,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(teams);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -953,6 +936,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_APPLICATION_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -964,7 +949,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(apps);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -975,6 +960,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_POSTING_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -986,7 +973,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(posts);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -997,6 +984,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(REVIEW_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1008,7 +997,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(reviews);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -1019,6 +1008,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1030,7 +1021,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
@@ -1041,6 +1032,8 @@ public enum JobsDAO {
 	    	try {
 	    		
 	    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
+	    		file.createNewFile();
+	    		
 	    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
 	
 	    		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -1052,7 +1045,7 @@ public enum JobsDAO {
 	    		
 	    		System.out.println(profiles);
 	    		
-			} catch (JAXBException e) {
+			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
 	  	}
