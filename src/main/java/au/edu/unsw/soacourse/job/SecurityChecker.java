@@ -43,7 +43,7 @@ public enum SecurityChecker {
 		writePermission = new boolean[NUM_RESOURCES][NUM_USERS];
 		
 		readPermission[REVIEW_PROFILE][CANDIDATE] = false;
-		readPermission[REVIEW_PROFILE][MANAGER] = true;
+		readPermission[REVIEW_PROFILE][MANAGER] = false;
 		readPermission[REVIEW_PROFILE][REVIEWER] = true;
 		
 		readPermission[USER_PROFILE][CANDIDATE] = true;
