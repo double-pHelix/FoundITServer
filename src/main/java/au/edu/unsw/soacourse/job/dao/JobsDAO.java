@@ -482,12 +482,18 @@ public enum JobsDAO {
     
     public JobApplication getJobApplication(String id){
     	loadJobApplicationsFromFile();
-    	return contentStoreApplications.get(id);
+    	if(contentStoreApplications.get(id).getArchived().matches(JobApplication.ARCHIVED_FALSE))
+    		return contentStoreApplications.get(id);
+    	
+    	return null;
     }
     
     public JobPosting getJobPosting(String id){
     	loadJobPostingsFromFile();
-    	return contentStorePostings.get(id);
+    	if(contentStorePostings.get(id).getArchived().matches(JobPosting.ARCHIVED_FALSE))
+    		return contentStorePostings.get(id);
+    	
+    	return null;
     }
     
     public Review getReview(String id){
@@ -565,7 +571,7 @@ public enum JobsDAO {
     public String getNextCompanyProfileId(){
     	loadCompanyProfilesFromFile();
     	
-    	int nextId = contentStoreUserProfiles.size() + 1;
+    	int nextId = contentStoreCompProfiles.size() + 1;
     	while(contentStoreCompProfiles.containsKey(Integer.toString(nextId))){
     		nextId++;
     	}
@@ -647,12 +653,17 @@ public enum JobsDAO {
       	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
       	for(JobPosting p : contentStorePostings.values()){
+      		if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+      			continue;
+      		
     		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
     				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
     				p.getLocation());
       		
     		sendJobPosting.setSendVersion(true);
       		if(p.getTitle().matches(keyword) || p.getSkills().matches(keyword) || p.getStatus().matches(keyword) || p.getDescription().matches(keyword)){
+      			
+
       			jobPostingsList.add(sendJobPosting);
       		}
       	}
@@ -680,6 +691,8 @@ public enum JobsDAO {
   	List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 
   	for(JobPosting p : contentStorePostings.values()){
+  		if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+  			continue;
   		
   		JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
 				p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
@@ -723,7 +736,9 @@ public enum JobsDAO {
 	  List<JobPosting> jobPostingsList = new ArrayList<JobPosting>();
 	
 	  for(JobPosting p : contentStorePostings.values()){
-		
+		  if(p.getArchived().matches(JobPosting.ARCHIVED_TRUE))
+      			continue;
+    		
 		  JobPosting sendJobPosting= new JobPosting(p.getId(), p.getTitle(), p.getDescription(), p.getCompanyProfileId(),
 					p.getPositionType(), p.getSkills(), p.getSalaryLevel(),
 					p.getLocation());
@@ -749,7 +764,9 @@ public enum JobsDAO {
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication a : contentStoreApplications.values()){
-	  		
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;
+			  
 	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
 			sendVersion.setSendVersion(true);
 	  		
@@ -775,10 +792,14 @@ public enum JobsDAO {
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplicationAssignment appAss : contentStoreJobApplicationAssignment.values()){
+			
 	  		if(appAss.getReviewer1().matches(query) || appAss.getReviewer2().matches(query)){
 	  			
 	  			//add job...
 	  			JobApplication a = getJobApplication(appAss.getJobApplicationId());
+				if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+					continue;		
+	  			
 	  			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
 				sendVersion.setSendVersion(true);
 	  			
@@ -804,6 +825,9 @@ public enum JobsDAO {
 	  	List<JobApplication> JobApplicationsList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication a : contentStoreApplications.values()){
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;
+	  		
 	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
 			sendVersion.setSendVersion(true);
 	  		
@@ -827,6 +851,9 @@ public enum JobsDAO {
 	  	List<JobApplication> jobApplicationList = new ArrayList<JobApplication>();
 
 	  	for(JobApplication a : contentStoreApplications.values()){
+			if(a.getArchived().matches(JobApplication.ARCHIVED_TRUE))
+				continue;	
+	  		
 	  		JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
 			sendVersion.setSendVersion(true);
 			
