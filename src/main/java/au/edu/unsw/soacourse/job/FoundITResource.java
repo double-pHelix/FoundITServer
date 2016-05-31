@@ -64,7 +64,9 @@ public class FoundITResource {
 			@FormParam("currentposition") String currentPosition,
 			@FormParam("education") String education,
 			@FormParam("pastexperience") String pastExperience,
-			@FormParam("professionalskills") String professionalSkills
+			@FormParam("professionalskills") String professionalSkills,
+			@FormParam("address") String address,
+			@FormParam("licensenumber") String licenseNumber
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
@@ -87,7 +89,7 @@ public class FoundITResource {
 			return res;
 		}
 		//create new profile
-		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills);
+		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills, address, licenseNumber);
 				
 		//store profile
 		JobsDAO.instance.storeUserProfile(newProfile);
