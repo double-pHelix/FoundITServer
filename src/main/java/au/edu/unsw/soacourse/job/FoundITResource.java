@@ -1236,7 +1236,7 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 		}
-		/*
+		
 		//check company exists
 		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(t.getCompanyProfileId());
 		//get users
@@ -1280,8 +1280,6 @@ public class FoundITResource {
 			//throw new RuntimeException(errormsg);
 		}
 		
-		System.out.println(t.getMember1Link().getLink());
-		*/
 		//store profile
 		JobsDAO.instance.storeHiringTeam(t);
 		
