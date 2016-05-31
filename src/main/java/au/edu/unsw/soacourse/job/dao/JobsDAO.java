@@ -996,6 +996,24 @@ public enum JobsDAO {
 		
 	}
 	
+	public boolean applicationAlreadyExists(JobPosting post, UserProfile user){
+		loadJobApplicationsFromFile();
+		String postId = post.getId();
+		String userId = user.getId();
+		
+		for(JobApplication a : contentStoreApplications.values()){
+			//for
+			//check the team
+			if(a.getJobPostId().matches(postId) && a.getUserProfileId().matches(userId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+	}
+	
+	
 	public void writeToUserProfilesFile(){
     	//create storage class
       	List<UserProfile> userProfiles = new ArrayList<UserProfile>(contentStoreUserProfiles.values());

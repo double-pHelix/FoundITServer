@@ -733,10 +733,10 @@ public class FoundITResource {
 		}
 		//check job application exists
 		//check user profile exists
+		//check that user hasn't already applied to job posting
 		JobPosting existingPost = JobsDAO.instance.getJobPosting(jobpostId);
 		UserProfile existingUser = JobsDAO.instance.getUserProfile(userProfileId);
-		
-		
+
 		if(existingPost == null && existingUser == null){
 			String msg = "POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
@@ -761,7 +761,13 @@ public class FoundITResource {
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-		} else {
+		}  else if(JobsDAO.instance.applicationAlreadyExists(existingPost, existingUser)){
+			String msg = "POST: User with id:" + existingUser.getId() + " already applied to job with id:" + existingPost.getId() ; //TODO: change to jobpost id
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}	else {
+		
 			//create new application
 			JobApplication newJobApp= new JobApplication(id, jobpostId,
 					userProfileId, coverLetter, resume);
