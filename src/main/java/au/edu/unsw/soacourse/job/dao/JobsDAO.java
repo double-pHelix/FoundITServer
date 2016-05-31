@@ -272,7 +272,7 @@ public enum JobsDAO {
     	String jobAppId = newReview.getJobApplicationId();
     	JobApplication app = getJobApplication(jobAppId);
     	
-    	if(newReview.getDecision() == Review.DECISION_REJECTED){
+    	if(newReview.getDecision().matches(Review.DECISION_REJECTED)){
     		//set to not being shortlisted!
     		app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
     		//archive the job

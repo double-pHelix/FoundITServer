@@ -81,7 +81,8 @@ public class CompanyProfile {
 	public void setLink(String link) {
 		this.link = link;
 		//use this link info to update id
-		this.id = link.substring(link.length()-1);
+		int startId = link.lastIndexOf('/') + 1;
+		this.id = link.substring(startId,link.length());
 	}
 	
 	@XmlAttribute(name = "rel")
