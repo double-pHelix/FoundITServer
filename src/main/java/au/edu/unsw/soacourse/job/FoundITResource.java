@@ -64,7 +64,9 @@ public class FoundITResource {
 			@FormParam("currentposition") String currentPosition,
 			@FormParam("education") String education,
 			@FormParam("pastexperience") String pastExperience,
-			@FormParam("professionalskills") String professionalSkills
+			@FormParam("professionalskills") String professionalSkills,
+			@FormParam("address") String address,
+			@FormParam("licensenumber") String licenseNumber
 	) throws IOException {
 		String id = JobsDAO.instance.getNextUserProfileId();
 
@@ -87,7 +89,7 @@ public class FoundITResource {
 			return res;
 		}
 		//create new profile
-		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills);
+		UserProfile newProfile = new UserProfile(id, name, currentPosition, education, pastExperience, professionalSkills, address, licenseNumber);
 				
 		//store profile
 		JobsDAO.instance.storeUserProfile(newProfile);
@@ -631,7 +633,7 @@ public class FoundITResource {
 		
 		CompanyProfile existingProfile = JobsDAO.instance.getCompanyProfile(p.getCompanyProfileId());
 		if(existingProfile == null){
-			String msg = "PUT: Given CompanyProfile does not exist";
+			String msg = "PUT: Given CompanyProfile id:" + p.getCompanyProfileId() + " does not exist";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -731,10 +733,10 @@ public class FoundITResource {
 		}
 		//check job application exists
 		//check user profile exists
+		//check that user hasn't already applied to job posting
 		JobPosting existingPost = JobsDAO.instance.getJobPosting(jobpostId);
 		UserProfile existingUser = JobsDAO.instance.getUserProfile(userProfileId);
-		
-		
+
 		if(existingPost == null && existingUser == null){
 			String msg = "POST: No Job Postings found with id:" + jobpostId + " and no User found with id:" + userProfileId;
 			ResponseBuilder resBuild = Response.ok(msg);
@@ -754,12 +756,18 @@ public class FoundITResource {
 			res = resBuild.build();
 			
 		} else if(existingPost.getStatus().matches(JobPosting.STATUS_CLOSED)){
-			String msg = "POST: Job Application closed id:" + userProfileId;
+			String msg = "POST: Job posting closed id:" + jobpostId; //TODO: change to jobpost id
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 			
-		} else {
+		}  else if(JobsDAO.instance.applicationAlreadyExists(existingPost, existingUser)){
+			String msg = "POST: User with id:" + existingUser.getId() + " already applied to job with id:" + existingPost.getId() ; //TODO: change to jobpost id
+			ResponseBuilder resBuild = Response.ok(msg);
+			resBuild.status(Response.Status.BAD_REQUEST);
+			res = resBuild.build();
+		}	else {
+		
 			//create new application
 			JobApplication newJobApp= new JobApplication(id, jobpostId,
 					userProfileId, coverLetter, resume);
@@ -804,7 +812,7 @@ public class FoundITResource {
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
-			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume(), a.getStatus());
 			sendVersion.setSendVersion(true);
 			res = Response.ok(sendVersion).build();
 		}
@@ -962,13 +970,15 @@ public class FoundITResource {
 		
 		
 		//archived already
-		if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
-			msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
-			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(Response.Status.BAD_REQUEST);
-			res = resBuild.build();
-			return res;
-			
+		if(currApp != null){
+			if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
+				msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
+				ResponseBuilder resBuild = Response.ok(msg);
+				resBuild.status(Response.Status.BAD_REQUEST);
+				res = resBuild.build();
+				return res;
+				
+			}
 		}
 		
 		if(existingPost == null && existingUser == null){
@@ -993,16 +1003,29 @@ public class FoundITResource {
 			return res;
 		}
 		
-		if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
-			if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
-				msg = "PUT: Application cannot be accepted or rejected without being shortlisted.";
-				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(Response.Status.BAD_REQUEST);
-				res = resBuild.build();
-				return res;
+		if(currApp != null){
+			if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
+				if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
+					msg = "PUT: Application cannot be accepted or rejected without being shortlisted.";
+					ResponseBuilder resBuild = Response.ok(msg);
+					resBuild.status(Response.Status.BAD_REQUEST);
+					res = resBuild.build();
+					return res;
+				}
 			}
+			if(p.getStatus().matches(JobApplication.STATUS_CHECK_FAIL) || p.getStatus().matches(JobApplication.STATUS_CHECK_SUCCESS)){
+				if(!currApp.getStatus().matches(JobApplication.STATUS_SUBMITTED)){
+					msg = "PUT: Application can be checked success or fail only right after submission. Workflow not in the right order,";
+					ResponseBuilder resBuild = Response.ok(msg);
+					resBuild.status(Response.Status.BAD_REQUEST);
+					res = resBuild.build();
+					return res;
+				}
+			}
+			
+			
 		}
-
+		
 		msg = "Success";
 		//store profile
 		JobsDAO.instance.storeJobApplication(p);

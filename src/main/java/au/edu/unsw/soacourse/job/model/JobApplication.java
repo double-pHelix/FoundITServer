@@ -14,6 +14,8 @@ public class JobApplication {
     public static final String STATUS_NOT_SHORTLISTED = "not-shortlisted";
     public static final String STATUS_ACCEPTED = "accepted-invitation";
     public static final String STATUS_REJECTED = "rejected-invitation";
+    public static final String STATUS_CHECK_SUCCESS = "check-success";
+    public static final String STATUS_CHECK_FAIL = "check-fail";
     //archived status
     public static final String ARCHIVED_TRUE = "T";
     public static final String ARCHIVED_FALSE = "F";
@@ -43,6 +45,19 @@ public class JobApplication {
 		super();
 		this.link = "http://localhost:8080/FoundITServer/jobapplication/" + id;
 	}
+    
+    public JobApplication(String id, String jobPostId,
+ 			String userProfileId, String coverLetter, String resume, String status) {
+ 		super();
+ 		this.id = id;
+ 		this.jobPostId = jobPostId;
+ 		this.userProfileId = userProfileId;
+ 		this.coverLetter = coverLetter;
+ 		this.resume = resume;
+ 		this.status = status;
+ 		this.archived = ARCHIVED_FALSE;
+ 		this.link = "http://localhost:8080/FoundITServer/jobapplication/" + this.id;
+ 	}
     
     public JobApplication(String id, String jobPostId,
 			String userProfileId, String coverLetter, String resume) {
@@ -124,7 +139,8 @@ public class JobApplication {
 
 	public void setLink(String link) {
 		this.link = link;
-		this.id = link.substring(link.length()-1);
+		int startId = link.lastIndexOf('/') + 1;
+		this.id = link.substring(startId,link.length());
 	}
 
 	@XmlAttribute(name = "rel")

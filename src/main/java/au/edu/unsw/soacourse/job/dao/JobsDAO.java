@@ -225,26 +225,8 @@ public enum JobsDAO {
       	
     	contentStoreUserProfiles.put(newUserProfile.getId(), newUserProfile);
     	System.out.println(":" + newUserProfile.getPastExperience());
-    	//create storage class
-      	List<UserProfile> userProfiles = new ArrayList<UserProfile>(contentStoreUserProfiles.values());
-    	UserProfiles storeThis = new UserProfiles(userProfiles);
-    	
-    	try {
-    		File file = new File(USER_PROFILE_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
-
+    	writeToUserProfilesFile();
     }
     
     public void storeCompanyProfile(CompanyProfile newCompanyProfile){
@@ -252,52 +234,16 @@ public enum JobsDAO {
 
     	contentStoreCompProfiles.put(newCompanyProfile.getId(), newCompanyProfile);
     	
-    	//create storage class
-      	List<CompanyProfile> compProfiles = new ArrayList<CompanyProfile>(contentStoreCompProfiles.values());
-      	CompanyProfiles storeThis = new CompanyProfiles(compProfiles);
+    	writeCompanyProfilesToFile();
     	
-    	try {
-    		File file = new File(COMPANY_PROFILE_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
     }
     
     public void storeHiringTeam(HiringTeamStore newHiringTeam){
     	loadHiringTeamsFromFile();
 
     	contentStoreHiringTeam.put(newHiringTeam.getId(), newHiringTeam);
-    	
-     	//create storage class
-      	List<HiringTeamStore> hiringTeams = new ArrayList<HiringTeamStore>(contentStoreHiringTeam.values());
-      	HiringTeams storeThis = new HiringTeams(hiringTeams);
-    	
-    	try {
-    		File file = new File(HIRING_TEAM_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
-    	
+    	writeToHiringTeamsFile();
     }
     
     public void storeJobApplication(JobApplication newJobApplication ){
@@ -305,25 +251,7 @@ public enum JobsDAO {
     	
     	contentStoreApplications.put(newJobApplication.getId(), newJobApplication);
     	
-    	//create storage class
-      	List<JobApplication> jobApps = new ArrayList<JobApplication>(contentStoreApplications.values());
-      	JobApplications storeThis = new JobApplications(jobApps);
-    	
-    	try {
-    		File file = new File(JOB_APPLICATION_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
+    	writeJobApplicationsToFile();
     	
     }
     
@@ -331,26 +259,10 @@ public enum JobsDAO {
     	loadJobPostingsFromFile();
 
     	contentStorePostings.put(newJobPosting.getId(), newJobPosting);
+
+
+    	writeJobPostingsToFile();
     	
-    	//create storage class
-      	List<JobPosting> jobPosts = new ArrayList<JobPosting>(contentStorePostings.values());
-      	JobPostings storeThis = new JobPostings(jobPosts);
-    	
-    	try {
-    		File file = new File(JOB_POSTING_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
     }
     
     public void storeReview(Review newReview){
@@ -360,7 +272,7 @@ public enum JobsDAO {
     	String jobAppId = newReview.getJobApplicationId();
     	JobApplication app = getJobApplication(jobAppId);
     	
-    	if(newReview.getDecision() == Review.DECISION_REJECTED){
+    	if(newReview.getDecision().matches(Review.DECISION_REJECTED)){
     		//set to not being shortlisted!
     		app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
     		//archive the job
@@ -373,36 +285,24 @@ public enum JobsDAO {
 				if(review.getJobApplicationId().matches(jobAppId)){
 					if(review.getDecision().matches(Review.DECISION_ACCEPTED)){
 						app.setStatus(JobApplication.STATUS_SHORTLISTED);
+						System.out.println("!");
 					} else {
 						app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
-			    		app.setArchived(JobApplication.ARCHIVED_TRUE);
+						//HERE WE HAVE CHOSEN TO NOT ARCHIVE IF SHORTLISTED 
+						
+			    		//app.setArchived(JobApplication.ARCHIVED_TRUE);
 					}
+					storeJobApplication(app);
 				}
 				
 			}	
     	}
-    	//now store the new review
+
+		//now store the new review
     	contentStoreReviews.put(newReview.getId(), newReview);
+
+    	writeReviewsToFile();
     	
-    	//create storage class
-      	List<Review> reviews = new ArrayList<Review>(contentStoreReviews.values());
-      	Reviews storeThis = new Reviews(reviews);
-    	
-    	try {
-    		File file = new File(REVIEW_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
     }
     
     public void storeTeamMemberProfile(TeamMemberProfile newTeamMemberProfile){
@@ -410,25 +310,8 @@ public enum JobsDAO {
     	
     	contentStoreTeamProfiles.put(newTeamMemberProfile.getId(), newTeamMemberProfile);
     	
-    	//create storage class
-      	List<TeamMemberProfile> profiles = new ArrayList<TeamMemberProfile>(contentStoreTeamProfiles.values());
-      	TeamMemberProfiles storeThis = new TeamMemberProfiles(profiles);
+    	writeTeamMemberProfilesToFile();
     	
-    	try {
-    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
     }
     
     
@@ -437,25 +320,7 @@ public enum JobsDAO {
     	
     	contentStoreJobApplicationAssignment.put(newJobAppAssignment.getId(), newJobAppAssignment);
     	
-    	//create storage class
-      	List<JobApplicationAssignment> assgns = new ArrayList<JobApplicationAssignment>(contentStoreJobApplicationAssignment.values());
-      	JobApplicationAssignments storeThis = new JobApplicationAssignments(assgns);
-    	
-    	try {
-    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
-    		
-    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
-    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-    		// output pretty printed
-    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-    		jaxbMarshaller.marshal(storeThis, file);
-    		//jaxbMarshaller.marshal(storeThis, System.out);
-
-    	} catch (JAXBException e) {
-    		e.printStackTrace();
-    	}
+    	writeJobApplicationAssignmentsToFile();
     }
     
 
@@ -483,7 +348,12 @@ public enum JobsDAO {
     
     public JobApplication getJobApplication(String id){
     	loadJobApplicationsFromFile();
-    	if(contentStoreApplications.get(id).getArchived().matches(JobApplication.ARCHIVED_FALSE))
+    	JobApplication get = contentStoreApplications.get(id);
+    	if(get == null){
+    		return null;
+    	}
+    	
+    	if(get.getArchived().matches(JobApplication.ARCHIVED_FALSE))
     		return contentStoreApplications.get(id);
     	
     	return null;
@@ -491,6 +361,12 @@ public enum JobsDAO {
     
     public JobPosting getJobPosting(String id){
     	loadJobPostingsFromFile();
+    	
+    	JobPosting get = contentStorePostings.get(id);
+    	if(get == null){
+    		return null;
+    	}
+    	
     	if(contentStorePostings.get(id).getArchived().matches(JobPosting.ARCHIVED_FALSE))
     		return contentStorePostings.get(id);
     	
@@ -515,15 +391,28 @@ public enum JobsDAO {
     //DELETE
     
     public UserProfile deleteUserProfile(String id){
-    	return contentStoreUserProfiles.remove(id);
+    	UserProfile deleted = contentStoreUserProfiles.remove(id);
+    	
+    	writeToUserProfilesFile();
+    	
+    	return deleted;
     }
     
     public CompanyProfile deleteCompanyProfile(String id){
-    	return contentStoreCompProfiles.remove(id);
+    	CompanyProfile deleted = contentStoreCompProfiles.remove(id);
+    	
+    	writeCompanyProfilesToFile();
+    	
+    	return deleted;
     }
     
     public HiringTeamStore deleteHiringTeam(String id){
-    	return contentStoreHiringTeam.remove(id);
+    	
+    	HiringTeamStore deleted = contentStoreHiringTeam.remove(id);
+    	
+    	writeToHiringTeamsFile();
+    	
+    	return deleted;
     }
     
     public JobApplication deleteJobApplication(String id){
@@ -532,6 +421,8 @@ public enum JobsDAO {
     	if(archived != null)
     		archived.setArchived(ARCHIVED_TRUE);
     	
+    	
+    	writeJobApplicationsToFile();
     	return archived;
     }
     
@@ -541,19 +432,29 @@ public enum JobsDAO {
     	if(archived != null)
     		archived.setArchived(ARCHIVED_TRUE);
     	
+    	writeJobPostingsToFile();
     	return archived;
     }
     
     public Review deleteReview(String id){
-    	return contentStoreReviews.remove(id);
+    	Review deleted = contentStoreReviews.remove(id);
+    			
+    	writeReviewsToFile();
+    	return deleted;
     }
     
     public TeamMemberProfile deleteTeamMemberProfile(String id){
-    	return contentStoreTeamProfiles.remove(id);
+    	TeamMemberProfile deleted = contentStoreTeamProfiles.remove(id);
+    			
+    	writeTeamMemberProfilesToFile();
+    	return deleted;
     }
     
     public JobApplicationAssignment deleteJobApplicationAssignment(String id){
-    	return contentStoreJobApplicationAssignment.remove(id);
+    	JobApplicationAssignment deleted = contentStoreJobApplicationAssignment.remove(id);
+    			
+    	writeJobApplicationAssignmentsToFile();
+    	return deleted;
     }
     
      
@@ -857,7 +758,81 @@ public enum JobsDAO {
 	  	return newJobApplications;
 }
 
- 
+	
+	//checks if the two given reviewer ids are from the specified company
+	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
+		loadHiringTeamsFromFile();
+		
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			if(team.getCompanyProfileId().matches(companyId)){
+				System.out.println("company" + companyId);
+				//check the team
+				if(team.getMember1id().matches(reviewer1) || team.getMember2id().matches(reviewer1) || team.getMember3id().matches(reviewer1) || team.getMember4id().matches(reviewer1) || team.getMember5id().matches(reviewer1)){
+					if(team.getMember1id().matches(reviewer2) || team.getMember2id().matches(reviewer2) || team.getMember3id().matches(reviewer2) || team.getMember4id().matches(reviewer2) || team.getMember5id().matches(reviewer2)){
+						return true;
+					}
+				}
+			}
+		}
+
+		
+		return false;
+	}
+	
+	public boolean existsInHiringTeam(TeamMemberProfile member){
+		loadHiringTeamsFromFile();
+		
+		String memberId = member.getId();
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			
+			//check the team
+			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
+					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
+	}
+	
+	public boolean assignmentAlreadyExists(JobApplication app){
+		loadJobApplicationAssignmentsFromFile();
+		
+		String appId = app.getId();
+		for(JobApplicationAssignment assign : contentStoreJobApplicationAssignment.values()){
+			//for
+			//check the team
+			if(assign.getJobApplicationId().matches(appId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
+	}
+	
+	public boolean applicationAlreadyExists(JobPosting post, UserProfile user){
+		loadJobApplicationsFromFile();
+		String postId = post.getId();
+		String userId = user.getId();
+		
+		for(JobApplication a : contentStoreApplications.values()){
+			//for
+			//check the team
+			if(a.getJobPostId().matches(postId) && a.getUserProfileId().matches(userId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+	}
+	
 //loads from file if we've reset from last time
 	void loadUserProfilesFromFile() {
 	  	if(contentStoreUserProfiles.size() == 0){
@@ -1051,61 +1026,181 @@ public enum JobsDAO {
 	  	}
 	}
 	
-	//checks if the two given reviewer ids are from the specified company
-	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
-		loadHiringTeamsFromFile();
-		
-		for(HiringTeamStore team : contentStoreHiringTeam.values()){
-			//for
-			if(team.getCompanyProfileId().matches(companyId)){
-				System.out.println("company" + companyId);
-				//check the team
-				if(team.getMember1id().matches(reviewer1) || team.getMember2id().matches(reviewer1) || team.getMember3id().matches(reviewer1) || team.getMember4id().matches(reviewer1) || team.getMember5id().matches(reviewer1)){
-					if(team.getMember1id().matches(reviewer2) || team.getMember2id().matches(reviewer2) || team.getMember3id().matches(reviewer2) || team.getMember4id().matches(reviewer2) || team.getMember5id().matches(reviewer2)){
-						return true;
-					}
-				}
-			}
-		}
+	public void writeToUserProfilesFile(){
+    	//create storage class
+      	List<UserProfile> userProfiles = new ArrayList<UserProfile>(contentStoreUserProfiles.values());
+    	UserProfiles storeThis = new UserProfiles(userProfiles);
+    	
+    	try {
+    		File file = new File(USER_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(UserProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-		
-		return false;
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
 	}
 	
-	public boolean existsInHiringTeam(TeamMemberProfile member){
-		loadHiringTeamsFromFile();
-		
-		String memberId = member.getId();
-		for(HiringTeamStore team : contentStoreHiringTeam.values()){
-			//for
-			
-			//check the team
-			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
-					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
-				return true;	
-			}
-			
-		}
+	public void writeCompanyProfilesToFile(){
+    	//create storage class
+      	List<CompanyProfile> compProfiles = new ArrayList<CompanyProfile>(contentStoreCompProfiles.values());
+      	CompanyProfiles storeThis = new CompanyProfiles(compProfiles);
+    	
+    	try {
+    		File file = new File(COMPANY_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(CompanyProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-		return false;
-		
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
 	}
 	
-	public boolean assignmentAlreadyExists(JobApplication app){
-		loadJobApplicationAssignmentsFromFile();
-		
-		String appId = app.getId();
-		for(JobApplicationAssignment assign : contentStoreJobApplicationAssignment.values()){
-			//for
-			//check the team
-			if(assign.getJobApplicationId().matches(appId)){
-				return true;	
-			}
-			
-		}
+	public void writeToHiringTeamsFile(){
+    	
+     	//create storage class
+      	List<HiringTeamStore> hiringTeams = new ArrayList<HiringTeamStore>(contentStoreHiringTeam.values());
+      	HiringTeams storeThis = new HiringTeams(hiringTeams);
+    	
+    	try {
+    		File file = new File(HIRING_TEAM_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(HiringTeams.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-		return false;
-		
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+	}
+	
+	public void writeJobApplicationsToFile(){
+		//create storage class
+      	List<JobApplication> jobApps = new ArrayList<JobApplication>(contentStoreApplications.values());
+      	JobApplications storeThis = new JobApplications(jobApps);
+    	
+    	try {
+    		File file = new File(JOB_APPLICATION_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplications.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+	}
+	public void writeJobPostingsToFile(){
+		//create storage class
+      	List<JobPosting> jobPosts = new ArrayList<JobPosting>(contentStorePostings.values());
+      	JobPostings storeThis = new JobPostings(jobPosts);
+    	
+    	try {
+    		File file = new File(JOB_POSTING_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobPostings.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+	}
+	
+	public void writeReviewsToFile(){
+    	
+    	//create storage class
+      	List<Review> reviews = new ArrayList<Review>(contentStoreReviews.values());
+      	Reviews storeThis = new Reviews(reviews);
+    	
+    	try {
+    		File file = new File(REVIEW_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(Reviews.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+	}
+	
+	public void writeTeamMemberProfilesToFile(){
+		//create storage class
+      	List<TeamMemberProfile> profiles = new ArrayList<TeamMemberProfile>(contentStoreTeamProfiles.values());
+      	TeamMemberProfiles storeThis = new TeamMemberProfiles(profiles);
+    	
+    	try {
+    		File file = new File(TEAM_MEMBER_PROFILE_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(TeamMemberProfiles.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
+	}
+	
+	public void writeJobApplicationAssignmentsToFile(){
+		//create storage class
+      	List<JobApplicationAssignment> assgns = new ArrayList<JobApplicationAssignment>(contentStoreJobApplicationAssignment.values());
+      	JobApplicationAssignments storeThis = new JobApplicationAssignments(assgns);
+    	
+    	try {
+    		File file = new File(JOB_APPLICATION_ASSIGNMENT_FILEDIR);
+    		
+    		JAXBContext jaxbContext = JAXBContext.newInstance(JobApplicationAssignments.class);
+    		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+    		// output pretty printed
+    		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    		jaxbMarshaller.marshal(storeThis, file);
+    		//jaxbMarshaller.marshal(storeThis, System.out);
+
+    	} catch (JAXBException e) {
+    		e.printStackTrace();
+    	}
 	}
     
 }	

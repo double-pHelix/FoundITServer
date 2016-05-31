@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class UserProfile {
 	private String id;
     private String name;
+	private String address;
+	private String licenseNumber;
     private String currentPosition;
 	private String education;
     private String pastExperience;
@@ -24,7 +26,7 @@ public class UserProfile {
 	}
     
 	public UserProfile(String id, String name, String currentPosition,
-			String education, String pastExperience, String professionalSkills) {
+			String education, String pastExperience, String professionalSkills, String address, String licenseNumber) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -33,6 +35,8 @@ public class UserProfile {
 		this.pastExperience = pastExperience;
 		this.professionalSkills = professionalSkills;
 		this.link = "http://localhost:8080/FoundITServer/userprofile/" + this.id;
+		this.address = address;
+		this.licenseNumber = licenseNumber;
 	}
 
 	public String getId() {
@@ -90,7 +94,8 @@ public class UserProfile {
 
 	public void setLink(String link) {
 		this.link = link;
-		this.id = link.substring(link.length()-1);
+		int startId = link.lastIndexOf('/') + 1;
+		this.id = link.substring(startId,link.length());
 	}
 
 	@XmlAttribute(name = "rel")
@@ -102,5 +107,19 @@ public class UserProfile {
 		this.rel = rel;
 	}
     
-    
+    public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getLicenseNumber() {
+		return licenseNumber;
+	}
+
+	public void setLicenseNumber(String licenseNumber) {
+		this.licenseNumber = licenseNumber;
+	}
 }

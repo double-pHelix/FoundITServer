@@ -75,7 +75,7 @@ public enum SecurityChecker {
 		readPermission[HIRE_TEAM][REVIEWER] = false;
 
 		writePermission[REVIEW_PROFILE][CANDIDATE] = false;
-		writePermission[REVIEW_PROFILE][MANAGER] = false;
+		writePermission[REVIEW_PROFILE][MANAGER] = true;
 		writePermission[REVIEW_PROFILE][REVIEWER] = true;
 		
 		writePermission[USER_PROFILE][CANDIDATE] = true;
@@ -87,7 +87,7 @@ public enum SecurityChecker {
 		writePermission[COMP_PROFILE][REVIEWER] = false;
 		
 		writePermission[JOB_APPLICATION][CANDIDATE] = true;
-		writePermission[JOB_APPLICATION][MANAGER] = false;
+		writePermission[JOB_APPLICATION][MANAGER] = true;
 		writePermission[JOB_APPLICATION][REVIEWER] = false;
 		
 		writePermission[JOB_POSTING][CANDIDATE] = false;
@@ -137,6 +137,7 @@ public enum SecurityChecker {
 	}
 	
 	public boolean keyAccepted(String givenKey){
+		
 		if(givenKey == null)
 			return false;
 		
@@ -148,6 +149,7 @@ public enum SecurityChecker {
 	}
 	
 	public boolean checkPermisionResource(String method, int resource, String shortKey){
+		
 		if(shortKey == null)
 			return false;
 		
