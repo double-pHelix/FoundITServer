@@ -276,7 +276,7 @@ public enum JobsDAO {
     		//set to not being shortlisted!
     		app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
     		//archive the job
-    		app.setArchived(JobApplication.ARCHIVED_TRUE);
+    		//app.setArchived(JobApplication.ARCHIVED_TRUE);
     	} else {
     		//compare with other review... if it exists!
     		//check if the review is in and is positive
