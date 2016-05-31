@@ -758,7 +758,81 @@ public enum JobsDAO {
 	  	return newJobApplications;
 }
 
- 
+	
+	//checks if the two given reviewer ids are from the specified company
+	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
+		loadHiringTeamsFromFile();
+		
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			if(team.getCompanyProfileId().matches(companyId)){
+				System.out.println("company" + companyId);
+				//check the team
+				if(team.getMember1id().matches(reviewer1) || team.getMember2id().matches(reviewer1) || team.getMember3id().matches(reviewer1) || team.getMember4id().matches(reviewer1) || team.getMember5id().matches(reviewer1)){
+					if(team.getMember1id().matches(reviewer2) || team.getMember2id().matches(reviewer2) || team.getMember3id().matches(reviewer2) || team.getMember4id().matches(reviewer2) || team.getMember5id().matches(reviewer2)){
+						return true;
+					}
+				}
+			}
+		}
+
+		
+		return false;
+	}
+	
+	public boolean existsInHiringTeam(TeamMemberProfile member){
+		loadHiringTeamsFromFile();
+		
+		String memberId = member.getId();
+		for(HiringTeamStore team : contentStoreHiringTeam.values()){
+			//for
+			
+			//check the team
+			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
+					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
+	}
+	
+	public boolean assignmentAlreadyExists(JobApplication app){
+		loadJobApplicationAssignmentsFromFile();
+		
+		String appId = app.getId();
+		for(JobApplicationAssignment assign : contentStoreJobApplicationAssignment.values()){
+			//for
+			//check the team
+			if(assign.getJobApplicationId().matches(appId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+		
+	}
+	
+	public boolean applicationAlreadyExists(JobPosting post, UserProfile user){
+		loadJobApplicationsFromFile();
+		String postId = post.getId();
+		String userId = user.getId();
+		
+		for(JobApplication a : contentStoreApplications.values()){
+			//for
+			//check the team
+			if(a.getJobPostId().matches(postId) && a.getUserProfileId().matches(userId)){
+				return true;	
+			}
+			
+		}
+
+		return false;
+	}
+	
 //loads from file if we've reset from last time
 	void loadUserProfilesFromFile() {
 	  	if(contentStoreUserProfiles.size() == 0){
@@ -951,81 +1025,6 @@ public enum JobsDAO {
 			}
 	  	}
 	}
-	
-	//checks if the two given reviewer ids are from the specified company
-	public boolean reviewersFromCompany(String companyId, String reviewer1, String reviewer2){
-		loadHiringTeamsFromFile();
-		
-		for(HiringTeamStore team : contentStoreHiringTeam.values()){
-			//for
-			if(team.getCompanyProfileId().matches(companyId)){
-				System.out.println("company" + companyId);
-				//check the team
-				if(team.getMember1id().matches(reviewer1) || team.getMember2id().matches(reviewer1) || team.getMember3id().matches(reviewer1) || team.getMember4id().matches(reviewer1) || team.getMember5id().matches(reviewer1)){
-					if(team.getMember1id().matches(reviewer2) || team.getMember2id().matches(reviewer2) || team.getMember3id().matches(reviewer2) || team.getMember4id().matches(reviewer2) || team.getMember5id().matches(reviewer2)){
-						return true;
-					}
-				}
-			}
-		}
-
-		
-		return false;
-	}
-	
-	public boolean existsInHiringTeam(TeamMemberProfile member){
-		loadHiringTeamsFromFile();
-		
-		String memberId = member.getId();
-		for(HiringTeamStore team : contentStoreHiringTeam.values()){
-			//for
-			
-			//check the team
-			if(team.getMember1id().matches(memberId) || team.getMember2id().matches(memberId) || 
-					team.getMember3id().matches(memberId) || team.getMember4id().matches(memberId) || team.getMember5id().matches(memberId)){
-				return true;	
-			}
-			
-		}
-
-		return false;
-		
-	}
-	
-	public boolean assignmentAlreadyExists(JobApplication app){
-		loadJobApplicationAssignmentsFromFile();
-		
-		String appId = app.getId();
-		for(JobApplicationAssignment assign : contentStoreJobApplicationAssignment.values()){
-			//for
-			//check the team
-			if(assign.getJobApplicationId().matches(appId)){
-				return true;	
-			}
-			
-		}
-
-		return false;
-		
-	}
-	
-	public boolean applicationAlreadyExists(JobPosting post, UserProfile user){
-		loadJobApplicationsFromFile();
-		String postId = post.getId();
-		String userId = user.getId();
-		
-		for(JobApplication a : contentStoreApplications.values()){
-			//for
-			//check the team
-			if(a.getJobPostId().matches(postId) && a.getUserProfileId().matches(userId)){
-				return true;	
-			}
-			
-		}
-
-		return false;
-	}
-	
 	
 	public void writeToUserProfilesFile(){
     	//create storage class
