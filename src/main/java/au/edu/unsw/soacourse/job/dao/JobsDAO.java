@@ -825,7 +825,9 @@ public enum JobsDAO {
 			//for
 			//check the team
 			if(a.getJobPostId().matches(postId) && a.getUserProfileId().matches(userId)){
-				return true;	
+				
+				if(a.getArchived().matches(JobApplication.ARCHIVED_FALSE))
+					return true;	
 			}
 			
 		}
