@@ -631,7 +631,7 @@ public class FoundITResource {
 		
 		CompanyProfile existingProfile = JobsDAO.instance.getCompanyProfile(p.getCompanyProfileId());
 		if(existingProfile == null){
-			String msg = "PUT: Given CompanyProfile does not exist";
+			String msg = "PUT: Given CompanyProfile id:" + p.getCompanyProfileId() + " does not exist";
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -754,7 +754,7 @@ public class FoundITResource {
 			res = resBuild.build();
 			
 		} else if(existingPost.getStatus().matches(JobPosting.STATUS_CLOSED)){
-			String msg = "POST: Job Application closed id:" + userProfileId;
+			String msg = "POST: Job posting closed id:" + jobpostId; //TODO: change to jobpost id
 			ResponseBuilder resBuild = Response.ok(msg);
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
@@ -804,7 +804,7 @@ public class FoundITResource {
 			resBuild.status(Response.Status.BAD_REQUEST);
 			res = resBuild.build();
 		} else {
-			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume());
+			JobApplication sendVersion = new JobApplication(a.getId(), a.getJobPostId(), a.getUserProfileId(), a.getCoverLetter(), a.getResume(), a.getStatus());
 			sendVersion.setSendVersion(true);
 			res = Response.ok(sendVersion).build();
 		}

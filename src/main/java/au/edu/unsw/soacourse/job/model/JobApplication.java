@@ -45,6 +45,19 @@ public class JobApplication {
 	}
     
     public JobApplication(String id, String jobPostId,
+ 			String userProfileId, String coverLetter, String resume, String status) {
+ 		super();
+ 		this.id = id;
+ 		this.jobPostId = jobPostId;
+ 		this.userProfileId = userProfileId;
+ 		this.coverLetter = coverLetter;
+ 		this.resume = resume;
+ 		this.status = status;
+ 		this.archived = ARCHIVED_FALSE;
+ 		this.link = "http://localhost:8080/FoundITServer/jobapplication/" + this.id;
+ 	}
+    
+    public JobApplication(String id, String jobPostId,
 			String userProfileId, String coverLetter, String resume) {
 		super();
 		this.id = id;
