@@ -970,13 +970,15 @@ public class FoundITResource {
 		
 		
 		//archived already
-		if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
-			msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
-			ResponseBuilder resBuild = Response.ok(msg);
-			resBuild.status(Response.Status.BAD_REQUEST);
-			res = resBuild.build();
-			return res;
-			
+		if(currApp != null){
+			if(currApp.getArchived().matches(JobApplication.ARCHIVED_TRUE)){			
+				msg = "PUT: Application with id:" + p.getUserProfileId() + " already archived.";
+				ResponseBuilder resBuild = Response.ok(msg);
+				resBuild.status(Response.Status.BAD_REQUEST);
+				res = resBuild.build();
+				return res;
+				
+			}
 		}
 		
 		if(existingPost == null && existingUser == null){

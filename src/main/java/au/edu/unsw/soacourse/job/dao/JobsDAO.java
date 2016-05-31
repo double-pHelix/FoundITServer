@@ -346,7 +346,12 @@ public enum JobsDAO {
     
     public JobApplication getJobApplication(String id){
     	loadJobApplicationsFromFile();
-    	if(contentStoreApplications.get(id).getArchived().matches(JobApplication.ARCHIVED_FALSE))
+    	JobApplication get = contentStoreApplications.get(id);
+    	if(get == null){
+    		return null;
+    	}
+    	
+    	if(get.getArchived().matches(JobApplication.ARCHIVED_FALSE))
     		return contentStoreApplications.get(id);
     	
     	return null;
@@ -354,6 +359,12 @@ public enum JobsDAO {
     
     public JobPosting getJobPosting(String id){
     	loadJobPostingsFromFile();
+    	
+    	JobPosting get = contentStorePostings.get(id);
+    	if(get == null){
+    		return null;
+    	}
+    	
     	if(contentStorePostings.get(id).getArchived().matches(JobPosting.ARCHIVED_FALSE))
     		return contentStorePostings.get(id);
     	
