@@ -1001,16 +1001,18 @@ public class FoundITResource {
 			return res;
 		}
 		
-		if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
-			if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
-				msg = "PUT: Application cannot be accepted or rejected without being shortlisted.";
-				ResponseBuilder resBuild = Response.ok(msg);
-				resBuild.status(Response.Status.BAD_REQUEST);
-				res = resBuild.build();
-				return res;
+		if(currApp != null){
+			if(p.getStatus().matches(JobApplication.STATUS_ACCEPTED) || p.getStatus().matches(JobApplication.STATUS_REJECTED)){
+				if(!currApp.getStatus().matches(JobApplication.STATUS_SHORTLISTED)){
+					msg = "PUT: Application cannot be accepted or rejected without being shortlisted.";
+					ResponseBuilder resBuild = Response.ok(msg);
+					resBuild.status(Response.Status.BAD_REQUEST);
+					res = resBuild.build();
+					return res;
+				}
 			}
 		}
-
+		
 		msg = "Success";
 		//store profile
 		JobsDAO.instance.storeJobApplication(p);
