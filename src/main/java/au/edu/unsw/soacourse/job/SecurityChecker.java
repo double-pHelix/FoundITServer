@@ -87,7 +87,7 @@ public enum SecurityChecker {
 		writePermission[COMP_PROFILE][REVIEWER] = false;
 		
 		writePermission[JOB_APPLICATION][CANDIDATE] = true;
-		writePermission[JOB_APPLICATION][MANAGER] = false;
+		writePermission[JOB_APPLICATION][MANAGER] = true;
 		writePermission[JOB_APPLICATION][REVIEWER] = false;
 		
 		writePermission[JOB_POSTING][CANDIDATE] = false;
