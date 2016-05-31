@@ -644,7 +644,7 @@ public class FoundITResource {
 			Integer.parseInt(p.getId());
 
 			//store profile
-			String msg = "PUT Success";
+			String msg = "PUT: Success";
 			
 			//store profile
 			JobsDAO.instance.storeJobPosting(p);
@@ -1236,7 +1236,7 @@ public class FoundITResource {
 			res = resBuild.build();
 			return res;
 		}
-		
+		/*
 		//check company exists
 		CompanyProfile existCompany = JobsDAO.instance.getCompanyProfile(t.getCompanyProfileId());
 		//get users
@@ -1251,7 +1251,7 @@ public class FoundITResource {
 			JobsDAO.instance.existsInHiringTeam(teamMember4) || JobsDAO.instance.existsInHiringTeam(teamMember5)){
 			
 			//return error that user's do not exist
-			String errormsg = "POST:";
+			String errormsg = "PUT:";
 			if(teamMember1 == null || teamMember2 == null || teamMember3 == null || teamMember4 == null || teamMember5 == null){
 				errormsg += "The following members do not exist: {";
 				if(teamMember1 == null){
@@ -1274,33 +1274,14 @@ public class FoundITResource {
 			if(existCompany == null){
 				errormsg = "Company with id:" + t.getCompanyProfileId() + " does not exist. ";
 			}
-			//if any of them have exist in a team
-			if(JobsDAO.instance.existsInHiringTeam(teamMember1) || JobsDAO.instance.existsInHiringTeam(teamMember2) || JobsDAO.instance.existsInHiringTeam(teamMember3) || 
-					JobsDAO.instance.existsInHiringTeam(teamMember4) || JobsDAO.instance.existsInHiringTeam(teamMember5)){
-				errormsg+= "The following team members are already in a team:";
-				
-				if(JobsDAO.instance.existsInHiringTeam(teamMember1)){
-					errormsg +="teamMember1=" + t.getMember1id() + ",";
-				}
-				if(JobsDAO.instance.existsInHiringTeam(teamMember2)){
-					errormsg +="teamMember1=" + t.getMember2id() + ",";
-				}
-				if(JobsDAO.instance.existsInHiringTeam(teamMember3)){
-					errormsg +="teamMember3=" + t.getMember3id()+ ",";
-				}
-				if(JobsDAO.instance.existsInHiringTeam(teamMember4)){
-					errormsg +="teamMember4=" + t.getMember4id() + ",";
-				}
-				if(JobsDAO.instance.existsInHiringTeam(teamMember5)){
-					errormsg +="teamMember5=" + t.getMember5id();
-				}
-			}
-			
-			
-			throw new RuntimeException(errormsg);
+			//reject
+			res = Response.status(Response.Status.UNAUTHORIZED).entity(errormsg).build();
+			return res;
+			//throw new RuntimeException(errormsg);
 		}
 		
-		
+		System.out.println(t.getMember1Link().getLink());
+		*/
 		//store profile
 		JobsDAO.instance.storeHiringTeam(t);
 		
@@ -1573,7 +1554,7 @@ public class FoundITResource {
 		JobApplicationAssignment sendJobApplicationAssignment = new JobApplicationAssignment(id, jobApplicationId, reviewer1, reviewer2);
 		sendJobApplicationAssignment.setSendVersion(true);
 				
-		res = Response.status(Response.Status.CREATED).entity(newJobApplicationAssignment).build();
+		res = Response.status(Response.Status.CREATED).entity(sendJobApplicationAssignment).build();
 		return res;
 	}
 	//GET
