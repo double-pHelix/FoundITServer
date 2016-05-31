@@ -1013,6 +1013,17 @@ public class FoundITResource {
 					return res;
 				}
 			}
+			if(p.getStatus().matches(JobApplication.STATUS_CHECK_FAIL) || p.getStatus().matches(JobApplication.STATUS_CHECK_SUCCESS)){
+				if(!currApp.getStatus().matches(JobApplication.STATUS_SUBMITTED)){
+					msg = "PUT: Application can be checked success or fail only right after submission. Workflow not in the right order,";
+					ResponseBuilder resBuild = Response.ok(msg);
+					resBuild.status(Response.Status.BAD_REQUEST);
+					res = resBuild.build();
+					return res;
+				}
+			}
+			
+			
 		}
 		
 		msg = "Success";
