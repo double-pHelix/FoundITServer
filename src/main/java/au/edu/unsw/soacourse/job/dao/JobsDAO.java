@@ -288,7 +288,9 @@ public enum JobsDAO {
 						System.out.println("!");
 					} else {
 						app.setStatus(JobApplication.STATUS_NOT_SHORTLISTED);
-			    		app.setArchived(JobApplication.ARCHIVED_TRUE);
+						//HERE WE HAVE CHOSEN TO NOT ARCHIVE IF SHORTLISTED 
+						
+			    		//app.setArchived(JobApplication.ARCHIVED_TRUE);
 					}
 					storeJobApplication(app);
 				}
